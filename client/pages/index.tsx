@@ -1,8 +1,5 @@
-import { Button } from '@nextui-org/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-
-const Component = () => <Button>Click me</Button>;
 
 const Home: NextPage = () => {
   return (
