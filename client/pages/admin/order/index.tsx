@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import AdminLayout from '../../../components/AdminLayout';
+import AdminLayout from '../../../components/common/AdminLayout';
 
 const IndexPage: NextPage = () => {
   return (

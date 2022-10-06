@@ -1,14 +1,16 @@
 import { Length, Matches } from 'class-validator';
+import { passwordRegex, usernameRegex } from './../../libs/regex';
 
 export class CreateUserDto {
   @Length(6, 32)
-  @Matches(/^[a-z0-9_-]{6,32}$/, {
-    message: 'Username must contains at least 6 letter and no space',
+  @Matches(usernameRegex, {
+    message:
+      'Username must contains at least 6 letter, no space, no special letters',
   })
   username: string;
 
   @Length(6, 32)
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/, {
+  @Matches(passwordRegex, {
     message: 'Password must contains at least 1 number and uppercase letter',
   })
   password: string;

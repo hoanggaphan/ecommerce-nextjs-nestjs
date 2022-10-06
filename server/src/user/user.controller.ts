@@ -35,7 +35,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.userService.findOne(id);
+    return this.userService.findById(id);
   }
 
   @UseGuards(AccessTokenGuard)

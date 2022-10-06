@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   HttpStatus,
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -24,7 +24,7 @@ export class UserService {
     const exist = await this.usersRepository.findOneBy({
       username: createUserDto.username,
     });
-    if (exist) throw new UnprocessableEntityException('username already exist');
+    if (exist) throw new BadRequestException('username already exist');
 
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
@@ -42,7 +42,7 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findById(id: number): Promise<User> {
     const exist = await this.usersRepository.findOneBy({ id });
     if (!exist) {
       throw new NotFoundException('User not found.');

@@ -11,7 +11,7 @@ export const validateName: ValidateType = (value) => {
 };
 
 export const validateSlug: ValidateType = (value) => {
-  return value.match(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i);
+  return value.match(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 };
 
 export const validateURL: ValidateType = (value) => {
