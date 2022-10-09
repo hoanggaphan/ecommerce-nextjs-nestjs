@@ -1,11 +1,9 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Product } from './../../product/entities/product.entity';
 import { VariantOption } from './variantOption.entity';
@@ -24,15 +22,10 @@ export class Variant {
   @ManyToOne(() => Product, (product) => product.variants, {
     cascade: true,
     onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   product: Product;
 
   @OneToMany(() => VariantOption, (variantOption) => variantOption.variant)
   public variantOptions!: VariantOption[];
-
-  @CreateDateColumn()
-  createdDate: Date;
-
-  @UpdateDateColumn()
-  updatedDate: Date;
 }

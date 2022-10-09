@@ -37,13 +37,6 @@ export const IconButton = styled('button', {
   },
 });
 
-export const CellText = styled('div', {
-  maxW: 150,
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-});
-
 const columns = [
   { name: 'ID', uid: 'id' },
   { name: 'TÊN', uid: 'name' },
@@ -79,10 +72,10 @@ const IndexPage: NextPage = () => {
           document.getElementById('category-des') as HTMLInputElement
         )?.value;
 
-        if (!name || !slug || !img) return;
+        if (!name || !slug || !img) return false;
 
         if (!validateName(name) || !validateSlug(slug) || !validateURL(img))
-          return;
+          return false;
 
         const data = {
           name,
@@ -101,7 +94,7 @@ const IndexPage: NextPage = () => {
         }
       },
     }).then((result) => {
-      if (result.isConfirmed && result.value?.status == 200) {
+      if (result.isConfirmed) {
         mutate();
         Swal.fire({
           title: 'Cập nhật thành công!',
@@ -184,7 +177,7 @@ const IndexPage: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <AdminLayout title='Thể loại'>
+      <AdminLayout title='Danh mục'>
         <Grid.Container gap={2}>
           <Grid xs={3}>
             <CategoryAddForm />

@@ -3,7 +3,6 @@ import {
   IsArray,
   IsInt,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
   Length,
@@ -13,12 +12,34 @@ import {
 } from 'class-validator';
 import { nameRegex, slugRegex, urlRegex } from './../../libs/regex';
 
-class NoOptionsDto {
+class CategoryDto {
+  @IsInt()
+  id: number;
+}
+class VariantOptionDto {
+  @IsOptional()
+  @IsInt()
+  variantId: number;
+
+  @IsInt()
+  optionId: number;
+
+  @IsString()
+  value: string;
+}
+class VariantDto {
+  @IsOptional()
+  @IsInt()
+  id: number;
+
   @IsNumber()
   price: number;
 
   @IsInt()
   quantity: number;
+
+  @IsArray()
+  variantOptions: VariantOptionDto[];
 }
 
 export class CreateProductDto {
@@ -43,38 +64,11 @@ export class CreateProductDto {
   @MaxLength(200)
   description: string;
 
-  @IsOptional()
-  @IsInt()
-  categoryId: number;
+  @ValidateNested()
+  @Type(() => CategoryDto)
+  category: CategoryDto;
 
-  @IsOptional()
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => VariantDto)
   variants: VariantDto[];
-
-  @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => NoOptionsDto)
-  noOptions: NoOptionsDto;
-}
-
-class VariantDto {
-  @IsNumber()
-  price: number;
-
-  @IsInt()
-  quantity: number;
-
-  @IsArray()
-  options: OptionDto[];
-}
-
-class OptionDto {
-  @IsInt()
-  id: number;
-
-  @IsString()
-  value: string;
 }

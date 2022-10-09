@@ -38,78 +38,24 @@ export class ProductService {
     });
     if (slug) throw new BadRequestException('Slug already exist');
 
-    const { variants, noOptions, categoryId, ...product } = createProductDto;
+    const { variants } = createProductDto;
 
-    // Case 1: Product has not variants
-    if (noOptions) {
-      // Save product
-      const createProduct = new Product();
-      if (categoryId) {
-        createProduct.category = await this.categoryService.findOne(categoryId);
-      }
-      createProduct.name = product.name;
-      createProduct.slug = product.slug;
-      createProduct.description = product.description;
-      createProduct.previewImage = product.previewImage;
-      const newProduct = await this.productsRepository.save(createProduct);
-
-      // Save variants
-      const variant = new Variant();
-      variant.price = noOptions.price;
-      variant.quantity = noOptions.quantity;
-      variant.product = newProduct;
-
-      await this.variantsRepository.save(variant);
-      return this.findOne(newProduct.id);
-    }
-
-    // Case 2: Product has variants
-    // Before action save variants, we must check all options are existing in DB
-    variants.forEach(async (variant) => {
-      variant.options.forEach(async (option) => {
-        // Check option existing in DB
-        await this.optionService.findOne(option.id);
-      });
-    });
-
-    // Save product
-    const createProduct = new Product();
-    if (categoryId) {
-      createProduct.category = await this.categoryService.findOne(categoryId);
-    }
-    createProduct.name = product.name;
-    createProduct.slug = product.slug;
-    createProduct.description = product.description;
-    createProduct.previewImage = product.previewImage;
-    const newProduct = await this.productsRepository.save(createProduct);
-
-    // Save variants
-    variants.forEach(async (item) => {
-      const variant = new Variant();
-      variant.price = item.price;
-      variant.quantity = item.quantity;
-      variant.product = newProduct;
-
-      const newVariant = await this.variantsRepository.save(variant);
-
-      // Check all options existing in DB
-      item.options.forEach(async (option) => {
-        const variantOption = new VariantOption();
-
-        variantOption.optionId = option.id;
-        variantOption.variantId = newVariant.id;
-        variantOption.value = option.value;
-
-        await this.variantOptionsRepository.save(variantOption);
-      });
-    });
-
-    // return result
-    return this.findOne(newProduct.id);
+    const newVariants = await this.variantsRepository.save(variants);
+    const variantOptions = [];
+    newVariants.forEach((v) =>
+      v.variantOptions.forEach((vo) => {
+        vo.variantId = v.id;
+        variantOptions.push(vo);
+      }),
+    );
+    await this.variantOptionsRepository.save(variantOptions);
+    return this.productsRepository.save({ ...createProductDto });
   }
 
   findAll(): Promise<Product[]> {
-    return this.productsRepository.find();
+    return this.productsRepository.find({
+      relations: { category: true, variants: { variantOptions: true } },
+    });
   }
 
   async findOne(id: number): Promise<Product> {
@@ -145,13 +91,18 @@ export class ProductService {
       .getOne();
     if (slug) throw new BadRequestException('Slug already exist');
 
-    return this.productsRepository
-      .update(id, updateProductDto)
-      .then((res) => ({
-        statusCode: HttpStatus.OK,
-        message: 'Update success',
-      }))
-      .catch((err) => console.log(err));
+    const { variants } = updateProductDto;
+
+    const newVariants = await this.variantsRepository.save(variants);
+    const variantOptions = [];
+    newVariants.forEach((v) =>
+      v.variantOptions.forEach((vo) => {
+        vo.variantId = v.id;
+        variantOptions.push(vo);
+      }),
+    );
+    await this.variantOptionsRepository.save(variantOptions);
+    return this.productsRepository.save({ id, ...updateProductDto });
   }
 
   async remove(id: number) {

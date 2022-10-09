@@ -10,12 +10,13 @@ export class VariantOption {
   @PrimaryColumn()
   public optionId!: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   value: string;
 
   @ManyToOne(() => Variant, (variant) => variant.variantOptions, {
     cascade: true,
     onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   public variant!: Variant;
 

@@ -1,9 +1,6 @@
-import { ProductService } from './../product/product.service';
-import { Injectable, BadRequestException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateVariantDto } from './dto/create-variant.dto';
-import { UpdateVariantDto } from './dto/update-variant.dto';
 import { Variant } from './entities/variant.entity';
 
 @Injectable()
@@ -13,26 +10,16 @@ export class VariantService {
     private variantsRepository: Repository<Variant>,
   ) {}
 
-  async create(createVariantDto: CreateVariantDto) {
-    return this.variantsRepository.save(createVariantDto).then((res) => ({
-      statusCode: HttpStatus.CREATED,
-      message: 'Register success',
-    }));
-  }
-
   findAll() {
-    return `This action returns all variant`;
+    return this.variantsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} variant`;
-  }
+  async findOne(id: number) {
+    const exist = await this.variantsRepository.findOneBy({ id });
+    if (!exist) {
+      throw new NotFoundException('Variant not found.');
+    }
 
-  update(id: number, updateVariantDto: UpdateVariantDto) {
-    return `This action updates a #${id} variant`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} variant`;
+    return exist;
   }
 }
