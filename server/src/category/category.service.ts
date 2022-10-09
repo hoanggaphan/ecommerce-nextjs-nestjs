@@ -38,8 +38,10 @@ export class CategoryService {
     return this.categoriesRepository.find();
   }
 
-  async findBySlug(slug: string): Promise<Category> {
-    const exist = await this.categoriesRepository.findOneBy({ slug });
+  async findOne(id: number): Promise<Category> {
+    const exist = await this.categoriesRepository.findOne({
+      where: { id },
+    });
     if (!exist) {
       throw new NotFoundException('Category not found.');
     }

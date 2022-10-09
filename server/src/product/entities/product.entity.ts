@@ -1,4 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Variant } from './../../variant/entities/variant.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Category } from './../../category/entities/category.entity';
 
 @Entity()
@@ -13,14 +22,20 @@ export class Product {
   slug: string;
 
   @Column({ nullable: false })
-  image: string;
+  previewImage: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: false, default: false })
-  active: boolean;
-
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
+
+  @OneToMany(() => Variant, (variant) => variant.product)
+  variants: Variant[];
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 }

@@ -1,11 +1,25 @@
+import { Type } from 'class-transformer';
 import {
-  IsBoolean,
+  IsArray,
+  IsInt,
+  IsNumber,
+  IsObject,
+  IsOptional,
   IsString,
   Length,
   Matches,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 import { nameRegex, slugRegex, urlRegex } from './../../libs/regex';
+
+class NoOptionsDto {
+  @IsNumber()
+  price: number;
+
+  @IsInt()
+  quantity: number;
+}
 
 export class CreateProductDto {
   @Length(2, 50)
@@ -23,12 +37,44 @@ export class CreateProductDto {
   @Matches(urlRegex, {
     message: 'Image url is not valid',
   })
-  image: string;
+  previewImage: string;
 
   @IsString()
   @MaxLength(200)
   description: string;
 
-  @IsBoolean()
-  active: boolean;
+  @IsOptional()
+  @IsInt()
+  categoryId: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => VariantDto)
+  variants: VariantDto[];
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => NoOptionsDto)
+  noOptions: NoOptionsDto;
+}
+
+class VariantDto {
+  @IsNumber()
+  price: number;
+
+  @IsInt()
+  quantity: number;
+
+  @IsArray()
+  options: OptionDto[];
+}
+
+class OptionDto {
+  @IsInt()
+  id: number;
+
+  @IsString()
+  value: string;
 }
