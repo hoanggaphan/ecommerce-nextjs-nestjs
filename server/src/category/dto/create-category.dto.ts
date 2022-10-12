@@ -1,22 +1,19 @@
 import { IsString, Length, Matches, MaxLength } from 'class-validator';
-import { nameRegex, slugRegex, urlRegex } from './../../libs/regex';
+import { nameRegex, slugRegex } from './../../libs/regex';
 
 export class CreateCategoryDto {
-  @Length(2, 50)
+  @Length(2, 200)
   @Matches(nameRegex, {
     message: 'Username must contains at least 2 letter, no special letters',
   })
   name: string;
 
-  @MaxLength(20)
   @Matches(slugRegex, {
     message: 'Slug is not valid',
   })
   slug: string;
 
-  @Matches(urlRegex, {
-    message: 'Image url is not valid',
-  })
+  @IsString()
   image: string;
 
   @IsString()

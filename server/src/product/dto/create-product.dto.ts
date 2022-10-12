@@ -1,8 +1,6 @@
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsInt,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -10,65 +8,57 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { nameRegex, slugRegex, urlRegex } from './../../libs/regex';
+import { nameRegex, slugRegex } from './../../libs/regex';
 
 class CategoryDto {
   @IsInt()
   id: number;
 }
-class VariantOptionDto {
-  @IsOptional()
-  @IsInt()
-  variantId: number;
 
-  @IsInt()
-  optionId: number;
-
-  @IsString()
-  value: string;
-}
-class VariantDto {
+class ImageDto {
   @IsOptional()
   @IsInt()
   id: number;
 
-  @IsNumber()
-  price: number;
+  @IsString()
+  url: string;
+}
 
+class OptionValueDto {
   @IsInt()
-  quantity: number;
-
-  @IsArray()
-  variantOptions: VariantOptionDto[];
+  id: number;
 }
 
 export class CreateProductDto {
-  @Length(2, 50)
+  @Length(2, 200)
   @Matches(nameRegex, {
     message: 'name must contains at least 2 letter, no special letters',
   })
   name: string;
 
-  @MaxLength(20)
   @Matches(slugRegex, {
     message: 'Slug is not valid',
   })
   slug: string;
 
-  @Matches(urlRegex, {
-    message: 'Image url is not valid',
-  })
-  previewImage: string;
+  @IsInt()
+  price: number;
+
+  @IsInt()
+  quantity: number;
+
+  @ValidateNested()
+  @Type(() => ImageDto)
+  images: ImageDto[];
 
   @IsString()
-  @MaxLength(200)
   description: string;
 
   @ValidateNested()
   @Type(() => CategoryDto)
   category: CategoryDto;
 
-  @ValidateNested({ each: true })
-  @Type(() => VariantDto)
-  variants: VariantDto[];
+  @ValidateNested()
+  @Type(() => OptionValueDto)
+  optionValues: OptionValueDto[];
 }

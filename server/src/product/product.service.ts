@@ -5,11 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { VariantOption } from 'src/variant/entities/variantOption.entity';
 import { Repository } from 'typeorm';
 import { CategoryService } from './../category/category.service';
+import { Image } from './../image/entities/image.entity';
 import { OptionService } from './../option/option.service';
-import { Variant } from './../variant/entities/variant.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -19,10 +18,8 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
-    @InjectRepository(Variant)
-    private variantsRepository: Repository<Variant>,
-    @InjectRepository(VariantOption)
-    private variantOptionsRepository: Repository<VariantOption>,
+    @InjectRepository(Image)
+    private imagesRepository: Repository<Image>,
     private optionService: OptionService,
     private categoryService: CategoryService,
   ) {}
@@ -38,28 +35,35 @@ export class ProductService {
     });
     if (slug) throw new BadRequestException('Slug already exist');
 
-    const { variants } = createProductDto;
+    const { images } = createProductDto;
 
-    const newVariants = await this.variantsRepository.save(variants);
-    const variantOptions = [];
-    newVariants.forEach((v) =>
-      v.variantOptions.forEach((vo) => {
-        vo.variantId = v.id;
-        variantOptions.push(vo);
-      }),
-    );
-    await this.variantOptionsRepository.save(variantOptions);
+    await this.imagesRepository.save(images);
     return this.productsRepository.save({ ...createProductDto });
   }
 
   findAll(): Promise<Product[]> {
     return this.productsRepository.find({
-      relations: { category: true, variants: { variantOptions: true } },
+      relations: {
+        category: true,
+        images: true,
+        optionValues: {
+          option: true,
+        },
+      },
     });
   }
 
   async findOne(id: number): Promise<Product> {
-    const exist = await this.productsRepository.findOneBy({ id });
+    const exist = await this.productsRepository.findOne({
+      where: { id },
+      relations: {
+        category: true,
+        images: true,
+        optionValues: {
+          option: true,
+        },
+      },
+    });
     if (!exist) {
       throw new NotFoundException('Product not found.');
     }
@@ -91,17 +95,9 @@ export class ProductService {
       .getOne();
     if (slug) throw new BadRequestException('Slug already exist');
 
-    const { variants } = updateProductDto;
+    const { images } = updateProductDto;
 
-    const newVariants = await this.variantsRepository.save(variants);
-    const variantOptions = [];
-    newVariants.forEach((v) =>
-      v.variantOptions.forEach((vo) => {
-        vo.variantId = v.id;
-        variantOptions.push(vo);
-      }),
-    );
-    await this.variantOptionsRepository.save(variantOptions);
+    await this.imagesRepository.save(images);
     return this.productsRepository.save({ id, ...updateProductDto });
   }
 

@@ -1,14 +1,17 @@
-import { Variant } from './../../variant/entities/variant.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Category } from './../../category/entities/category.entity';
+import { Image } from './../../image/entities/image.entity';
+import { OptionValue } from './../../option-value/entities/option-value.entity';
 
 @Entity()
 export class Product {
@@ -21,17 +24,24 @@ export class Product {
   @Column({ unique: true, nullable: false })
   slug: string;
 
-  @Column({ nullable: false })
-  previewImage: string;
-
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({ nullable: false })
+  price: number;
+
+  @Column({ nullable: false })
+  quantity: number;
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @OneToMany(() => Variant, (variant) => variant.product)
-  variants: Variant[];
+  @ManyToMany(() => OptionValue)
+  @JoinTable()
+  optionValues: OptionValue[];
+
+  @OneToMany(() => Image, (image) => image.product)
+  images: Image[];
 
   @CreateDateColumn()
   createdDate: Date;

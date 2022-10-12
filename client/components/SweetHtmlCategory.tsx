@@ -1,5 +1,5 @@
-import { Card, Spacer, Textarea, useInput } from '@nextui-org/react';
-import { validateName, validateSlug, validateURL } from '../libs/validate';
+import { Card, Input, Spacer, Textarea, useInput } from '@nextui-org/react';
+import { validateName, validateSlug } from '../libs/validate';
 import { CategoryType } from '../types';
 import ValidateInput from './common/ValidateInput';
 
@@ -35,6 +35,7 @@ export default function SweetHtmlCategory({
         <Spacer y={1} />
         <ValidateInput
           id='category-name'
+          name='category-name'
           initialValue={nameValueModal}
           value={nameValueModal}
           reset={resetNameModal}
@@ -48,6 +49,7 @@ export default function SweetHtmlCategory({
         <Spacer y={3} />
         <ValidateInput
           id='category-slug'
+          name='category-slug'
           initialValue={slugValueModal}
           value={slugValueModal}
           reset={resetSlugModal}
@@ -58,21 +60,18 @@ export default function SweetHtmlCategory({
           inValidText='Slug không hợp lệ'
         />
         <Spacer y={3} />
-        <ValidateInput
+        <Input
           id='category-img'
+          name='category-img'
           initialValue={imgValueModal}
-          value={imgValueModal}
-          reset={resetImgModal}
-          bindings={imgBindingsModal}
-          validate={validateURL}
+          {...imgBindingsModal}
           labelPlaceholder='Hình ảnh'
-          validText='Hình ảnh hợp lệ'
-          inValidText='Đường dẫn không hợp lệ'
           type='url'
         />
         <Spacer y={3} />
         <Textarea
           id='category-des'
+          name='category-des'
           initialValue={desValueModal}
           {...desBindingsModal}
           labelPlaceholder='Mô tả'

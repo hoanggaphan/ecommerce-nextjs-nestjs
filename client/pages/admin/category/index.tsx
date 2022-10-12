@@ -10,11 +10,7 @@ import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
 import { useCategory } from '../../../libs/api/useCategory';
-import {
-  validateName,
-  validateSlug,
-  validateURL,
-} from '../../../libs/validate';
+import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
 
 const MySwal = withReactContent(Swal);
@@ -72,10 +68,9 @@ const IndexPage: NextPage = () => {
           document.getElementById('category-des') as HTMLInputElement
         )?.value;
 
-        if (!name || !slug || !img) return false;
+        if (!name || !slug) return false;
 
-        if (!validateName(name) || !validateSlug(slug) || !validateURL(img))
-          return false;
+        if (!validateName(name) || !validateSlug(slug)) return false;
 
         const data = {
           name,
@@ -149,7 +144,10 @@ const IndexPage: NextPage = () => {
           <Row justify='center' align='center'>
             <Col css={{ d: 'flex' }}>
               <Tooltip content='Sửa'>
-                <IconButton onClick={() => handleUpdateCategory(category)}>
+                <IconButton
+                  type='button'
+                  onClick={() => handleUpdateCategory(category)}
+                >
                   <AiOutlineEdit size={20} fill='#979797' />
                 </IconButton>
               </Tooltip>
@@ -160,7 +158,7 @@ const IndexPage: NextPage = () => {
                 color='error'
                 onClick={() => handleDeleteCategory(category.id)}
               >
-                <IconButton>
+                <IconButton type='button'>
                   <AiOutlineDelete size={20} fill='#FF0080' />
                 </IconButton>
               </Tooltip>

@@ -1,28 +1,20 @@
 import {
   Button,
-  Col,
+  Card,
+  Grid,
   Input,
   Row,
   styled,
-  Table,
-  Tooltip,
+  Text,
 } from '@nextui-org/react';
-import axios from 'axios';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
-import SweetHtmlProductAdd from '../../../components/SweetHtmlProductAdd';
-import { useCategory } from '../../../libs/api/useCategory';
-import {
-  validateName,
-  validateSlug,
-  validateURL,
-} from '../../../libs/validate';
-import { CategoryType } from '../../../types';
+import { useProducts } from '../../../libs/api/useProducts';
+import api from './../../../libs/api';
 
 const MySwal = withReactContent(Swal);
 // IconButton component will be available as part of the core library soon
@@ -44,74 +36,11 @@ export const IconButton = styled('button', {
   },
 });
 
-const columns = [
-  { name: 'ID', uid: 'id' },
-  { name: 'TÊN', uid: 'name' },
-  { name: 'SLUG', uid: 'slug' },
-  { name: 'MÔ TẢ', uid: 'description' },
-  { name: 'HÀNH ĐỘNG', uid: 'actions' },
-];
-
 const IndexPage: NextPage = () => {
-  const { data, error, mutate } = useCategory();
+  const router = useRouter();
+  const { data, error, mutate } = useProducts();
 
-  const categories = data || [];
-
-  const handleUpdateCategory = (category: CategoryType) => {
-    MySwal.fire({
-      title: 'Tạo',
-      text: 'Hành động này không thể hoàn tác!',
-      html: <SweetHtmlCategory category={category} />,
-      showCancelButton: true,
-      confirmButtonText: 'Tạo!',
-      cancelButtonText: 'Đóng',
-      preConfirm: async (login) => {
-        const name = (
-          document.getElementById('category-name') as HTMLInputElement
-        )?.value;
-        const slug = (
-          document.getElementById('category-slug') as HTMLInputElement
-        )?.value;
-        const img = (
-          document.getElementById('category-img') as HTMLInputElement
-        )?.value;
-        const des = (
-          document.getElementById('category-des') as HTMLInputElement
-        )?.value;
-
-        if (!name || !slug || !img) return false;
-
-        if (!validateName(name) || !validateSlug(slug) || !validateURL(img))
-          return false;
-
-        const data = {
-          name,
-          slug,
-          image: img,
-          description: des,
-        };
-        try {
-          const res = await axios.patch(
-            `http://localhost:4000/category/${category.id}`,
-            data
-          );
-          return res;
-        } catch (error: any) {
-          Swal.showValidationMessage(error.response.data.message);
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        mutate();
-        Swal.fire({
-          title: 'Tạo thành công!',
-          icon: 'success',
-        });
-      }
-    });
-  };
-
-  const handleDeleteCategory = (id: number) => {
+  const handleDelete = async (id: number) => {
     Swal.fire({
       title: 'Bạn có chắc?',
       text: 'Hành động này không thể hoàn tác!',
@@ -121,9 +50,7 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
-          const res = await axios.delete(
-            `http://localhost:4000/category/${id}`
-          );
+          const res = await api.delete(`http://localhost:4000/product/${id}`);
           return res;
         } catch (error: any) {
           Swal.showValidationMessage(`Xóa thất bại`);
@@ -139,92 +66,6 @@ const IndexPage: NextPage = () => {
       }
     });
   };
-  const handleCreate = () => {
-    MySwal.fire({
-      title: 'Tạo mới',
-      text: 'Hành động này không thể hoàn tác!',
-      html: <SweetHtmlProductAdd />,
-      showCancelButton: true,
-      confirmButtonText: 'Tạo!',
-      cancelButtonText: 'Đóng',
-      preConfirm: async (login) => {
-        const name = (
-          document.getElementById('category-name') as HTMLInputElement
-        )?.value;
-        const slug = (
-          document.getElementById('category-slug') as HTMLInputElement
-        )?.value;
-        const img = (
-          document.getElementById('category-img') as HTMLInputElement
-        )?.value;
-        const des = (
-          document.getElementById('category-des') as HTMLInputElement
-        )?.value;
-
-        if (!name || !slug || !img) return false;
-
-        if (!validateName(name) || !validateSlug(slug) || !validateURL(img))
-          return false;
-
-        const data = {
-          name,
-          slug,
-          image: img,
-          description: des,
-        };
-        try {
-          const res = await axios.patch(`http://localhost:4000/category`, data);
-          return res;
-        } catch (error: any) {
-          Swal.showValidationMessage(error.response.data.message);
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        mutate();
-        Swal.fire({
-          title: 'Tạo thành công!',
-          icon: 'success',
-        });
-      }
-    });
-  };
-  const renderCell = (category: CategoryType, columnKey: React.Key) => {
-    switch (columnKey) {
-      case 'id':
-        return category?.id;
-      case 'name':
-        return category.name;
-      case 'slug':
-        return `/${category?.slug}`;
-      case 'description':
-        return category.description;
-
-      case 'actions':
-        return (
-          <Row justify='center' align='center'>
-            <Col css={{ d: 'flex' }}>
-              <Tooltip content='Sửa'>
-                <IconButton onClick={() => handleUpdateCategory(category)}>
-                  <AiOutlineEdit size={20} fill='#979797' />
-                </IconButton>
-              </Tooltip>
-            </Col>
-            <Col css={{ d: 'flex' }}>
-              <Tooltip
-                content='Xóa'
-                color='error'
-                onClick={() => handleDeleteCategory(category.id)}
-              >
-                <IconButton>
-                  <AiOutlineDelete size={20} fill='#FF0080' />
-                </IconButton>
-              </Tooltip>
-            </Col>
-          </Row>
-        );
-    }
-  };
 
   return (
     <>
@@ -235,52 +76,60 @@ const IndexPage: NextPage = () => {
 
       <AdminLayout title='Sản phẩm'>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Input placeholder='Tìm kiếm' size='lg' />
-          <Button onPress={handleCreate} shadow color='primary'>
+          <Input aria-label='product-search' placeholder='Tìm kiếm' size='lg' />
+          <Button
+            onPress={() => router.push('/admin/product/add')}
+            shadow
+            color='primary'
+          >
             Tạo mới
           </Button>
         </div>
 
-        <Table
-          aria-label='Category table'
-          css={{
-            height: 'auto',
-            minWidth: '100%',
-          }}
-          selectionMode='none'
-        >
-          <Table.Header columns={columns}>
-            {(column) => (
-              <Table.Column
-                key={column.uid}
-                // hideHeader={column.uid === 'actions'}
-                // align={column.uid === 'actions' ? 'center' : 'start'}
-              >
-                {column.name}
-              </Table.Column>
-            )}
-          </Table.Header>
-          <Table.Body items={categories}>
-            {(item: CategoryType) => (
-              <Table.Row>
-                {(columnKey) => (
-                  <Table.Cell css={{ maxW: '150px' }}>
-                    {renderCell(item, columnKey)}
-                  </Table.Cell>
-                )}
-              </Table.Row>
-            )}
-          </Table.Body>
-
-          <Table.Pagination
-            shadow
-            noMargin
-            align='center'
-            rowsPerPage={5}
-            total={2}
-            onPageChange={(page) => console.log({ page })}
-          />
-        </Table>
+        <Grid.Container gap={1}>
+          {data?.map((i) => (
+            <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
+              <Card css={{ mw: '330px' }}>
+                <Card.Body css={{ p: 0 }}>
+                  <Card.Image
+                    src={i.images[0].url}
+                    width='100%'
+                    height={140}
+                    alt=''
+                  />
+                </Card.Body>
+                <Card.Footer>
+                  <div className=''>
+                    <Text css={{ fontSize: 18 }}>{i.name}</Text>
+                    <Row justify='space-between'>
+                      <Button
+                        onPress={() =>
+                          router.push('/admin/product/update/' + i.id)
+                        }
+                        size='xs'
+                        color='secondary'
+                        shadow
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        onPress={() => handleDelete(i.id)}
+                        size='xs'
+                        color='error'
+                        shadow
+                      >
+                        Xóa
+                      </Button>
+                    </Row>
+                  </div>
+                </Card.Footer>
+              </Card>
+            </Grid>
+          ))}
+        </Grid.Container>
+        {/* <Row justify='center'>
+          <Pagination shadow color='primary' total={10} />
+        </Row> */}
       </AdminLayout>
     </>
   );

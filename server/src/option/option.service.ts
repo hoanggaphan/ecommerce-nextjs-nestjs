@@ -30,7 +30,7 @@ export class OptionService {
   }
 
   findAll(): Promise<Option[]> {
-    return this.optionsRepository.find();
+    return this.optionsRepository.find({ relations: { optionValues: true } });
   }
 
   async findOne(id: number): Promise<Option> {

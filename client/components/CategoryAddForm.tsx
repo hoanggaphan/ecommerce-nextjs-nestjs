@@ -1,8 +1,15 @@
-import { Button, Card, Spacer, Textarea, useInput } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  Input,
+  Spacer,
+  Textarea,
+  useInput,
+} from '@nextui-org/react';
 import Swal from 'sweetalert2';
 import api from '../libs/api';
 import { useCategory } from '../libs/api/useCategory';
-import { validateName, validateSlug, validateURL } from '../libs/validate';
+import { validateName, validateSlug } from '../libs/validate';
 import ValidateInput from './common/ValidateInput';
 
 export default function CategoryAddForm() {
@@ -30,14 +37,9 @@ export default function CategoryAddForm() {
   } = useInput('');
 
   const handleCreateCategory = async () => {
-    if (!nameValue || !slugValue || !imgValue) return;
+    if (!nameValue || !slugValue) return;
 
-    if (
-      !validateName(nameValue) ||
-      !validateSlug(slugValue) ||
-      !validateURL(imgValue)
-    )
-      return;
+    if (!validateName(nameValue) || !validateSlug(slugValue)) return;
 
     try {
       const newItem = {
@@ -89,16 +91,7 @@ export default function CategoryAddForm() {
           inValidText='Slug không hợp lệ'
         />
         <Spacer y={3} />
-        <ValidateInput
-          value={imgValue}
-          reset={resetImg}
-          bindings={imgBindings}
-          validate={validateURL}
-          labelPlaceholder='Hình ảnh'
-          validText='Hình ảnh hợp lệ'
-          inValidText='Đường dẫn không hợp lệ'
-          type='url'
-        />
+        <Input {...imgBindings} labelPlaceholder='Hình ảnh' type='url' />
         <Spacer y={3} />
         <Textarea {...desBindings} labelPlaceholder='Mô tả' rows={4} />
         <Spacer y={1} />
