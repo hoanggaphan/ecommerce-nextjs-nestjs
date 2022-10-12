@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
   AiOutlineSetting,
-  AiOutlineShoppingCart,
+  AiOutlineShoppingCart
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { RiProductHuntLine } from 'react-icons/ri';
+import MyNB from '../Navbar';
 
 const SideBar = () => {
   const router = useRouter();
@@ -111,12 +112,13 @@ interface Props {
 const AdminLayout: NextPage<Props> = ({ children, title }) => {
   return (
     <>
+      <MyNB />
       <div className='container'>
-        <Grid.Container gap={2} css={{ h: '100%' }}>
-          <Grid xs={2} css={{ maxH: '100%', overflowY: 'auto' }}>
+        <Grid.Container gap={2}>
+          <Grid xs={2}>
             <SideBar />
           </Grid>
-          <Grid xs={10} css={{ maxH: '100%', overflowY: 'auto' }}>
+          <Grid xs={10}>
             <div className='w100'>
               <div
                 style={{
@@ -126,9 +128,6 @@ const AdminLayout: NextPage<Props> = ({ children, title }) => {
                 }}
               >
                 <Text h2>{title}</Text>
-                <Button shadow color='warning'>
-                  Đăng xuất
-                </Button>
               </div>
               {children}
             </div>
@@ -138,9 +137,6 @@ const AdminLayout: NextPage<Props> = ({ children, title }) => {
       <style jsx>{`
         .container {
           width: 100%;
-          height: 100vh;
-          max-height: 100vh;
-          overflow: hidden;
         }
       `}</style>
     </>

@@ -11,13 +11,9 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import AdminLayout from '../../../components/common/AdminLayout';
 import { useProducts } from '../../../libs/api/useProducts';
 import api from './../../../libs/api';
-
-const MySwal = withReactContent(Swal);
-// IconButton component will be available as part of the core library soon
 
 export const IconButton = styled('button', {
   dflex: 'center',
@@ -89,7 +85,7 @@ const IndexPage: NextPage = () => {
         <Grid.Container gap={1}>
           {data?.map((i) => (
             <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
-              <Card css={{ mw: '330px' }}>
+              <Card variant='bordered' css={{ mw: '330px' }}>
                 <Card.Body css={{ p: 0 }}>
                   <Card.Image
                     src={i.images[0].url}

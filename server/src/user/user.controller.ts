@@ -11,7 +11,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Roles } from 'src/decorator/role.decorator';
 import { AccessTokenGuard } from './../auth/access-token.guard';
+import { Role } from './../enums/role.enum';
+import { RolesGuard } from './../guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
@@ -25,7 +28,8 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   findAll() {
