@@ -9,7 +9,7 @@ import {
   Row,
   Spacer,
   Textarea,
-  Tooltip
+  Tooltip,
 } from '@nextui-org/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -18,7 +18,7 @@ import {
   Controller,
   SubmitHandler,
   useFieldArray,
-  useForm
+  useForm,
 } from 'react-hook-form';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { GrAddCircle } from 'react-icons/gr';
@@ -26,10 +26,11 @@ import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import { IconButton } from '..';
 import AdminLayout from '../../../../components/common/AdminLayout';
+import SecureAdminPages from '../../../../components/SecureAdminPages';
 import api from '../../../../libs/api';
-import { useCategory } from '../../../../libs/api/useCategory';
-import { useOption } from '../../../../libs/api/useOption';
-import { useProduct } from '../../../../libs/api/useProduct';
+import { useCategory } from '../../../../libs/swr/useCategory';
+import { useOption } from '../../../../libs/swr/useOption';
+import { useProduct } from '../../../../libs/swr/useProduct';
 
 export type Option = {
   id: number;
@@ -137,7 +138,7 @@ export default function Update() {
   };
 
   return (
-    <>
+    <SecureAdminPages>
       {' '}
       <Head>
         <title>Cập nhật sản phẩm</title>
@@ -246,7 +247,6 @@ export default function Update() {
                                       size='sm'
                                       color='gradient'
                                       onChange={(isSelected) => {
-                                        console.log(isSelected);
                                         onChange(isSelected);
                                       }}
                                     >
@@ -386,6 +386,6 @@ export default function Update() {
           }
         `}</style>
       </AdminLayout>
-    </>
+    </SecureAdminPages>
   );
 }

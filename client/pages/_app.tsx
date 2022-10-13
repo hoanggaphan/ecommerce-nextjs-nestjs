@@ -1,16 +1,29 @@
+import { globalCss, NextUIProvider } from '@nextui-org/react';
+import { Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
-import { NextUIProvider } from '@nextui-org/react';
-import { globalCss } from '@nextui-org/react';
+import { useState } from 'react';
+import RefreshTokenHandler from '../components/refreshTokenHandler';
 
 const globalStyles = globalCss({
   body: { backgroundColor: '#f9f9f9' },
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) {
+  const [interval, setInterval] = useState(0);
   globalStyles();
+
   return (
     <NextUIProvider>
-      <Component {...pageProps} />
+      <SessionProvider session={pageProps.session} refetchInterval={interval}>
+        <Component {...pageProps} />
+        <RefreshTokenHandler setInterval={setInterval} />
+      </SessionProvider>
       <style jsx global>{`
         .w100 {
           width: 100%;

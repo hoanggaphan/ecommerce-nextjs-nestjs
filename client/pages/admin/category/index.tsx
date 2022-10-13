@@ -8,8 +8,9 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
+import SecureAdminPages from '../../../components/SecureAdminPages';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
-import { useCategory } from '../../../libs/api/useCategory';
+import { useCategory } from '../../../libs/swr/useCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
 
@@ -169,7 +170,7 @@ const IndexPage: NextPage = () => {
   };
 
   return (
-    <>
+    <SecureAdminPages>
       <Head>
         <title>Danh mục</title>
         <link rel='icon' href='/favicon.ico' />
@@ -226,7 +227,7 @@ const IndexPage: NextPage = () => {
           </Grid>
         </Grid.Container>
       </AdminLayout>
-    </>
+    </SecureAdminPages>
   );
 };
 

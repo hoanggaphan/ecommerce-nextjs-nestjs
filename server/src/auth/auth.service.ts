@@ -29,11 +29,11 @@ export class AuthService {
     };
     return {
       ...user,
-      access_token: this.jwtService.sign(payload, {
+      accessToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '1d',
       }),
-      refresh_token: this.jwtService.sign(payload, {
+      refreshToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_REFRESH_SECRET,
         expiresIn: '7d',
       }),
@@ -43,7 +43,7 @@ export class AuthService {
   async refresh(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
-      access_token: this.jwtService.sign(payload, {
+      accessToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '1d',
       }),

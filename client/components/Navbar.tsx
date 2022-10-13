@@ -1,6 +1,11 @@
-import { Button, Link, Navbar, Text } from '@nextui-org/react';
+import { Button, Navbar, Text } from '@nextui-org/react';
+import { signOut } from 'next-auth/react';
 
 export default function MyNB() {
+  const handleSignOut = () => {
+    signOut({ redirect: false });
+  };
+
   return (
     <div>
       {' '}
@@ -12,7 +17,7 @@ export default function MyNB() {
         </Navbar.Brand>
         <Navbar.Content>
           <Navbar.Item>
-            <Button auto flat>
+            <Button onPress={handleSignOut} auto flat>
               Đăng xuất
             </Button>
           </Navbar.Item>

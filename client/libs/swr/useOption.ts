@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import api from '../api';
-import { OptionType } from './../../types/index';
+import { OptionType } from '../../types/index';
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 

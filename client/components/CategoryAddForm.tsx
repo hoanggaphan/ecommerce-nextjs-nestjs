@@ -8,7 +8,7 @@ import {
 } from '@nextui-org/react';
 import Swal from 'sweetalert2';
 import api from '../libs/api';
-import { useCategory } from '../libs/api/useCategory';
+import { useCategory } from '../libs/swr/useCategory';
 import { validateName, validateSlug } from '../libs/validate';
 import ValidateInput from './common/ValidateInput';
 

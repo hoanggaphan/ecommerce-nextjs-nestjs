@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import api from '../api';
-import { ProductType } from './../../types/index';
+import { ProductType } from '../../types/index';
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 

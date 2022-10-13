@@ -24,9 +24,10 @@ import { GrAddCircle } from 'react-icons/gr';
 import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
+import SecureAdminPages from '../../../components/SecureAdminPages';
 import api from '../../../libs/api';
-import { useCategory } from '../../../libs/api/useCategory';
-import { useOption } from '../../../libs/api/useOption';
+import { useCategory } from '../../../libs/swr/useCategory';
+import { useOption } from '../../../libs/swr/useOption';
 import { IconButton } from '../category';
 
 export type Option = {
@@ -118,7 +119,7 @@ export default function Add() {
   };
 
   return (
-    <>
+    <SecureAdminPages>
       {' '}
       <Head>
         <title>Tạo sản phẩm</title>
@@ -360,6 +361,6 @@ export default function Add() {
           }
         `}</style>
       </AdminLayout>
-    </>
+    </SecureAdminPages>
   );
 }

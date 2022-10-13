@@ -5,14 +5,15 @@ import {
   Input,
   Row,
   styled,
-  Text,
+  Text
 } from '@nextui-org/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
-import { useProducts } from '../../../libs/api/useProducts';
+import SecureAdminPages from '../../../components/SecureAdminPages';
+import { useProducts } from '../../../libs/swr/useProducts';
 import api from './../../../libs/api';
 
 export const IconButton = styled('button', {
@@ -64,70 +65,76 @@ const IndexPage: NextPage = () => {
   };
 
   return (
-    <>
-      <Head>
-        <title>Sản phẩm</title>
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
+    <SecureAdminPages>
+      <>
+        <Head>
+          <title>Sản phẩm</title>
+          <link rel='icon' href='/favicon.ico' />
+        </Head>
 
-      <AdminLayout title='Sản phẩm'>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Input aria-label='product-search' placeholder='Tìm kiếm' size='lg' />
-          <Button
-            onPress={() => router.push('/admin/product/add')}
-            shadow
-            color='primary'
-          >
-            Tạo mới
-          </Button>
-        </div>
+        <AdminLayout title='Sản phẩm'>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Input
+              aria-label='product-search'
+              placeholder='Tìm kiếm'
+              size='lg'
+            />
+            <Button
+              onPress={() => router.push('/admin/product/add')}
+              shadow
+              color='primary'
+            >
+              Tạo mới
+            </Button>
+          </div>
 
-        <Grid.Container gap={1}>
-          {data?.map((i) => (
-            <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
-              <Card variant='bordered' css={{ mw: '330px' }}>
-                <Card.Body css={{ p: 0 }}>
-                  <Card.Image
-                    src={i.images[0].url}
-                    width='100%'
-                    height={140}
-                    alt=''
-                  />
-                </Card.Body>
-                <Card.Footer>
-                  <div className=''>
-                    <Text css={{ fontSize: 18 }}>{i.name}</Text>
-                    <Row justify='space-between'>
-                      <Button
-                        onPress={() =>
-                          router.push('/admin/product/update/' + i.id)
-                        }
-                        size='xs'
-                        color='secondary'
-                        shadow
-                      >
-                        Sửa
-                      </Button>
-                      <Button
-                        onPress={() => handleDelete(i.id)}
-                        size='xs'
-                        color='error'
-                        shadow
-                      >
-                        Xóa
-                      </Button>
-                    </Row>
-                  </div>
-                </Card.Footer>
-              </Card>
-            </Grid>
-          ))}
-        </Grid.Container>
-        {/* <Row justify='center'>
+          <Grid.Container gap={1}>
+            {data?.map((i) => (
+              <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
+                <Card variant='bordered' css={{ mw: '330px' }}>
+                  <Card.Body css={{ p: 0 }}>
+                    <Card.Image
+                      src={i.images[0].url}
+                      width='100%'
+                      height={140}
+                      alt=''
+                    />
+                  </Card.Body>
+                  <Card.Footer>
+                    <div className=''>
+                      <Text css={{ fontSize: 18 }}>{i.name}</Text>
+                      <Row justify='space-between'>
+                        <Button
+                          onPress={() =>
+                            router.push('/admin/product/update/' + i.id)
+                          }
+                          size='xs'
+                          color='secondary'
+                          shadow
+                        >
+                          Sửa
+                        </Button>
+                        <Button
+                          onPress={() => handleDelete(i.id)}
+                          size='xs'
+                          color='error'
+                          shadow
+                        >
+                          Xóa
+                        </Button>
+                      </Row>
+                    </div>
+                  </Card.Footer>
+                </Card>
+              </Grid>
+            ))}
+          </Grid.Container>
+          {/* <Row justify='center'>
           <Pagination shadow color='primary' total={10} />
         </Row> */}
-      </AdminLayout>
-    </>
+        </AdminLayout>
+      </>
+    </SecureAdminPages>
   );
 };
 
