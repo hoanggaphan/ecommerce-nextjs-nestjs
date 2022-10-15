@@ -1,4 +1,14 @@
-import { Card, Input, Spacer, Textarea, useInput } from '@nextui-org/react';
+import {
+  Card,
+  Checkbox,
+  Col,
+  Input,
+  Row,
+  Spacer,
+  Textarea,
+  useInput,
+} from '@nextui-org/react';
+import { useState } from 'react';
 import { validateName, validateSlug } from '../libs/validate';
 import { CategoryType } from '../types';
 import ValidateInput from './common/ValidateInput';
@@ -28,6 +38,7 @@ export default function SweetHtmlCategory({
     reset: resetDesModal,
     bindings: desBindingsModal,
   } = useInput(category.description || '');
+  const [checkbox, setCheckbox] = useState(false);
 
   return (
     <Card>
@@ -77,6 +88,22 @@ export default function SweetHtmlCategory({
           labelPlaceholder='Mô tả'
           rows={5}
         />
+        <Spacer y={1} />
+        <Row>
+          <Col>
+            <Checkbox
+              id='category-active'
+              size='sm'
+              color='secondary'
+              onChange={(isSelected) => {
+                setCheckbox(isSelected);
+              }}
+            >
+              Hiển thị
+            </Checkbox>
+          </Col>
+        </Row>
+        <Spacer y={1} />
       </Card.Body>
     </Card>
   );

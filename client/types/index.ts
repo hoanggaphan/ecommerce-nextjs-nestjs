@@ -4,6 +4,7 @@ export type CategoryType = {
   image?: string;
   slug?: string;
   description?: string;
+  isActive?: boolean;
 };
 
 type AttributeValues = {

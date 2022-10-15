@@ -21,9 +21,14 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
+  @Get('admin')
+  findAllForAdmin() {
+    return this.categoryService.findAllForAdmin();
+  }
+
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAllForUser() {
+    return this.categoryService.findAllForUser();
   }
 
   @Get(':id')

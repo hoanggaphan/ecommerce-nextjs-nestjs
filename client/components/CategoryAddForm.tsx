@@ -1,11 +1,15 @@
 import {
   Button,
   Card,
+  Checkbox,
+  Col,
   Input,
+  Row,
   Spacer,
   Textarea,
-  useInput,
+  useInput
 } from '@nextui-org/react';
+import { useState } from 'react';
 import Swal from 'sweetalert2';
 import api from '../libs/api';
 import { useCategory } from '../libs/swr/useCategory';
@@ -35,6 +39,7 @@ export default function CategoryAddForm() {
     reset: resetDes,
     bindings: desBindings,
   } = useInput('');
+  const [checkbox, setCheckbox] = useState(false);
 
   const handleCreateCategory = async () => {
     if (!nameValue || !slugValue) return;
@@ -47,6 +52,7 @@ export default function CategoryAddForm() {
         slug: slugValue,
         image: imgValue,
         description: desValue,
+        isActive: checkbox,
       };
       const res = await api.post('http://localhost:4000/category', newItem);
       Swal.fire({
@@ -94,6 +100,20 @@ export default function CategoryAddForm() {
         <Input {...imgBindings} labelPlaceholder='Hình ảnh' type='url' />
         <Spacer y={3} />
         <Textarea {...desBindings} labelPlaceholder='Mô tả' rows={4} />
+        <Spacer y={1} />
+        <Row>
+          <Col>
+            <Checkbox
+              size='sm'
+              color='secondary'
+              onChange={(isSelected) => {
+                setCheckbox(isSelected);
+              }}
+            >
+              Hiển thị
+            </Checkbox>
+          </Col>
+        </Row>
         <Spacer y={1} />
         <Button onPress={handleCreateCategory} shadow color='secondary' auto>
           Tạo danh mục

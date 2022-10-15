@@ -34,8 +34,16 @@ export class CategoryService {
     }));
   }
 
-  findAll(): Promise<Category[]> {
-    return this.categoriesRepository.find();
+  findAllForAdmin(): Promise<Category[]> {
+    return this.categoriesRepository.find({});
+  }
+
+  findAllForUser(): Promise<Category[]> {
+    return this.categoriesRepository.find({
+      where: {
+        isActive: true,
+      },
+    });
   }
 
   async findOne(id: number): Promise<Category> {

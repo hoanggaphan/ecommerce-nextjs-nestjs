@@ -1,4 +1,11 @@
-import { IsString, Length, Matches, MaxLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+  MaxLength,
+} from 'class-validator';
 import { nameRegex, slugRegex } from './../../libs/regex';
 
 export class CreateCategoryDto {
@@ -15,6 +22,10 @@ export class CreateCategoryDto {
 
   @IsString()
   image: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive: boolean;
 
   @IsString()
   @MaxLength(200)

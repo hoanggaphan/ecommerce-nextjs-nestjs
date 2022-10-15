@@ -1,4 +1,12 @@
-import { Col, Grid, Row, styled, Table, Tooltip } from '@nextui-org/react';
+import {
+  Badge,
+  Col,
+  Grid,
+  Row,
+  styled,
+  Table,
+  Tooltip
+} from '@nextui-org/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -10,7 +18,7 @@ import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
-import { useCategory } from '../../../libs/swr/useCategory';
+import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
 
@@ -38,12 +46,12 @@ const columns = [
   { name: 'ID', uid: 'id' },
   { name: 'TÊN', uid: 'name' },
   { name: 'SLUG', uid: 'slug' },
-  { name: 'MÔ TẢ', uid: 'description' },
+  { name: 'HIỂN THỊ', uid: 'isActive' },
   { name: 'HÀNH ĐỘNG', uid: 'actions' },
 ];
 
 const IndexPage: NextPage = () => {
-  const { data, error, mutate } = useCategory();
+  const { data, error, mutate } = useAdminCategory();
 
   const categories = data || [];
 
@@ -68,6 +76,9 @@ const IndexPage: NextPage = () => {
         const des = (
           document.getElementById('category-des') as HTMLInputElement
         )?.value;
+        const isActive = (
+          document.getElementById('category-active') as HTMLInputElement
+        )?.checked;
 
         if (!name || !slug) return false;
 
@@ -78,6 +89,7 @@ const IndexPage: NextPage = () => {
           slug,
           image: img,
           description: des,
+          isActive,
         };
         try {
           const res = await axios.patch(
@@ -137,8 +149,16 @@ const IndexPage: NextPage = () => {
         return category.name;
       case 'slug':
         return `/${category?.slug}`;
-      case 'description':
-        return category.description;
+      case 'isActive':
+        return category.isActive ? (
+          <Badge color='success' variant='flat'>
+            Đang hiển thị
+          </Badge>
+        ) : (
+          <Badge color='error' variant='flat'>
+            chưa hiển thị
+          </Badge>
+        );
 
       case 'actions':
         return (
