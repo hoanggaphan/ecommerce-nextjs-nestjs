@@ -50,6 +50,9 @@ export type FormValues = {
   };
   price: number;
   quantity: number;
+  isNew: boolean;
+  isActive: boolean;
+  isPopular: boolean;
   images: {
     url: string;
   }[];
@@ -60,7 +63,7 @@ export type FormValues = {
 export default function Update() {
   const router = useRouter();
   const { id } = router.query;
-  let { data: product } = useProduct({ id });
+  let { data: product, mutate } = useProduct({ id });
   let { data: options } = useOption();
   let { data: category } = useCategory();
 
@@ -128,6 +131,7 @@ export default function Update() {
         title: 'Cập nhật thành công!',
         icon: 'success',
       });
+      mutate();
     } catch (error: any) {
       Swal.fire({
         title: error.response.data.message,
@@ -245,7 +249,7 @@ export default function Update() {
                                         product
                                       )}
                                       size='sm'
-                                      color='gradient'
+                                      color='secondary'
                                       onChange={(isSelected) => {
                                         onChange(isSelected);
                                       }}
@@ -347,7 +351,64 @@ export default function Update() {
                     </Row>
                     <Spacer y={1} />
                     <Row justify='center'>
-                      <Button type='submit' shadow auto>
+                      <Col>
+                        <Controller
+                          name={`isActive`}
+                          control={control}
+                          render={({ field: { onChange } }) => (
+                            <Checkbox
+                              defaultSelected={product?.isActive}
+                              size='sm'
+                              color='secondary'
+                              onChange={(isSelected) => {
+                                onChange(isSelected);
+                              }}
+                            >
+                              Hiển thị
+                            </Checkbox>
+                          )}
+                        />
+                      </Col>
+                      <Col>
+                        <Controller
+                          name={`isNew`}
+                          control={control}
+                          render={({ field: { onChange } }) => (
+                            <Checkbox
+                              defaultSelected={product?.isNew}
+                              size='sm'
+                              color='secondary'
+                              onChange={(isSelected) => {
+                                onChange(isSelected);
+                              }}
+                            >
+                              Mới
+                            </Checkbox>
+                          )}
+                        />
+                      </Col>
+                      <Col>
+                        <Controller
+                          name={`isPopular`}
+                          control={control}
+                          render={({ field: { onChange } }) => (
+                            <Checkbox
+                              defaultSelected={product?.isPopular}
+                              size='sm'
+                              color='secondary'
+                              onChange={(isSelected) => {
+                                onChange(isSelected);
+                              }}
+                            >
+                              Nổi bật
+                            </Checkbox>
+                          )}
+                        />
+                      </Col>
+                    </Row>
+                    <Spacer y={1} />
+                    <Row justify='center'>
+                      <Button type='submit' shadow auto color='secondary'>
                         Cập nhật sản phẩm
                       </Button>
                     </Row>

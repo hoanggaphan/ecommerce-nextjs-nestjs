@@ -1,12 +1,14 @@
 import useSWR from 'swr';
-import { ProductType } from '../../types/index';
 import api from '../api';
+import { ProductPaginateType } from './../../types/index';
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data);
+const fetcher = (url: string, queryParams: string = '') => {
+  return api.get(`${url}${queryParams}`).then((res) => res.data);
+};
 
-export function useProducts() {
-  const { data, error, mutate } = useSWR<ProductType[]>(
-    `http://localhost:4000/product`,
+export function useProducts(queryParams?: string) {
+  const { data, error, mutate } = useSWR<ProductPaginateType>(
+    ['http://localhost:4000/product', queryParams],
     fetcher
   );
 

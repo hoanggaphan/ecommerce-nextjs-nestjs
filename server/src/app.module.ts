@@ -7,6 +7,7 @@ import { OptionValueModule } from './option-value/option-value.module';
 import { OptionModule } from './option/option.module';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UserModule } from './user/user.module';
     ProductModule,
     OptionModule,
     OptionValueModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

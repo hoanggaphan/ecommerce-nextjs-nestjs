@@ -17,7 +17,7 @@ export default function MyNB() {
         </Navbar.Brand>
         <Navbar.Content>
           <Navbar.Item>
-            <Button onPress={handleSignOut} auto flat>
+            <Button onPress={handleSignOut} auto flat color='secondary'>
               Đăng xuất
             </Button>
           </Navbar.Item>

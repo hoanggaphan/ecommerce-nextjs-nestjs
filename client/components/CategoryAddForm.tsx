@@ -95,7 +95,7 @@ export default function CategoryAddForm() {
         <Spacer y={3} />
         <Textarea {...desBindings} labelPlaceholder='Mô tả' rows={4} />
         <Spacer y={1} />
-        <Button onPress={handleCreateCategory} shadow color='primary' auto>
+        <Button onPress={handleCreateCategory} shadow color='secondary' auto>
           Tạo danh mục
         </Button>
       </Card.Body>

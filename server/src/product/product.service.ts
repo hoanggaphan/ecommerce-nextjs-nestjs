@@ -5,6 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { CategoryService } from './../category/category.service';
 import { Image } from './../image/entities/image.entity';
@@ -23,6 +28,67 @@ export class ProductService {
     private optionService: OptionService,
     private categoryService: CategoryService,
   ) {}
+
+  async findAllForAdmin(
+    options: IPaginationOptions,
+  ): Promise<Pagination<Product>> {
+    return paginate<Product>(this.productsRepository, options, {
+      relations: {
+        category: true,
+        images: true,
+        optionValues: {
+          option: true,
+        },
+      },
+    });
+  }
+
+  async findAllForUser(
+    options: IPaginationOptions,
+  ): Promise<Pagination<Product>> {
+    return paginate<Product>(this.productsRepository, options, {
+      where: {
+        isActive: true,
+      },
+      relations: {
+        category: true,
+        images: true,
+        optionValues: {
+          option: true,
+        },
+      },
+    });
+  }
+
+  async findNew(options: IPaginationOptions): Promise<Pagination<Product>> {
+    return paginate<Product>(this.productsRepository, options, {
+      where: {
+        isNew: true,
+        isActive: true,
+      },
+      order: {
+        createdDate: 'DESC',
+      },
+      relations: {
+        images: true,
+      },
+    });
+  }
+
+  async findPopular(options: IPaginationOptions): Promise<Pagination<Product>> {
+    return paginate<Product>(this.productsRepository, options, {
+      where: {
+        isPopular: true,
+        isActive: true,
+      },
+      order: {
+        createdDate: 'DESC',
+      },
+      relations: {
+        images: true,
+      },
+    });
+  }
 
   async create(createProductDto: CreateProductDto) {
     const name = await this.productsRepository.findOneBy({

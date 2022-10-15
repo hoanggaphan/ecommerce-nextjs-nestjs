@@ -1,3 +1,4 @@
+import { OrderItem } from 'src/order/entities/orderItem.entity';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +13,7 @@ import {
 import { Category } from './../../category/entities/category.entity';
 import { Image } from './../../image/entities/image.entity';
 import { OptionValue } from './../../option-value/entities/option-value.entity';
+import { CartItem } from './../../user/entities/cartItem.entity';
 
 @Entity()
 export class Product {
@@ -33,6 +35,15 @@ export class Product {
   @Column({ nullable: false })
   quantity: number;
 
+  @Column({ nullable: false, default: false })
+  isNew: boolean;
+
+  @Column({ nullable: false, default: false })
+  isActive: boolean;
+
+  @Column({ nullable: false, default: false })
+  isPopular: boolean;
+
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
@@ -42,6 +53,12 @@ export class Product {
 
   @OneToMany(() => Image, (image) => image.product)
   images: Image[];
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  public orderItems!: OrderItem[];
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+  public cartItems!: CartItem[];
 
   @CreateDateColumn()
   createdDate: Date;

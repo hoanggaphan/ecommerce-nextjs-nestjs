@@ -10,6 +10,8 @@ declare module 'next-auth' {
     //   address: string;
     // } & DefaultSession['user'];
     accessTokenExpiry: number;
+    accessToken: string;
+    refreshToken: string;
     error: string;
     roles: ['admin', 'user'];
   }

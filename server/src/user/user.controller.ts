@@ -52,7 +52,8 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);

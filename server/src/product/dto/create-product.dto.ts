@@ -1,11 +1,11 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsInt,
   IsOptional,
   IsString,
   Length,
   Matches,
-  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { nameRegex, slugRegex } from './../../libs/regex';
@@ -53,6 +53,18 @@ export class CreateProductDto {
 
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isNew: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isPopular: boolean;
 
   @ValidateNested()
   @Type(() => CategoryDto)

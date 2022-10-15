@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
   AiOutlineSetting,
-  AiOutlineShoppingCart
+  AiOutlineShoppingCart,
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
@@ -22,7 +22,7 @@ const SideBar = () => {
           icon={<AiOutlineHome />}
           css={{
             backgroundColor: router.pathname.includes('/admin/dashboard')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           light={router.pathname.includes('/admin/dashboard') ? false : true}
@@ -36,7 +36,7 @@ const SideBar = () => {
           light={router.pathname.includes('/admin/category') ? false : true}
           css={{
             backgroundColor: router.pathname.includes('/admin/category')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           ripple={false}
@@ -49,7 +49,7 @@ const SideBar = () => {
           icon={<RiProductHuntLine />}
           css={{
             backgroundColor: router.pathname.includes('/admin/product')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           light={router.pathname.includes('/admin/product') ? false : true}
@@ -63,7 +63,7 @@ const SideBar = () => {
           icon={<AiOutlineShoppingCart />}
           css={{
             backgroundColor: router.pathname.includes('/admin/order')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           light={router.pathname.includes('/admin/order') ? false : true}
@@ -77,7 +77,7 @@ const SideBar = () => {
           icon={<HiOutlineUserGroup />}
           css={{
             backgroundColor: router.pathname.includes('/admin/employee')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           light={router.pathname.includes('/admin/employee') ? false : true}
@@ -91,7 +91,7 @@ const SideBar = () => {
           icon={<AiOutlineSetting />}
           css={{
             backgroundColor: router.pathname.includes('/admin/setting')
-              ? '#343e3e'
+              ? '$secondary'
               : '',
           }}
           light={router.pathname.includes('/admin/setting') ? false : true}
@@ -127,7 +127,9 @@ const AdminLayout: NextPage<Props> = ({ children, title }) => {
                   alignItems: 'center',
                 }}
               >
-                <Text h2>{title}</Text>
+                <Text h2 color='secondary'>
+                  {title}
+                </Text>
               </div>
               {children}
             </div>

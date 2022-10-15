@@ -35,6 +35,9 @@ export type ProductType = {
   quantity: number;
   slug: string;
   description: string;
+  isActive: boolean;
+  isNew: boolean;
+  isPopular: boolean;
   category: {
     id: number;
     name: string;
@@ -46,4 +49,21 @@ export type ProductType = {
     url: string;
   }[];
   optionValues: OptionValueType[];
+};
+
+export type ProductPaginateType = {
+  items: ProductType[];
+  meta: {
+    totalItems: number;
+    itemCount: number;
+    itemsPerPage: number;
+    totalPages: number;
+    currentPage: number;
+  };
+  links: {
+    first: string;
+    previous: string;
+    next: string;
+    last: string;
+  };
 };

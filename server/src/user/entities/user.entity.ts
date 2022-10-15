@@ -1,12 +1,15 @@
-import { Role } from './../../enums/role.enum';
+import { Exclude } from 'class-transformer';
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Role } from './../../enums/role.enum';
+import { Order } from './../../order/entities/order.entity';
+import { CartItem } from './cartItem.entity';
 
 @Entity()
 export class User {
@@ -35,6 +38,12 @@ export class User {
     default: [Role.User],
   })
   roles: Role[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
+
+  @OneToMany(() => CartItem, (cartItem) => cartItem.user)
+  cartItems: CartItem[];
 
   @CreateDateColumn()
   createdDate: Date;

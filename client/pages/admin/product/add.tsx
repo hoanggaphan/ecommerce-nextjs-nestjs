@@ -48,6 +48,9 @@ export type FormValues = {
   };
   price: number;
   quantity: number;
+  isNew: boolean;
+  isActive: boolean;
+  isPopular: boolean;
   images: {
     url: string;
   }[];
@@ -220,7 +223,7 @@ export default function Add() {
                                 render={({ field: { onChange } }) => (
                                   <Checkbox
                                     size='sm'
-                                    color='gradient'
+                                    color='secondary'
                                     onChange={(isSelected) => {
                                       onChange({
                                         optionId: item.id,
@@ -323,8 +326,63 @@ export default function Add() {
                     />
                   </Row>
                   <Spacer y={1} />
+                  <Row>
+                    <Col>
+                      <Controller
+                        name={`isActive`}
+                        control={control}
+                        render={({ field: { onChange } }) => (
+                          <Checkbox
+                            size='sm'
+                            color='secondary'
+                            onChange={(isSelected) => {
+                              onChange(isSelected);
+                            }}
+                          >
+                            Hiển thị
+                          </Checkbox>
+                        )}
+                      />
+                    </Col>
+                    <Col>
+                      <Controller
+                        name={`isNew`}
+                        control={control}
+                        render={({ field: { onChange } }) => (
+                          <Checkbox
+                            size='sm'
+                            color='secondary'
+                            onChange={(isSelected) => {
+                              onChange(isSelected);
+                            }}
+                          >
+                            Mới
+                          </Checkbox>
+                        )}
+                      />
+                    </Col>
+                    <Col>
+                      <Controller
+                        name={`isPopular`}
+                        control={control}
+                        render={({ field: { onChange } }) => (
+                          <Checkbox
+                            size='sm'
+                            color='secondary'
+                            onChange={(isSelected) => {
+                              onChange(isSelected);
+                            }}
+                          >
+                            Nổi bật
+                          </Checkbox>
+                        )}
+                      />
+                    </Col>
+                  </Row>
+                  <Spacer y={1} />
+
                   <Row justify='center'>
-                    <Button type='submit' shadow auto>
+                    <Button type='submit' shadow auto color='secondary'>
                       Tạo sản phẩm
                     </Button>
                   </Row>
