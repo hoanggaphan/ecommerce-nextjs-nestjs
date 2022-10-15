@@ -26,14 +26,14 @@ import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import api from '../../../libs/api';
+import { useAttribute } from '../../../libs/swr/useAttribute';
 import { useCategory } from '../../../libs/swr/useCategory';
-import { useOption } from '../../../libs/swr/useOption';
 import { IconButton } from '../category';
 
-export type Option = {
+export type Attribute = {
   id: number;
   name: string;
-  options: {
+  attributes: {
     id: number;
     name: string;
   };
@@ -55,17 +55,17 @@ export type FormValues = {
     url: string;
   }[];
   checkbox: {
-    optionId: number;
-    optionName: string;
+    attributeId: number;
+    attributeName: string;
     isSelected: boolean;
   }[];
-  optionValues: {
-    optionValueId: number;
+  attributeValues: {
+    attributeValueId: number;
   }[];
 };
 
 export default function Add() {
-  let { data: options } = useOption();
+  let { data: attributes } = useAttribute();
   let { data: category } = useCategory();
 
   const {
@@ -86,25 +86,25 @@ export default function Add() {
   }, []);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    let { checkbox, optionValues, ...result } = data;
+    let { checkbox, attributeValues, ...result } = data;
     checkbox = checkbox.filter((i) => i).filter((i) => i.isSelected);
 
-    const optionsSelected: any = [];
-    options?.forEach((i) => {
-      const index = checkbox.findIndex((c) => c.optionId == i.id);
-      if (index != -1) optionsSelected.push(i);
+    const attributesSelected: any = [];
+    attributes?.forEach((i) => {
+      const index = checkbox.findIndex((c) => c.attributeId == i.id);
+      if (index != -1) attributesSelected.push(i);
     });
 
-    let newOptionValues: any = [];
-    optionValues.forEach((i) => {
-      const id = i.optionValueId;
-      optionsSelected.forEach((opt: any) => {
-        const res = opt.optionValues.find((k: any) => k.id == id);
-        if (res) newOptionValues.push(res);
+    let newAttributeValues: any = [];
+    attributeValues.forEach((i) => {
+      const id = i.attributeValueId;
+      attributesSelected.forEach((opt: any) => {
+        const res = opt.attributeValues.find((k: any) => k.id == id);
+        if (res) newAttributeValues.push(res);
       });
     });
-    newOptionValues = newOptionValues.map((i: any) => ({ id: i.id }));
-    (result as any).optionValues = newOptionValues;
+    newAttributeValues = newAttributeValues.map((i: any) => ({ id: i.id }));
+    (result as any).attributeValues = newAttributeValues;
 
     try {
       const res = await api.post('http://localhost:4000/product', result);
@@ -203,9 +203,9 @@ export default function Add() {
                   </div>
                   <Spacer y={1} />
                   <Row wrap='wrap'>
-                    {options && (
+                    {attributes && (
                       <Row align='center' style={{ columnGap: 5 }}>
-                        {options.map((item, i) => (
+                        {attributes.map((item, i) => (
                           <Col
                             key={item.name}
                             span={6}
@@ -226,8 +226,8 @@ export default function Add() {
                                     color='secondary'
                                     onChange={(isSelected) => {
                                       onChange({
-                                        optionId: item.id,
-                                        optionName: item.name,
+                                        attributeId: item.id,
+                                        attributeName: item.name,
                                         isSelected,
                                       });
                                     }}
@@ -239,15 +239,15 @@ export default function Add() {
 
                               <select
                                 {...register(
-                                  `optionValues.${i}.optionValueId`,
+                                  `attributeValues.${i}.attributeValueId`,
                                   {
                                     valueAsNumber: true,
                                   }
                                 )}
-                                defaultValue={item.optionValues[0].id}
+                                defaultValue={item.attributeValues[0].id}
                                 style={{ fontSize: 13 }}
                               >
-                                {item.optionValues.map((o) => (
+                                {item.attributeValues.map((o) => (
                                   <option key={o.value} value={o.id}>
                                     {o.value}
                                   </option>

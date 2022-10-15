@@ -11,9 +11,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { CategoryService } from './../category/category.service';
 import { Image } from './../image/entities/image.entity';
-import { OptionService } from './../option/option.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -25,8 +23,6 @@ export class ProductService {
     private productsRepository: Repository<Product>,
     @InjectRepository(Image)
     private imagesRepository: Repository<Image>,
-    private optionService: OptionService,
-    private categoryService: CategoryService,
   ) {}
 
   async findAllForAdmin(
@@ -36,9 +32,12 @@ export class ProductService {
       relations: {
         category: true,
         images: true,
-        optionValues: {
-          option: true,
+        attributeValues: {
+          attribute: true,
         },
+      },
+      order: {
+        createdDate: 'DESC',
       },
     });
   }
@@ -50,11 +49,14 @@ export class ProductService {
       where: {
         isActive: true,
       },
+      order: {
+        createdDate: 'DESC',
+      },
       relations: {
         category: true,
         images: true,
-        optionValues: {
-          option: true,
+        attributeValues: {
+          attribute: true,
         },
       },
     });
@@ -112,8 +114,8 @@ export class ProductService {
       relations: {
         category: true,
         images: true,
-        optionValues: {
-          option: true,
+        attributeValues: {
+          attribute: true,
         },
       },
     });
@@ -125,8 +127,8 @@ export class ProductService {
       relations: {
         category: true,
         images: true,
-        optionValues: {
-          option: true,
+        attributeValues: {
+          attribute: true,
         },
       },
     });

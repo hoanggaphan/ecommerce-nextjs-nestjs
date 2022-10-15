@@ -7,7 +7,7 @@ export default function MyNB() {
   };
 
   return (
-    <div>
+    <div style={{backgroundColor: "#fdfdff"}}>
       {' '}
       <Navbar isBordered>
         <Navbar.Brand>

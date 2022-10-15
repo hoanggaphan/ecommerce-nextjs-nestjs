@@ -24,7 +24,7 @@ class ImageDto {
   url: string;
 }
 
-class OptionValueDto {
+class AttributeValueDto {
   @IsInt()
   id: number;
 }
@@ -71,6 +71,6 @@ export class CreateProductDto {
   category: CategoryDto;
 
   @ValidateNested()
-  @Type(() => OptionValueDto)
-  optionValues: OptionValueDto[];
+  @Type(() => AttributeValueDto)
+  attributeValues: AttributeValueDto[];
 }
