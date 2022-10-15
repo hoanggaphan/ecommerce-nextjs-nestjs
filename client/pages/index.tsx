@@ -1,6 +1,17 @@
-import { Card, Container, Grid, Image, Spacer, Text } from '@nextui-org/react';
+import {
+  Badge,
+  Card,
+  Col,
+  Container,
+  Grid,
+  Image,
+  Row,
+  Spacer,
+  Text
+} from '@nextui-org/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { Navigation } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -88,18 +99,34 @@ const ItemsList = ({ title, data }: ItemsListProps) => {
       <Grid.Container gap={2}>
         {data?.items.map((i) => (
           <Grid key={i.id} xs={3}>
-            <Card css={{ mw: '315px' }}>
-              <Card.Body css={{ py: '$10' }}>
-                <Image width={235} height={235} src={i.images[0].url} />
-                <Spacer y={1} />
-                <Text h3 css={{ textAlign: 'center', minHeight: 72 }}>
-                  {i.name}
-                </Text>
-                <Text h3 color='secondary' css={{ textAlign: 'center' }}>
-                  {i.price.toLocaleString('vi-VN')} đ
-                </Text>
-              </Card.Body>
-            </Card>
+            <Link href={`/${i.id}`}>
+              <a style={{ width: '100%' }}>
+                <Card isHoverable css={{ mw: '315px' }}>
+                  <Card.Header>
+                    {i.isNew && (
+                      <Badge isSquared variant='flat' color='secondary'>
+                        Mới
+                      </Badge>
+                    )}
+                    {i.isPopular && (
+                      <Badge isSquared variant='flat' color='error'>
+                        Nổi bật
+                      </Badge>
+                    )}
+                  </Card.Header>
+                  <Card.Body css={{ py: '$10' }}>
+                    <Image width={235} height={235} src={i.images[0].url} />
+                    <Spacer y={1} />
+                    <Text h3 css={{ textAlign: 'center', minHeight: 72 }}>
+                      {i.name}
+                    </Text>
+                    <Text h3 color='secondary' css={{ textAlign: 'center' }}>
+                      {i.price.toLocaleString('vi-VN')} đ
+                    </Text>
+                  </Card.Body>
+                </Card>
+              </a>
+            </Link>
           </Grid>
         ))}
       </Grid.Container>
@@ -121,8 +148,57 @@ const IndexPage: NextPage = () => {
       <UserLayout>
         <Carouse />
         <Container md>
+          <Row css={{ mt: 50 }}>
+            <Col>
+              <Card isHoverable>
+                <Card.Body css={{ p: 50 }}>
+                  <Row align='center'>
+                    <div className=''>
+                      <Text h2 css={{ fontWeight: 500 }}>
+                        Chọn điện thoại
+                      </Text>
+                      <Text h3 css={{ fontWeight: 400 }}>
+                        Mua ngay
+                      </Text>
+                    </div>
+                    <Image
+                      width='140px'
+                      height='140px'
+                      objectFit='cover'
+                      src='/iphone-14-pro-tim.jpg'
+                      alt=''
+                    />
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Spacer x={1} />
+            <Col>
+              <Card isHoverable>
+                <Card.Body css={{ p: 50 }}>
+                  <Row align='center'>
+                    <div className=''>
+                      <Text h2 css={{ fontWeight: 500 }}>
+                        Chọn phụ kiện
+                      </Text>
+                      <Text h3 css={{ fontWeight: 400 }}>
+                        Mua ngay
+                      </Text>
+                    </div>
+                    <Image
+                      width='140px'
+                      height='140px'
+                      objectFit='cover'
+                      src='/phu-kien.png'
+                      alt=''
+                    />
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
           <ItemsList title='Sản phẩm mới' data={productNew} />
-          <ItemsList title='Sản nổi bật' data={productPopular} />
+          <ItemsList title='Sản phẩm nổi bật' data={productPopular} />
         </Container>
       </UserLayout>
     </>

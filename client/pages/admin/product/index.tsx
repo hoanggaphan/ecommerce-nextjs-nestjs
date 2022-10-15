@@ -108,7 +108,7 @@ const IndexPage: NextPage = () => {
             <Grid.Container gap={1}>
               {data?.items.map((i) => (
                 <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
-                  <Card variant='bordered' css={{ mw: '330px' }}>
+                  <Card isHoverable variant='bordered' css={{ mw: '330px' }}>
                     <Card.Header
                       css={{
                         flexWrap: 'wrap',
