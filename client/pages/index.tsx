@@ -101,7 +101,7 @@ const ItemsList = ({ title, data }: ItemsListProps) => {
           <Grid key={i.id} xs={3}>
             <Link href={`/${i.id}`}>
               <a style={{ width: '100%' }}>
-                <Card isHoverable css={{ mw: '315px' }}>
+                <Card variant='bordered' isHoverable css={{ mw: '315px' }}>
                   <Card.Header>
                     {i.isNew && (
                       <Badge isSquared variant='flat' color='secondary'>
@@ -150,7 +150,7 @@ const IndexPage: NextPage = () => {
         <Container md>
           <Row css={{ mt: 50 }}>
             <Col>
-              <Card isHoverable>
+              <Card variant='bordered' isHoverable>
                 <Card.Body css={{ p: 50 }}>
                   <Row align='center'>
                     <div className=''>
@@ -174,7 +174,7 @@ const IndexPage: NextPage = () => {
             </Col>
             <Spacer x={1} />
             <Col>
-              <Card isHoverable>
+              <Card variant='bordered' isHoverable>
                 <Card.Body css={{ p: 50 }}>
                   <Row align='center'>
                     <div className=''>

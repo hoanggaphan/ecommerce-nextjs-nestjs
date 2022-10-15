@@ -4,9 +4,10 @@ import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { useState } from 'react';
 import RefreshTokenHandler from '../components/refreshTokenHandler';
+import { theme } from '../libs/theme';
 
 const globalStyles = globalCss({
-  body: { backgroundColor: '#f9f9f9' },
+  body: { backgroundColor: '#f5f7fa' },
 });
 
 function MyApp({
@@ -19,7 +20,7 @@ function MyApp({
   globalStyles();
 
   return (
-    <NextUIProvider>
+    <NextUIProvider theme={theme}>
       <SessionProvider session={pageProps.session} refetchInterval={interval}>
         <Component {...pageProps} />
         <RefreshTokenHandler setInterval={setInterval} />

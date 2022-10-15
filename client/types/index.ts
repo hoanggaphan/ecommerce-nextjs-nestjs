@@ -6,24 +6,24 @@ export type CategoryType = {
   description?: string;
 };
 
-type OptionValues = {
+type AttributeValues = {
   id: number;
   value: string;
-  options: {
+  attributes: {
     id: number;
     name: string;
   };
 };
-export type OptionType = {
+export type AttributeType = {
   id: number;
   name: string;
-  optionValues: OptionValues[];
+  attributeValues: AttributeValues[];
 };
 
-export type OptionValueType = {
+export type AttributeValueType = {
   id: number;
   value: string;
-  option: {
+  attribute: {
     id: number;
     name: string;
   };
@@ -48,7 +48,7 @@ export type ProductType = {
     id: number;
     url: string;
   }[];
-  optionValues: OptionValueType[];
+  attributeValues: AttributeValueType[];
 };
 
 export type ProductPaginateType = {

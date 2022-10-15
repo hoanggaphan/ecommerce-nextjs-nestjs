@@ -28,14 +28,14 @@ import { IconButton } from '..';
 import AdminLayout from '../../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../../components/SecureAdminPages';
 import api from '../../../../libs/api';
+import { useAttribute } from '../../../../libs/swr/useAttribute';
 import { useCategory } from '../../../../libs/swr/useCategory';
-import { useOption } from '../../../../libs/swr/useOption';
 import { useProduct } from '../../../../libs/swr/useProduct';
 
-export type Option = {
+export type Attribute = {
   id: number;
   name: string;
-  options: {
+  attributes: {
     id: number;
     name: string;
   };
@@ -57,14 +57,14 @@ export type FormValues = {
     url: string;
   }[];
   checkbox: any;
-  optionValues: any;
+  attributeValues: any;
 };
 
 export default function Update() {
   const router = useRouter();
   const { id } = router.query;
   let { data: product, mutate } = useProduct({ id });
-  let { data: options } = useOption();
+  let { data: attributes } = useAttribute();
   let { data: category } = useCategory();
 
   const {
@@ -90,23 +90,23 @@ export default function Update() {
       setValue('description', product.description);
       setValue('category.id', product.category.id);
 
-      product.optionValues.forEach((o, i) => {
-        setValue(`optionValues.${o.option.name}.optionValueId`, o.id);
-        setValue(`checkbox.${o.option.name}`, true);
+      product.attributeValues.forEach((o, i) => {
+        setValue(`attributeValues.${o.attribute.name}.attributeValueId`, o.id);
+        setValue(`checkbox.${o.attribute.name}`, true);
       });
     }
-  }, [product, options]);
+  }, [product, attributes]);
 
-  const checkCheckbox = (option: any, product: any) => {
-    const optionId = option.id;
-    const index = product.optionValues.findIndex(
-      (i: any) => i.option.id == optionId
+  const checkCheckbox = (attribute: any, product: any) => {
+    const attributeId = attribute.id;
+    const index = product.attributeValues.findIndex(
+      (i: any) => i.attribute.id == attributeId
     );
     return index != -1 ? true : false;
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    let { checkbox, optionValues, ...result } = data;
+    let { checkbox, attributeValues, ...result } = data;
 
     let newCheckbox = [];
     for (const key in checkbox) {
@@ -115,12 +115,12 @@ export default function Update() {
       }
     }
     newCheckbox = newCheckbox.filter((i) => i);
-    const newOptionValues = [];
-    for (const key in optionValues) {
+    const newAttributeValues = [];
+    for (const key in attributeValues) {
       if (newCheckbox.includes(key))
-        newOptionValues.push({ id: optionValues[key].optionValueId });
+        newAttributeValues.push({ id: attributeValues[key].attributeValueId });
     }
-    (result as any).optionValues = newOptionValues;
+    (result as any).attributeValues = newAttributeValues;
 
     try {
       const res = await api.patch(
@@ -225,9 +225,9 @@ export default function Update() {
                     </div>
                     <Spacer y={1} />
                     <Row wrap='wrap'>
-                      {options && (
+                      {attributes && (
                         <Row align='center' style={{ columnGap: 5 }}>
-                          {options.map((item, i) => (
+                          {attributes.map((item, i) => (
                             <Col
                               key={item.name}
                               span={6}
@@ -261,15 +261,15 @@ export default function Update() {
 
                                 <select
                                   {...register(
-                                    `optionValues.${item.name}.optionValueId`,
+                                    `attributeValues.${item.name}.attributeValueId`,
                                     {
                                       valueAsNumber: true,
                                     }
                                   )}
-                                  defaultValue={item.optionValues[0].id}
+                                  defaultValue={item.attributeValues[0].id}
                                   style={{ fontSize: 13 }}
                                 >
-                                  {item.optionValues.map((o) => (
+                                  {item.attributeValues.map((o) => (
                                     <option key={o.value} value={o.id}>
                                       {o.value}
                                     </option>

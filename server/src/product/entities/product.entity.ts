@@ -10,9 +10,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AttributeValue } from '../../attribute-value/entities/attribute-value.entity';
 import { Category } from './../../category/entities/category.entity';
 import { Image } from './../../image/entities/image.entity';
-import { OptionValue } from './../../option-value/entities/option-value.entity';
 import { CartItem } from './../../user/entities/cartItem.entity';
 
 @Entity()
@@ -47,9 +47,9 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @ManyToMany(() => OptionValue)
+  @ManyToMany(() => AttributeValue)
   @JoinTable()
-  optionValues: OptionValue[];
+  attributeValues: AttributeValue[];
 
   @OneToMany(() => Image, (image) => image.product)
   images: Image[];

@@ -1,16 +1,16 @@
 import { Type } from 'class-transformer';
 import { IsInt, Length, ValidateNested } from 'class-validator';
 
-class OptionDto {
+class AttributeDto {
   @IsInt()
   id: number;
 }
 
-export class CreateOptionValueDto {
+export class CreateAttributeValueDto {
   @Length(1, 50)
   value: string;
 
   @ValidateNested()
-  @Type(() => OptionDto)
-  option: OptionDto;
+  @Type(() => AttributeDto)
+  attribute: AttributeDto;
 }
