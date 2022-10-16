@@ -37,7 +37,7 @@ export class ProductService {
         },
       },
       order: {
-        createdDate: 'DESC',
+        updatedDate: 'DESC',
       },
     });
   }
