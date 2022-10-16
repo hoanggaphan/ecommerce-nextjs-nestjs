@@ -71,6 +71,7 @@ export default function Login() {
                   />
                   <Spacer y={2} />
                   <Input
+                    type='password'
                     labelPlaceholder='Password'
                     {...register('password', { required: true })}
                     required

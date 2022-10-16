@@ -8,9 +8,17 @@ const YOUR_API_URL = 'http://localhost:4000/';
 async function refreshAccessToken(tokenObject: any) {
   try {
     // Get a new set of tokens with a refreshToken
-    const tokenResponse = await axios.post(YOUR_API_URL + 'auth/refreshToken', {
-      token: tokenObject.refreshToken,
-    });
+    const tokenResponse = await axios.post(
+      YOUR_API_URL + 'auth/refreshToken',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${tokenObject.refreshToken}`,
+        },
+      }
+    );
+
+    // console.log({ server: tokenResponse.data });
 
     return {
       ...tokenObject,
@@ -65,8 +73,9 @@ const callbacks = {
     }
 
     // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
+    // before 1 hours
     const shouldRefreshTime = Math.round(
-      token.accessTokenExpiry - Date.now() / 1000
+      (token.accessTokenExpiry - 60 * 60) - (Date.now() / 1000) // seconds
     );
 
     // If the token is still valid, just return it.
