@@ -9,25 +9,17 @@ import {
   useInput,
 } from '@nextui-org/react';
 import { useState } from 'react';
-import { validateName, validateSlug } from '../libs/validate';
+import slugify from 'react-slugify';
 import { CategoryType } from '../types';
-import ValidateInput from './common/ValidateInput';
 
 export default function SweetHtmlCategory({
   category,
 }: {
   category: CategoryType;
 }) {
-  const {
-    value: nameValueModal,
-    reset: resetNameModal,
-    bindings: nameBindingsModal,
-  } = useInput(category.name || '');
-  const {
-    value: slugValueModal,
-    reset: resetSlugModal,
-    bindings: slugBindingsModal,
-  } = useInput(category.slug || '');
+  const [name, setName] = useState(category.name || '');
+  const [slug, setSlug] = useState(category.slug || '');
+
   const {
     value: imgValueModal,
     reset: resetImgModal,
@@ -44,31 +36,27 @@ export default function SweetHtmlCategory({
     <Card>
       <Card.Body>
         <Spacer y={1} />
-        <ValidateInput
+        <Input
           id='category-name'
           name='category-name'
-          initialValue={nameValueModal}
-          value={nameValueModal}
-          reset={resetNameModal}
-          bindings={nameBindingsModal}
-          validate={validateName}
+          initialValue={name}
+          value={name}
           labelPlaceholder='Tên'
-          validText='Tên hợp lệ'
-          inValidText='Tên không hợp lệ'
+          clearable
+          onChange={(e) => {
+            setName(e.target.value);
+            setSlug(slugify(e.target.value));
+          }}
         />
 
         <Spacer y={3} />
-        <ValidateInput
+        <Input
           id='category-slug'
           name='category-slug'
-          initialValue={slugValueModal}
-          value={slugValueModal}
-          reset={resetSlugModal}
-          bindings={slugBindingsModal}
-          validate={validateSlug}
+          initialValue={slug}
+          value={slug}
           labelPlaceholder='Slug'
-          validText='Slug hợp lệ'
-          inValidText='Slug không hợp lệ'
+          onChange={(e) => setSlug(e.target.value)}
         />
         <Spacer y={3} />
         <Input

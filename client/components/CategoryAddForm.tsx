@@ -7,28 +7,20 @@ import {
   Row,
   Spacer,
   Textarea,
-  useInput
+  useInput,
 } from '@nextui-org/react';
 import { useState } from 'react';
+import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import api from '../libs/api';
 import { useAdminCategory } from '../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../libs/validate';
-import ValidateInput from './common/ValidateInput';
 
 export default function CategoryAddForm() {
   const { mutate } = useAdminCategory();
+  const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
 
-  const {
-    value: nameValue,
-    reset: resetName,
-    bindings: nameBindings,
-  } = useInput('');
-  const {
-    value: slugValue,
-    reset: resetSlug,
-    bindings: slugBindings,
-  } = useInput('');
   const {
     value: imgValue,
     reset: resetImg,
@@ -42,14 +34,14 @@ export default function CategoryAddForm() {
   const [checkbox, setCheckbox] = useState(false);
 
   const handleCreateCategory = async () => {
-    if (!nameValue || !slugValue) return;
+    if (!name || !slug) return;
 
-    if (!validateName(nameValue) || !validateSlug(slugValue)) return;
+    if (!validateName(name) || !validateSlug(slug)) return;
 
     try {
       const newItem = {
-        name: nameValue,
-        slug: slugValue,
+        name,
+        slug,
         image: imgValue,
         description: desValue,
         isActive: checkbox,
@@ -59,8 +51,8 @@ export default function CategoryAddForm() {
         title: 'Tạo thành công!',
         icon: 'success',
       });
-      resetName();
-      resetSlug();
+      setName('');
+      setSlug('');
       resetImg();
       resetDes();
       mutate();
@@ -77,24 +69,21 @@ export default function CategoryAddForm() {
     <Card>
       <Card.Body>
         <Spacer y={1} />
-        <ValidateInput
-          value={nameValue}
-          reset={resetName}
-          bindings={nameBindings}
-          validate={validateName}
+        <Input
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setSlug(slugify(e.target.value));
+          }}
           labelPlaceholder='Tên'
-          validText='Tên hợp lệ'
-          inValidText='Tên không hợp lệ'
+          clearable
         />
         <Spacer y={3} />
-        <ValidateInput
-          value={slugValue}
-          reset={resetSlug}
-          bindings={slugBindings}
-          validate={validateSlug}
+        <Input
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
           labelPlaceholder='Slug'
-          validText='Slug hợp lệ'
-          inValidText='Slug không hợp lệ'
+          clearable
         />
         <Spacer y={3} />
         <Input {...imgBindings} labelPlaceholder='Hình ảnh' type='url' />

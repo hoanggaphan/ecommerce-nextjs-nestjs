@@ -151,12 +151,12 @@ const IndexPage: NextPage = () => {
         return `/${category?.slug}`;
       case 'isActive':
         return category.isActive ? (
-          <Badge color='success' variant='flat'>
+          <Badge color='secondary' variant='flat'>
             Đang hiển thị
           </Badge>
         ) : (
           <Badge color='error' variant='flat'>
-            chưa hiển thị
+            Chưa hiển thị
           </Badge>
         );
 
