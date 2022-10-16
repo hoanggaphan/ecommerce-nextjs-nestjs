@@ -140,6 +140,7 @@ export default function Add() {
                       name='name'
                       render={({ field: { value, onChange } }) => (
                         <Input
+                          value={value}
                           onChange={(e: React.ChangeEvent<FormElement>) => {
                             setValue('name', e.target.value);
                             setValue('slug', slugify(e.target.value));
@@ -225,6 +226,26 @@ export default function Add() {
                                     size='sm'
                                     color='secondary'
                                     onChange={(isSelected) => {
+                                      if (isSelected) {
+                                        const attributeValues =
+                                          item.attributeValues;
+                                        const idSelecting = getValues(
+                                          `attributeValues.${i}.attributeValueId`
+                                        );
+                                        const value =
+                                          attributeValues.find(
+                                            (i) => i.id === idSelecting
+                                          )?.value || '';
+                                        setValue(
+                                          'name',
+                                          getValues('name') + ` ${value}`
+                                        );
+                                        setValue(
+                                          'slug',
+                                          slugify(getValues('name'))
+                                        );
+                                      }
+
                                       onChange({
                                         attributeId: item.id,
                                         attributeName: item.name,

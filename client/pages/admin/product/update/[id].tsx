@@ -251,6 +251,26 @@ export default function Update() {
                                       size='sm'
                                       color='secondary'
                                       onChange={(isSelected) => {
+                                        if (isSelected) {
+                                          const attributeValues =
+                                            item.attributeValues;
+                                          const idSelecting = getValues(
+                                            `attributeValues.${item.name}.attributeValueId`
+                                          );
+                                          const value =
+                                            attributeValues.find(
+                                              (i) => i.id === idSelecting
+                                            )?.value || '';
+                                          setValue(
+                                            'name',
+                                            getValues('name') + ` ${value}`
+                                          );
+                                          setValue(
+                                            'slug',
+                                            slugify(getValues('name'))
+                                          );
+                                        }
+
                                         onChange(isSelected);
                                       }}
                                     >
