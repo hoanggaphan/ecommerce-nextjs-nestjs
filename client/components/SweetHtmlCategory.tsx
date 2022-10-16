@@ -95,6 +95,7 @@ export default function SweetHtmlCategory({
               id='category-active'
               size='sm'
               color='secondary'
+              defaultSelected={category.isActive}
               onChange={(isSelected) => {
                 setCheckbox(isSelected);
               }}

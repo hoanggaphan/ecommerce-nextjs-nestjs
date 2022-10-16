@@ -12,12 +12,12 @@ import {
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import api from '../libs/api';
-import { useCategory } from '../libs/swr/useCategory';
+import { useAdminCategory } from '../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../libs/validate';
 import ValidateInput from './common/ValidateInput';
 
 export default function CategoryAddForm() {
-  const { mutate } = useCategory();
+  const { mutate } = useAdminCategory();
 
   const {
     value: nameValue,
