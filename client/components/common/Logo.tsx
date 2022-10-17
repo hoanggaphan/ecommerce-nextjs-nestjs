@@ -9,12 +9,9 @@ export default function Logo({ url }: { url: string }) {
       </Link>
       <style jsx>{`
         .logo {
-          color: black;
           transition: color 0.3s;
           font-weight: 500;
           cursor: pointer;
-        }
-        .logo:hover {
           color: #7828c8;
         }
       `}</style>

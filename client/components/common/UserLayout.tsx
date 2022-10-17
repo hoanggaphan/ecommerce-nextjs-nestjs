@@ -15,7 +15,7 @@ interface Props {
 const UserLayout: NextPage<Props> = ({ children }) => {
   const { data: category } = useCategory();
   const router = useRouter();
-  console.log(router);
+
   return (
     <>
       <div style={{ backgroundColor: '#fdfdff' }}>

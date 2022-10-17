@@ -20,7 +20,6 @@ export default function Product() {
   const { id } = router.query;
   const { data: product } = useProduct({ id });
   const [amount, setAmount] = useState(1);
-  console.log(product);
 
   return (
     <>
