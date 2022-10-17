@@ -1,10 +1,11 @@
-import { Badge, Button, Navbar } from '@nextui-org/react';
+import { Badge, Button, Navbar, Spacer } from '@nextui-org/react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 // import Link from 'next/link';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCategory } from '../../libs/swr/useCategory';
+import Footer from './Footer';
 import Logo from './Logo';
 
 interface Props {
@@ -58,6 +59,9 @@ const UserLayout: NextPage<Props> = ({ children }) => {
       </div>
 
       {children}
+
+      <Spacer y={6} />
+      <Footer />
     </>
   );
 };
