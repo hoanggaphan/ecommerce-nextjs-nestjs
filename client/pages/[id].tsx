@@ -3,23 +3,33 @@ import {
   Card,
   Col,
   Container,
+  Image,
   Row,
   Spacer,
   Text,
 } from '@nextui-org/react';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { MdAdd, MdRemove } from 'react-icons/md';
 import UserLayout from '../components/common/UserLayout';
 import { useProduct } from '../libs/swr/useProduct';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import { FreeMode, Thumbs } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
+
 export default function Product() {
   const router = useRouter();
   const { id } = router.query;
   const { data: product } = useProduct({ id });
   const [amount, setAmount] = useState(1);
+  const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
 
   return (
     <>
@@ -33,22 +43,54 @@ export default function Product() {
           <Container md css={{ pt: 80 }}>
             <Row>
               <Col span={6}>
-                <Row justify='center'>
-                  <Image
-                    width={400}
-                    height={400}
-                    src={product.images[0].url || ''}
-                    alt=''
-                    objectFit='cover'
-                  />
-                </Row>
+                <div style={{ maxWidth: 400, margin: '0 auto' }}>
+                  <Swiper
+                    spaceBetween={10}
+                    thumbs={{
+                      swiper:
+                        thumbsSwiper && !thumbsSwiper.destroyed
+                          ? thumbsSwiper
+                          : null,
+                    }}
+                    modules={[FreeMode, Thumbs]}
+                    className='mySwiper2'
+                  >
+                    {product.images.map((i) => (
+                      <SwiperSlide key={i.id}>
+                        <Image src={i.url} alt='' />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  <Swiper
+                    onSwiper={setThumbsSwiper}
+                    spaceBetween={15}
+                    slidesPerView={3}
+                    freeMode={true}
+                    watchSlidesProgress={true}
+                    modules={[FreeMode, Thumbs]}
+                    className='mySwiper'
+                    style={{ marginTop: 35 }}
+                  >
+                    {product.images.map((i, index) => (
+                      <SwiperSlide
+                        key={i.id}
+                        style={{
+                          border: '2px solid rgba(0,0,0,.2)',
+                          borderRadius: 5,
+                        }}
+                      >
+                        <Image src={i.url} alt='' />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
               </Col>
               <Spacer y={2} />
               <Col span={6}>
                 <Text h2>{product.name}</Text>
                 <Row>
                   {product.attributeValues.map((i) => (
-                    <Col>
+                    <Col key={i.id}>
                       <Text size='$xl'>
                         {i.attribute.name.toUpperCase()}:{' '}
                         {i.value.toUpperCase()}
