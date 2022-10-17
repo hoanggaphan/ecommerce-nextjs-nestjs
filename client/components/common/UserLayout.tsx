@@ -1,5 +1,8 @@
-import { Badge, Button, Link, Navbar } from '@nextui-org/react';
+import { Badge, Button, Navbar } from '@nextui-org/react';
 import { NextPage } from 'next';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+// import Link from 'next/link';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useCategory } from '../../libs/swr/useCategory';
 import Logo from './Logo';
@@ -10,7 +13,8 @@ interface Props {
 
 const UserLayout: NextPage<Props> = ({ children }) => {
   const { data: category } = useCategory();
-
+  const router = useRouter();
+  console.log(router);
   return (
     <>
       <div style={{ backgroundColor: '#fdfdff' }}>
@@ -25,18 +29,22 @@ const UserLayout: NextPage<Props> = ({ children }) => {
             variant='highlight-rounded'
           >
             {category?.map((item, i) => (
-              <Navbar.Link key={i} href='#'>
-                {item.name}
-              </Navbar.Link>
+              <Link key={i} href={`/category/${item.slug}`}>
+                <Navbar.Link
+                  isActive={router.asPath === `/category/${item.slug}`}
+                >
+                  {item.name}
+                </Navbar.Link>
+              </Link>
             ))}
             {/* <Navbar.Link isActive href='#'> */}
           </Navbar.Content>
           <Navbar.Content>
-            <Navbar.Link color='inherit' href='#'>
+            <Navbar.Link color='inherit' href=''>
               Đăng nhập
             </Navbar.Link>
             <Navbar.Item>
-              <Button color='secondary' auto flat as={Link} href='#'>
+              <Button color='secondary' auto flat href='#'>
                 Đăng ký
               </Button>
             </Navbar.Item>

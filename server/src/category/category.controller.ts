@@ -31,6 +31,11 @@ export class CategoryController {
     return this.categoryService.findAllForUser();
   }
 
+  @Get(':slug/products')
+  findAllProductsBySLug(@Param('slug') slug: string) {
+    return this.categoryService.findAllProductsBySLug(slug);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.findOne(id);

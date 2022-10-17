@@ -18,7 +18,7 @@ import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import UserLayout from '../components/common/UserLayout';
 import { useProducts } from '../libs/swr/useProducts';
-import { ProductPaginateType } from '../types';
+import { ProductType } from '../types';
 
 const Carouse = () => (
   <Swiper
@@ -89,11 +89,11 @@ const Carouse = () => (
 
 type ItemsListProps = {
   title: string;
-  data?: ProductPaginateType;
+  data?: ProductType[];
 };
-const ItemsList = ({ title, data }: ItemsListProps) => {
+export const ItemsList = ({ title, data }: ItemsListProps) => {
   return (
-    <div style={{ marginTop: 100 }}>
+    <>
       <Text
         h2
         size={50}
@@ -106,7 +106,7 @@ const ItemsList = ({ title, data }: ItemsListProps) => {
         {title}
       </Text>
       <Grid.Container gap={2}>
-        {data?.items.map((i) => (
+        {data?.map((i) => (
           <Grid key={i.id} xs={3}>
             <Link href={`/${i.id}`}>
               <a style={{ width: '100%' }}>
@@ -139,7 +139,7 @@ const ItemsList = ({ title, data }: ItemsListProps) => {
           </Grid>
         ))}
       </Grid.Container>
-    </div>
+    </>
   );
 };
 
@@ -206,8 +206,12 @@ const IndexPage: NextPage = () => {
               </Card>
             </Col>
           </Row>
-          <ItemsList title='Sản phẩm mới' data={productNew} />
-          <ItemsList title='Sản phẩm nổi bật' data={productPopular} />
+          <div style={{ marginTop: 100 }}>
+            <ItemsList title='Sản phẩm mới' data={productNew?.items} />
+          </div>
+          <div style={{ marginTop: 100 }}>
+            <ItemsList title='Sản phẩm nổi bật' data={productPopular?.items} />
+          </div>
         </Container>
       </UserLayout>
     </>
