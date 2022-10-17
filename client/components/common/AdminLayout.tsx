@@ -1,15 +1,16 @@
-import { Button, Card, Grid, Spacer, Text } from '@nextui-org/react';
+import { Button, Card, Grid, Navbar, Spacer, Text } from '@nextui-org/react';
 import type { NextPage } from 'next';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
   AiOutlineSetting,
-  AiOutlineShoppingCart,
+  AiOutlineShoppingCart
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { RiProductHuntLine } from 'react-icons/ri';
-import MyNB from '../Navbar';
+import Logo from './Logo';
 
 const SideBar = () => {
   const router = useRouter();
@@ -110,9 +111,27 @@ interface Props {
 }
 
 const AdminLayout: NextPage<Props> = ({ children, title }) => {
+  const handleSignOut = () => {
+    signOut({ redirect: false });
+  };
+
   return (
     <>
-      <MyNB />
+      <div style={{ backgroundColor: '#fdfdff' }}>
+        {' '}
+        <Navbar isBordered>
+          <Navbar.Brand>
+            <Logo url='/admin/dashboard' />
+          </Navbar.Brand>
+          <Navbar.Content>
+            <Navbar.Item>
+              <Button onPress={handleSignOut} auto flat color='secondary'>
+                Đăng xuất
+              </Button>
+            </Navbar.Item>
+          </Navbar.Content>
+        </Navbar>
+      </div>
       <div className='container'>
         <Grid.Container gap={2}>
           <Grid xs={2}>

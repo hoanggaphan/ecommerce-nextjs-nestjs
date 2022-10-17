@@ -7,12 +7,12 @@ import {
   Image,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Navigation } from 'swiper';
+import { Autoplay, Navigation } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -21,7 +21,15 @@ import { useProducts } from '../libs/swr/useProducts';
 import { ProductPaginateType } from '../types';
 
 const Carouse = () => (
-  <Swiper slidesPerView={1} navigation={true} modules={[Navigation]}>
+  <Swiper
+    autoplay={{
+      delay: 4000,
+      disableOnInteraction: false,
+    }}
+    slidesPerView={1}
+    navigation={true}
+    modules={[Navigation, Autoplay]}
+  >
     <SwiperSlide>
       <Image
         width='100%'
@@ -90,6 +98,7 @@ const ItemsList = ({ title, data }: ItemsListProps) => {
         h2
         size={50}
         css={{
+          textAlign: 'center',
           textGradient: '45deg, $purple600 -20%, $pink600 100%',
         }}
         weight='bold'

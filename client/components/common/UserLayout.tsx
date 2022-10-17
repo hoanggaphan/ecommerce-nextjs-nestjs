@@ -1,6 +1,8 @@
-import { Button, Link, Navbar, Text } from '@nextui-org/react';
+import { Badge, Button, Link, Navbar } from '@nextui-org/react';
 import { NextPage } from 'next';
+import { FaShoppingCart } from 'react-icons/fa';
 import { useCategory } from '../../libs/swr/useCategory';
+import Logo from './Logo';
 
 interface Props {
   children: React.ReactNode;
@@ -14,10 +16,7 @@ const UserLayout: NextPage<Props> = ({ children }) => {
       <div style={{ backgroundColor: '#fdfdff' }}>
         <Navbar isBordered>
           <Navbar.Brand>
-            {/* <AcmeLogo /> */}
-            <Text b color='inherit' hideIn='xs'>
-              ETOET
-            </Text>
+            <Logo url='/' />
           </Navbar.Brand>
           <Navbar.Content
             enableCursorHighlight
@@ -40,6 +39,11 @@ const UserLayout: NextPage<Props> = ({ children }) => {
               <Button color='secondary' auto flat as={Link} href='#'>
                 Đăng ký
               </Button>
+            </Navbar.Item>
+            <Navbar.Item>
+              <Badge color='secondary' content='0' shape='circle'>
+                <FaShoppingCart fill='#687076' size={30} />
+              </Badge>
             </Navbar.Item>
           </Navbar.Content>
         </Navbar>
