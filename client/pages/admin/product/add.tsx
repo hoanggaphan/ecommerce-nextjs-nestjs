@@ -26,8 +26,8 @@ import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import api from '../../../libs/api';
+import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { useAttribute } from '../../../libs/swr/useAttribute';
-import { useCategory } from '../../../libs/swr/useCategory';
 import { IconButton } from '../category';
 
 export type Attribute = {
@@ -66,7 +66,7 @@ export type FormValues = {
 
 export default function Add() {
   let { data: attributes } = useAttribute();
-  let { data: category } = useCategory();
+  let { data: category } = useAdminCategory();
 
   const {
     control,

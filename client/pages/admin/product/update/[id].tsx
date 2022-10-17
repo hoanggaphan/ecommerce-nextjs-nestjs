@@ -9,7 +9,7 @@ import {
   Row,
   Spacer,
   Textarea,
-  Tooltip,
+  Tooltip
 } from '@nextui-org/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -18,7 +18,7 @@ import {
   Controller,
   SubmitHandler,
   useFieldArray,
-  useForm,
+  useForm
 } from 'react-hook-form';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { GrAddCircle } from 'react-icons/gr';
@@ -28,8 +28,8 @@ import { IconButton } from '..';
 import AdminLayout from '../../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../../components/SecureAdminPages';
 import api from '../../../../libs/api';
+import { useAdminCategory } from '../../../../libs/swr/useAdminCategory';
 import { useAttribute } from '../../../../libs/swr/useAttribute';
-import { useCategory } from '../../../../libs/swr/useCategory';
 import { useProduct } from '../../../../libs/swr/useProduct';
 
 export type Attribute = {
@@ -65,7 +65,7 @@ export default function Update() {
   const { id } = router.query;
   let { data: product, mutate } = useProduct({ id });
   let { data: attributes } = useAttribute();
-  let { data: category } = useCategory();
+  let { data: category } = useAdminCategory();
 
   const {
     control,
@@ -81,21 +81,25 @@ export default function Update() {
   });
 
   useEffect(() => {
-    if (product) {
+    if (product && category) {
       setValue('name', product.name);
       setValue('slug', product.slug);
       setValue('price', product.price);
       setValue('quantity', product.quantity);
       setValue('images', product.images);
       setValue('description', product.description);
-      setValue('category.id', product.category.id);
+      if (product.category) {
+        setValue('category.id', product.category.id);
+      } else {
+        setValue('category.id', category[0].id);
+      }
 
       product.attributeValues.forEach((o, i) => {
         setValue(`attributeValues.${o.attribute.name}.attributeValueId`, o.id);
         setValue(`checkbox.${o.attribute.name}`, true);
       });
     }
-  }, [product, attributes]);
+  }, [product, attributes, category]);
 
   const checkCheckbox = (attribute: any, product: any) => {
     const attributeId = attribute.id;

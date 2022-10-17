@@ -44,7 +44,10 @@ export class Product {
   @Column({ nullable: false, default: false })
   isPopular: boolean;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   category: Category;
 
   @ManyToMany(() => AttributeValue)

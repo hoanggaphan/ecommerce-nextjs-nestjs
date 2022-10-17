@@ -45,7 +45,7 @@ const IndexPage: NextPage = () => {
     `?limit=12&page=${pageIndex}`,
     session?.accessToken
   );
-
+  console.log(data);
   const handleDelete = async (id: number) => {
     Swal.fire({
       title: 'Bạn có chắc?',
@@ -133,6 +133,11 @@ const IndexPage: NextPage = () => {
                       ) : (
                         <Badge variant='flat' isSquared color='error'>
                           Chưa hiển thị
+                        </Badge>
+                      )}
+                      {i.category === null && (
+                        <Badge variant='flat' isSquared color='error'>
+                          Chưa có danh mục
                         </Badge>
                       )}
                     </Card.Header>
