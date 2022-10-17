@@ -2504,12 +2504,17 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-scroll-to-top@^3.0.0":
+  "integrity" "sha512-I/k45Ujai097du59tHBbzGxN7Lyc6K8Uc3IChq6HMXaBfB8N/rrfm055T5Yv0DWfVpf6pOFaBmhD3LOfH5unGw=="
+  "resolved" "https://registry.npmjs.org/react-scroll-to-top/-/react-scroll-to-top-3.0.0.tgz"
+  "version" "3.0.0"
+
 "react-slugify@^2.1.0":
   "integrity" "sha512-X+kYdGP1WumAX2exool+1lwjLSZ1dDCaCzwF0KvDWHjPfCD4hxtHvok4oyZEZro2lioaR+lCtyVG8ti2Yvpnsg=="
   "resolved" "https://registry.npmjs.org/react-slugify/-/react-slugify-2.1.0.tgz"
   "version" "2.1.0"
 
-"react@*", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^17.0.2 || ^18", "react@^17.0.2 || ^18.0.0-0", "react@^18.0.0", "react@^18.2.0", "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.8.0", "react@18.2.0":
+"react@*", "react@^16.11.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.0 || 17.x || ^18", "react@^17.0.2 || ^18", "react@^17.0.2 || ^18.0.0-0", "react@^18.0.0", "react@^18.2.0", "react@>= 16.3.0", "react@>= 16.8.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.8.0", "react@18.2.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"

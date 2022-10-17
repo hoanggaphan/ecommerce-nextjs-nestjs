@@ -2,8 +2,8 @@ import { Badge, Button, Navbar, Spacer } from '@nextui-org/react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-// import Link from 'next/link';
 import { FaShoppingCart } from 'react-icons/fa';
+import ScrollToTop from 'react-scroll-to-top';
 import { useCategory } from '../../libs/swr/useCategory';
 import Footer from './Footer';
 import Logo from './Logo';
@@ -62,6 +62,7 @@ const UserLayout: NextPage<Props> = ({ children }) => {
 
       <Spacer y={6} />
       <Footer />
+      <ScrollToTop smooth color='#6f00ff' />
     </>
   );
 };

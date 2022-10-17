@@ -18,6 +18,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.37.0",
     "react-icons": "^4.4.0",
+    "react-scroll-to-top": "^3.0.0",
     "react-slugify": "^2.1.0",
     "styled-components": "^5.3.6",
     "sweetalert2": "^11.4.37",
