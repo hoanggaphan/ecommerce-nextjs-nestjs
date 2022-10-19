@@ -17,6 +17,15 @@ export class Order {
   id: number;
 
   @Column({ nullable: false })
+  fullName: string;
+
+  @Column({ nullable: false })
+  phone: number;
+
+  @Column({ nullable: false })
+  address: string;
+
+  @Column({ nullable: false })
   orderDate: Date;
 
   @Column({ nullable: false })

@@ -51,7 +51,9 @@ export class Product {
   category: Category;
 
   @ManyToMany(() => AttributeValue)
-  @JoinTable()
+  @JoinTable({
+    name: 'product_attribute_value',
+  })
   attributeValues: AttributeValue[];
 
   @OneToMany(() => Image, (image) => image.product)
