@@ -108,7 +108,7 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
       <Grid.Container gap={2}>
         {data?.map((i) => (
           <Grid key={i.id} xs={3}>
-            <Link href={`/${i.id}`}>
+            <Link href={`/${i.slug}`}>
               <a style={{ width: '100%' }}>
                 <Card variant='bordered' isHoverable css={{ mw: '315px' }}>
                   <Card.Header>

@@ -26,10 +26,19 @@ import 'swiper/css/thumbs';
 
 export default function Product() {
   const router = useRouter();
-  const { id } = router.query;
-  const { data: product } = useProduct({ id });
+  const { slug } = router.query;
+  const { data: product, error, isValidating, mutate } = useProduct({ slug });
   const [amount, setAmount] = useState(1);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+
+  // If Product not found, redirect user
+  if (
+    error &&
+    (error.response.status === 400 || error.response.status === 404)
+  ) {
+    mutate(() => undefined, { revalidate: false });
+    router.push('/');
+  }
 
   return (
     <>

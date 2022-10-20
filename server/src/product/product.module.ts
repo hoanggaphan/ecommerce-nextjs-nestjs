@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AttributeModule } from '../attribute/attribute.module';
 import { CategoryModule } from './../category/category.module';
 import { Image } from './../image/entities/image.entity';
-import { AttributeModule } from '../attribute/attribute.module';
 import { Product } from './entities/product.entity';
-import { ProductController } from './product.controller';
+import {
+  ProductAdminController,
+  ProductController,
+} from './product.controller';
 import { ProductService } from './product.service';
 
 @Module({
@@ -13,7 +16,7 @@ import { ProductService } from './product.service';
     AttributeModule,
     CategoryModule,
   ],
-  controllers: [ProductController],
+  controllers: [ProductController, ProductAdminController],
   providers: [ProductService],
   exports: [ProductService],
 })

@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Roles } from 'src/decorator/role.decorator';
+import { Roles } from '../decorator/role.decorator';
 import { AccessTokenGuard } from './../auth/access-token.guard';
 import { Role } from './../enums/role.enum';
 import { RolesGuard } from './../guards/roles.guard';

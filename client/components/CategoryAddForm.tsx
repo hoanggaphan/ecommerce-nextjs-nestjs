@@ -9,15 +9,18 @@ import {
   Textarea,
   useInput,
 } from '@nextui-org/react';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
-import api from '../libs/api';
+import { server } from '../libs/constants';
 import { useAdminCategory } from '../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../libs/validate';
 
 export default function CategoryAddForm() {
-  const { mutate } = useAdminCategory();
+  const { data: session } = useSession();
+  const { mutate } = useAdminCategory(session?.accessToken);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
 
@@ -46,7 +49,11 @@ export default function CategoryAddForm() {
         description: desValue,
         isActive: checkbox,
       };
-      const res = await api.post('http://localhost:4000/category', newItem);
+      const res = await axios.post(`${server}/admin/category`, newItem, {
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+      });
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',

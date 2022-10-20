@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { Roles } from 'src/decorator/role.decorator';
+import { Roles } from '../decorator/role.decorator';
 import { AccessTokenGuard } from './../auth/access-token.guard';
 import { Role } from './../enums/role.enum';
 import { RolesGuard } from './../guards/roles.guard';
@@ -25,22 +25,7 @@ import { ProductService } from './product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Roles(Role.Admin)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @Get('admin')
-  async findAllForAdmin(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-  ): Promise<Pagination<Product>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.productService.findAllForAdmin({
-      page,
-      limit,
-      route: 'http://localhost:4000/product/admin',
-    });
-  }
-
-  @Get('')
+  @Get()
   async findAllForUser(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
@@ -49,7 +34,7 @@ export class ProductController {
     return this.productService.findAllForUser({
       page,
       limit,
-      route: 'http://localhost:4000/product',
+      route: `${process.env.SERVER}/product`,
     });
   }
 
@@ -62,7 +47,7 @@ export class ProductController {
     return this.productService.findNew({
       page,
       limit,
-      route: 'http://localhost:4000/product/new',
+      route: `${process.env.SERVER}/product/new`,
     });
   }
 
@@ -75,7 +60,32 @@ export class ProductController {
     return this.productService.findPopular({
       page,
       limit,
-      route: 'http://localhost:4000/product/popular',
+      route: `${process.env.SERVER}/product/popular`,
+    });
+  }
+
+  @Get(':slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.productService.findBySlugForUser(slug);
+  }
+}
+
+@Controller('admin/product')
+@Roles(Role.Admin)
+@UseGuards(AccessTokenGuard, RolesGuard)
+export class ProductAdminController {
+  constructor(private readonly productService: ProductService) {}
+
+  @Get()
+  async findAllForAdmin(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<Product>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.productService.findAllForAdmin({
+      page,
+      limit,
+      route: `${process.env.SERVER}/admin/product`,
     });
   }
 
@@ -86,7 +96,7 @@ export class ProductController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.findOne(id);
+    return this.productService.findById(id);
   }
 
   @Patch(':id')

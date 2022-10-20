@@ -2,14 +2,13 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
-const YOUR_API_URL = 'http://localhost:4000/';
+import { server } from '../../../libs/constants';
 
 async function refreshAccessToken(tokenObject: any) {
   try {
     // Get a new set of tokens with a refreshToken
     const tokenResponse = await axios.post(
-      YOUR_API_URL + 'auth/refreshToken',
+      server + '/auth/refreshToken',
       {},
       {
         headers: {
@@ -40,7 +39,7 @@ const providers = [
     authorize: async (credentials) => {
       try {
         // Authenticate user with credentials
-        const user = await axios.post(YOUR_API_URL + 'auth/login', {
+        const user = await axios.post(server + '/auth/login', {
           username: credentials?.username,
           password: credentials?.password,
         });
@@ -75,7 +74,7 @@ const callbacks = {
     // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
     // before 1 hours
     const shouldRefreshTime = Math.round(
-      (token.accessTokenExpiry - 60 * 60) - (Date.now() / 1000) // seconds
+      token.accessTokenExpiry - 60 * 60 - Date.now() / 1000 // seconds
     );
 
     // If the token is still valid, just return it.

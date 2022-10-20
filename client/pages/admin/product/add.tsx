@@ -11,6 +11,8 @@ import {
   Textarea,
   Tooltip,
 } from '@nextui-org/react';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useEffect } from 'react';
 import {
@@ -25,7 +27,7 @@ import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import api from '../../../libs/api';
+import { server } from '../../../libs/constants';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { useAttribute } from '../../../libs/swr/useAttribute';
 import { IconButton } from '../category';
@@ -65,8 +67,9 @@ export type FormValues = {
 };
 
 export default function Add() {
+  const { data: session } = useSession();
+  let { data: category } = useAdminCategory(session?.accessToken);
   let { data: attributes } = useAttribute();
-  let { data: category } = useAdminCategory();
 
   const {
     control,
@@ -107,7 +110,11 @@ export default function Add() {
     (result as any).attributeValues = newAttributeValues;
 
     try {
-      const res = await api.post('http://localhost:4000/product', result);
+      const res = await axios.post(`${server}/admin/product`, result, {
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+      });
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',

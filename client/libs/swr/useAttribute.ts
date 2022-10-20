@@ -1,12 +1,13 @@
+import axios from 'axios';
 import useSWR from 'swr';
 import { AttributeType } from '../../types/index';
-import api from '../api';
+import { server } from '../constants';
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data);
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export function useAttribute() {
   const { data, error, mutate } = useSWR<AttributeType[]>(
-    'http://localhost:4000/attribute',
+    `${server}/attribute`,
     fetcher
   );
 

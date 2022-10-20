@@ -1,12 +1,18 @@
+import axios from 'axios';
 import useSWR from 'swr';
 import { CategoryType } from '../../types';
-import api from '../api';
+import { server } from '../constants';
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data);
+const fetcher = (url: string, token: string) =>
+  axios
+    .get(url, {
+      headers: { Authorization: 'Bearer ' + token },
+    })
+    .then((res) => res.data);
 
-export function useAdminCategory() {
+export function useAdminCategory(token?: string) {
   const { data, error, mutate } = useSWR<CategoryType[]>(
-    'http://localhost:4000/category/admin',
+    token ? [`${server}/admin/category`, token] : null,
     fetcher
   );
 

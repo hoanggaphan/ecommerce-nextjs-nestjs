@@ -1,12 +1,13 @@
+import axios from 'axios';
 import useSWR from 'swr';
 import { ProductType } from '../../types/index';
-import api from '../api';
+import { server } from '../constants';
 
-const fetcher = (url: string) => api.get(url).then((res) => res.data);
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-export function useProduct({ id }: { id: string | string[] | undefined }) {
-  const { data, error, mutate } = useSWR<ProductType>(
-    id ? `http://localhost:4000/product/${id}` : null,
+export function useProduct({ slug }: { slug: string | string[] | undefined }) {
+  const { data, error, isValidating, mutate } = useSWR<ProductType>(
+    slug ? `${server}/product/${slug}` : null,
     fetcher
   );
 
@@ -14,6 +15,7 @@ export function useProduct({ id }: { id: string | string[] | undefined }) {
     data,
     error,
     mutate,
+    isValidating,
   };
 }
 export type categoryState = ReturnType<typeof useProduct>;

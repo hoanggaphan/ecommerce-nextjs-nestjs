@@ -5,10 +5,11 @@ import {
   Row,
   styled,
   Table,
-  Tooltip
+  Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
@@ -18,6 +19,7 @@ import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
+import { server } from '../../../libs/constants';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
@@ -51,7 +53,8 @@ const columns = [
 ];
 
 const IndexPage: NextPage = () => {
-  const { data, error, mutate } = useAdminCategory();
+  const { data: session } = useSession();
+  const { data, error, mutate } = useAdminCategory(session?.accessToken);
 
   const categories = data || [];
 
@@ -93,8 +96,13 @@ const IndexPage: NextPage = () => {
         };
         try {
           const res = await axios.patch(
-            `http://localhost:4000/category/${category.id}`,
-            data
+            `${server}/admin/category/${category.id}`,
+            data,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            }
           );
           return res;
         } catch (error: any) {
@@ -122,9 +130,11 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
-          const res = await axios.delete(
-            `http://localhost:4000/category/${id}`
-          );
+          const res = await axios.delete(`${server}/admin/category/${id}`, {
+            headers: {
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+          });
           return res;
         } catch (error: any) {
           Swal.showValidationMessage(`Xóa thất bại`);

@@ -46,9 +46,9 @@ export class CategoryService {
     });
   }
 
-  async findAllProductsBySLug(slug: string) {
+  async findAllProductsBySLugForUser(slug: string) {
     const exist = await this.categoriesRepository.findOne({
-      where: { slug },
+      where: { slug, isActive: true },
       relations: {
         products: {
           images: true,

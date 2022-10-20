@@ -7,8 +7,9 @@ import {
   Pagination,
   Row,
   styled,
-  Text,
+  Text
 } from '@nextui-org/react';
+import axios from 'axios';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
@@ -17,8 +18,8 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
+import { server } from '../../../libs/constants';
 import { useAdminProducts } from '../../../libs/swr/useAdminProducts';
-import api from './../../../libs/api';
 
 export const IconButton = styled('button', {
   dflex: 'center',
@@ -56,7 +57,11 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
-          const res = await api.delete(`http://localhost:4000/product/${id}`);
+          const res = await axios.delete(`${server}/admin/product/${id}`, {
+            headers: {
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+          });
           return res;
         } catch (error: any) {
           Swal.showValidationMessage(`Xóa thất bại`);

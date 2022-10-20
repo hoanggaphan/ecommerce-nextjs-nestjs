@@ -7,7 +7,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { Roles } from '../decorator/role.decorator';
+import { AccessTokenGuard } from './../auth/access-token.guard';
+import { Role } from './../enums/role.enum';
+import { RolesGuard } from './../guards/roles.guard';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -16,16 +21,6 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
-  }
-
-  @Get('admin')
-  findAllForAdmin() {
-    return this.categoryService.findAllForAdmin();
-  }
-
   @Get()
   findAllForUser() {
     return this.categoryService.findAllForUser();
@@ -33,7 +28,24 @@ export class CategoryController {
 
   @Get(':slug/products')
   findAllProductsBySLug(@Param('slug') slug: string) {
-    return this.categoryService.findAllProductsBySLug(slug);
+    return this.categoryService.findAllProductsBySLugForUser(slug);
+  }
+}
+
+@Controller('admin/category')
+@Roles(Role.Admin)
+@UseGuards(AccessTokenGuard, RolesGuard)
+export class CategoryAdminController {
+  constructor(private readonly categoryService: CategoryService) {}
+
+  @Post()
+  create(@Body() createCategoryDto: CreateCategoryDto) {
+    return this.categoryService.create(createCategoryDto);
+  }
+
+  @Get()
+  findAllForAdmin() {
+    return this.categoryService.findAllForAdmin();
   }
 
   @Get(':id')

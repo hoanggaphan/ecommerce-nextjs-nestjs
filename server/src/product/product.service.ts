@@ -121,9 +121,27 @@ export class ProductService {
     });
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findById(id: number): Promise<Product> {
     const exist = await this.productsRepository.findOne({
       where: { id },
+      relations: {
+        category: true,
+        images: true,
+        attributeValues: {
+          attribute: true,
+        },
+      },
+    });
+    if (!exist) {
+      throw new NotFoundException('Product not found.');
+    }
+
+    return exist;
+  }
+
+  async findBySlugForUser(slug: string): Promise<Product> {
+    const exist = await this.productsRepository.findOne({
+      where: { slug, isActive: true },
       relations: {
         category: true,
         images: true,

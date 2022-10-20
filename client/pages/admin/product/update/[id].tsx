@@ -9,8 +9,10 @@ import {
   Row,
   Spacer,
   Textarea,
-  Tooltip
+  Tooltip,
 } from '@nextui-org/react';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -18,7 +20,7 @@ import {
   Controller,
   SubmitHandler,
   useFieldArray,
-  useForm
+  useForm,
 } from 'react-hook-form';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { GrAddCircle } from 'react-icons/gr';
@@ -27,10 +29,10 @@ import Swal from 'sweetalert2';
 import { IconButton } from '..';
 import AdminLayout from '../../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../../components/SecureAdminPages';
-import api from '../../../../libs/api';
+import { server } from '../../../../libs/constants';
 import { useAdminCategory } from '../../../../libs/swr/useAdminCategory';
+import { useAdminProduct } from '../../../../libs/swr/useAdminProduct';
 import { useAttribute } from '../../../../libs/swr/useAttribute';
-import { useProduct } from '../../../../libs/swr/useProduct';
 
 export type Attribute = {
   id: number;
@@ -63,9 +65,10 @@ export type FormValues = {
 export default function Update() {
   const router = useRouter();
   const { id } = router.query;
-  let { data: product, mutate } = useProduct({ id });
+  const { data: session } = useSession();
+  let { data: product, mutate } = useAdminProduct(id, session?.accessToken);
   let { data: attributes } = useAttribute();
-  let { data: category } = useAdminCategory();
+  let { data: category } = useAdminCategory(session?.accessToken);
 
   const {
     control,
@@ -127,10 +130,11 @@ export default function Update() {
     (result as any).attributeValues = newAttributeValues;
 
     try {
-      const res = await api.patch(
-        `http://localhost:4000/product/${id}`,
-        result
-      );
+      const res = await axios.patch(`${server}/admin/product/${id}`, result, {
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
+      });
       Swal.fire({
         title: 'Cập nhật thành công!',
         icon: 'success',
