@@ -38,6 +38,11 @@ export class ProductController {
     });
   }
 
+  @Post('cart-items')
+  async findAllByIds(@Body() ids: number[]) {
+    return this.productService.findByIds(ids);
+  }
+
   @Get('new')
   async findNew(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,

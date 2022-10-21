@@ -46,7 +46,7 @@ const IndexPage: NextPage = () => {
     `?limit=12&page=${pageIndex}`,
     session?.accessToken
   );
-  console.log(data);
+
   const handleDelete = async (id: number) => {
     Swal.fire({
       title: 'Bạn có chắc?',

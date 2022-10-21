@@ -68,3 +68,9 @@ export type ProductPaginateType = {
     last: string;
   };
 };
+
+export type CartItemType = {
+  userId?: number;
+  productId: number;
+  quantity: number;
+};

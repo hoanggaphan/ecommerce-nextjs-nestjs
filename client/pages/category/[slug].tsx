@@ -27,7 +27,7 @@ export default function Slug() {
     slug ? `${server}/category/${slug}/products` : null,
     fetcher
   );
-  console.log(error);
+
   if (
     error &&
     (error.response.status === 400 || error.response.status === 404)

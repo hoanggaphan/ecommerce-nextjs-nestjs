@@ -18,11 +18,14 @@ import { useProduct } from '../libs/swr/useProduct';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
+import Swal from 'sweetalert2';
 import { FreeMode, Thumbs } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
+import { addItemToCart, selectCart } from '../libs/redux/reducers/cartReducer';
+import { useAppDispatch, useAppSelector } from '../libs/redux/store';
 
 export default function Product() {
   const router = useRouter();
@@ -30,6 +33,8 @@ export default function Product() {
   const { data: product, error, isValidating, mutate } = useProduct({ slug });
   const [amount, setAmount] = useState(1);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector(selectCart);
 
   // If Product not found, redirect user
   if (
@@ -39,6 +44,40 @@ export default function Product() {
     mutate(() => undefined, { revalidate: false });
     router.push('/');
   }
+
+  const handleCartAddItem = () => {
+    if (!product) return;
+
+    // If the current product is not in the cart
+    const currentProduct = cart.find((i) => i.productId === product.id);
+    if (!currentProduct) {
+      const newItem = {
+        productId: product.id,
+        quantity: amount,
+      };
+
+      dispatch(addItemToCart(newItem));
+      return;
+    }
+
+    // If product is in the cart
+    // amount > 3, throw error
+    if (currentProduct.quantity + amount > 3) {
+      Swal.fire({
+        title: 'Không thêm được vào giỏ hàng!',
+        text: 'Số lượng sản phẩm này trong giỏ quá lớn',
+        icon: 'error',
+      });
+      return;
+    }
+
+    const newItem = {
+      productId: product.id,
+      quantity: amount,
+    };
+
+    dispatch(addItemToCart(newItem));
+  };
 
   return (
     <>
@@ -136,7 +175,12 @@ export default function Product() {
                     />
                   </div>
                   <Spacer x={2} />
-                  <Button shadow color='secondary' auto>
+                  <Button
+                    onPress={handleCartAddItem}
+                    shadow
+                    color='secondary'
+                    auto
+                  >
                     Thêm vào giỏ
                   </Button>
                 </Row>

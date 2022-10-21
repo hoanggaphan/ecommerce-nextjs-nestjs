@@ -10,7 +10,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Image } from './../image/entities/image.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -119,6 +119,24 @@ export class ProductService {
         },
       },
     });
+  }
+
+  async findByIds(ids: number[]): Promise<Product[]> {
+    const exist = await this.productsRepository.find({
+      where: { id: In(ids), isActive: true },
+      relations: {
+        category: true,
+        images: true,
+        attributeValues: {
+          attribute: true,
+        },
+      },
+    });
+    if (!exist) {
+      throw new NotFoundException('Product not found.');
+    }
+
+    return exist;
   }
 
   async findById(id: number): Promise<Product> {
