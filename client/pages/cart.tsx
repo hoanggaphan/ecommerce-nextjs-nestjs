@@ -297,6 +297,7 @@ export default function Cart() {
 
         .details {
           padding: 20px;
+          padding-top: 0;
         }
 
         .priceDetail {
