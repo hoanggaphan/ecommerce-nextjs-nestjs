@@ -69,6 +69,10 @@ const callbacks = {
       token.accessTokenExpiry = (jwt_decode(user.accessToken) as any).exp;
       token.refreshToken = user.refreshToken;
       token.roles = user.roles;
+      token.fullName = user.fullName;
+      token.phone = user.phone;
+      token.address = user.address;
+      token.username = user.username;
     }
 
     // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
@@ -88,6 +92,10 @@ const callbacks = {
   },
   session: async ({ session, token }: any) => {
     // Here we pass accessToken to the client to be used in authentication with your API
+    session.fullName = token.fullName;
+    session.phone = token.phone;
+    session.address = token.address;
+    session.username = token.username;
     session.accessToken = token.accessToken;
     session.accessTokenExpiry = token.accessTokenExpiry;
     session.refreshToken = token.refreshToken;

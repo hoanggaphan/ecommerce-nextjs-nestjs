@@ -7,40 +7,39 @@ import {
   Spacer,
   Text,
 } from '@nextui-org/react';
+import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession } from 'next-auth';
-import { getSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
+import { server } from '../../libs/constants';
 import { options } from '../api/auth/[...nextauth]';
 
-export default function Login() {
-  const [error, setError] = useState<string | null>();
+export default function Register() {
   const router = useRouter();
+  const [error, setError] = useState<string[] | string>([]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = async (data: any) => {
-    const res = await signIn('credentials', {
-      username: data.username,
-      password: data.password,
-      redirect: false,
-    });
 
-    if (res?.error) {
-      setError(res?.error);
-    } else {
-      const session = await getSession();
-      if (session && session.roles.includes('admin')) {
-        router.push('/admin/dashboard');
-      } else if (session && session.roles.includes('user')) {
-        router.push('/');
-      }
+  const onSubmit = async (data: any) => {
+    setError([]);
+    try {
+      const res = await axios.post(`${server}/user`, data);
+      Swal.fire({
+        title: 'Tạo thành công!',
+        icon: 'success',
+      }).then(() => {
+        router.push('/auth/login');
+      });
+    } catch (err: any) {
+      setError(err.response.data.message);
     }
   };
 
@@ -52,15 +51,23 @@ export default function Login() {
           autoSave='off'
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Card css={{ minWidth: '300px' }}>
-            {error && (
-              <Card.Header>
-                <Text color='error'>Lỗi xác thực</Text>
-              </Card.Header>
-            )}
+          <Card css={{ width: '300px' }}>
+            <Card.Header style={{ flexDirection: 'column' }}>
+              {Array.isArray(error) ? (
+                error.map((i, index) => (
+                  <Text key={index} color='error' css={{ fontSize: 14 }}>
+                    {i}
+                  </Text>
+                ))
+              ) : (
+                <Text color='error' css={{ fontSize: 14 }}>
+                  {error}
+                </Text>
+              )}
+            </Card.Header>
             <Card.Header css={{ justifyContent: 'center' }}>
               <Text b color='secondary'>
-                Đăng nhập
+                Đăng ký
               </Text>
             </Card.Header>
             <Card.Divider />
@@ -83,27 +90,24 @@ export default function Login() {
                 autoSave='off'
               />
             </Card.Body>
+            <Card.Divider />
             <Card.Footer css={{ flexDirection: 'column' }}>
               <Row justify='center'>
                 <Button type='submit' size='sm' color='secondary'>
-                  Đăng nhập
+                  Đăng ký
                 </Button>
               </Row>
               <Row css={{ mt: 10 }}>
-                <Text>
-                  Chưa có tài khoản?
-                  <Link href='/auth/register'>
-                    <a
-                      style={{
-                        textDecoration: 'underline',
-                        color: '#7828C8',
-                      }}
-                    >
-                      {' '}
-                      Đăng ký
-                    </a>
-                  </Link>
-                </Text>
+                <Link href='/auth/login'>
+                  <a
+                    style={{
+                      textDecoration: 'underline',
+                      color: '#7828C8',
+                    }}
+                  >
+                    Đăng nhập
+                  </a>
+                </Link>
               </Row>
             </Card.Footer>
           </Card>
