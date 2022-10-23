@@ -1,5 +1,6 @@
-import { Button, Image, Row, Spacer, Text } from '@nextui-org/react';
+import { Button, Container, Image, Row, Spacer, Text } from '@nextui-org/react';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo } from 'react';
@@ -34,6 +35,7 @@ export default function Cart() {
     ids.length ? [`${server}/product/cart-items`, ids] : null,
     fetcher
   );
+  const { data: session } = useSession();
 
   // Track the product is still visible or not
   // If not -> update cart
@@ -88,6 +90,17 @@ export default function Cart() {
     });
   };
 
+  const handlePay = () => {
+    if (!session) {
+      router.push({
+        pathname: '/auth/login',
+        query: { name: '/checkout' },
+      });
+    } else {
+      router.push('/checkout');
+    }
+  };
+
   return (
     <>
       <Head>
@@ -96,7 +109,7 @@ export default function Cart() {
       </Head>
 
       <UserLayout>
-        <div className='wrapper'>
+        <Container md>
           <Text
             h2
             size={50}
@@ -230,7 +243,7 @@ export default function Cart() {
                   paddingTop: 25,
                 }}
               >
-                <Button size='lg' color='secondary'>
+                <Button onPress={handlePay} size='lg' color='secondary'>
                   THANH TOÁN NGAY
                 </Button>
                 <Button
@@ -244,7 +257,7 @@ export default function Cart() {
               </Row>
             </div>
           </div>
-        </div>
+        </Container>
       </UserLayout>
       <style jsx>{`
         .amount {

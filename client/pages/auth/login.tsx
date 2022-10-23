@@ -37,9 +37,11 @@ export default function Login() {
     } else {
       const session = await getSession();
       if (session && session.roles.includes('admin')) {
-        router.push('/admin/dashboard');
+        const name = (router.query.name as string) || '/admin/dashboard';
+        router.replace(name);
       } else if (session && session.roles.includes('user')) {
-        router.push('/');
+        const name = (router.query.name as string) || '/';
+        router.replace(name);
       }
     }
   };
