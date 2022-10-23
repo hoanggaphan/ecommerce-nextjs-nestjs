@@ -1,10 +1,20 @@
-import { Button, Container, Image, Row, Spacer, Text } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+  Table,
+  Text,
+  Tooltip,
+  User,
+} from '@nextui-org/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo } from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { MdAdd, MdRemove } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
@@ -19,11 +29,34 @@ import {
   updateCart,
 } from '../libs/redux/reducers/cartReducer';
 import { useAppDispatch, useAppSelector } from '../libs/redux/store';
-import { ProductType } from '../types';
+import { CartItemType, ProductType } from '../types';
+import { IconButton } from './admin/category';
+
+type CustomCartItemType = ProductType & {
+  amountInCart: number;
+};
 
 const fetcher = (url: string, ids: number[]) => {
   return axios.post(url, ids).then((res) => res.data);
 };
+
+const columns = [
+  { name: 'Sản phẩm', uid: 'product' },
+  { name: 'Đơn giá', uid: 'price' },
+  { name: 'Số lượng', uid: 'amount' },
+  { name: 'Tổng', uid: 'total' },
+  { name: 'hành động', uid: 'actions' },
+];
+
+const findAmount = (productId: number, cart: CartItemType[]) => {
+  const amount = cart.find((c) => c.productId === productId)?.quantity;
+  return amount || 0;
+};
+
+const totalPrice = (cart: CustomCartItemType[]) =>
+  cart?.reduce((prev: number, curr: CustomCartItemType) => {
+    return prev + curr.amountInCart * curr.price;
+  }, 0);
 
 export default function Cart() {
   const router = useRouter();
@@ -37,6 +70,15 @@ export default function Cart() {
   );
   const { data: session } = useSession();
 
+  const cartItems: CustomCartItemType[] = useMemo(() => {
+    const items = data?.map((d) => {
+      const amountInCart = findAmount(d.id, cart);
+      return { amountInCart, ...d };
+    });
+
+    return items || [];
+  }, [data, cart]);
+
   // Track the product is still visible or not
   // If not -> update cart
   useEffect(() => {
@@ -46,31 +88,14 @@ export default function Cart() {
     }
   }, [data]);
 
-  const findAmountMemorized = useMemo(
-    () => (productId: number) => {
-      const amount = cart.find((c) => c.productId === productId)?.quantity;
-      return amount || 0;
-    },
-    [cart]
-  );
-
-  const totalPriceMemorized = useMemo(
-    () =>
-      data?.reduce((prev: number, curr: ProductType) => {
-        const amount = findAmountMemorized(curr.id);
-        return prev + amount * curr.price;
-      }, 0),
-    [cart, data]
-  );
-
   const handleIncreaseAmount = (productId: number) => {
-    const amount = findAmountMemorized(productId);
+    const amount = findAmount(productId, cart);
     if (amount >= 3) return;
     dispatch(increaseAmount({ productId }));
   };
 
   const handleDecreaseAmount = (productId: number) => {
-    const amount = findAmountMemorized(productId);
+    const amount = findAmount(productId, cart);
     if (amount <= 1) return;
     dispatch(decreaseAmount({ productId }));
   };
@@ -101,6 +126,116 @@ export default function Cart() {
     }
   };
 
+  const renderCell = (product: CustomCartItemType, columnKey: React.Key) => {
+    switch (columnKey) {
+      case 'product':
+        return (
+          <User
+            squared
+            src={product.images.length > 0 ? product.images[0].url : ''}
+            name={product.name}
+            css={{ p: 0 }}
+          >
+            {product.attributeValues.length > 0 && (
+              <>
+                <Row>
+                  {product.attributeValues.map((i, index) => (
+                    <Text
+                      key={i.id + i.value}
+                      b
+                      size={13}
+                      css={{ tt: 'capitalize', color: '$accents7' }}
+                    >
+                      {(index ? ', ' : '') + i.value}
+                    </Text>
+                  ))}
+                </Row>
+              </>
+            )}
+          </User>
+        );
+
+      case 'price':
+        return (
+          <Text b size={13} css={{ tt: 'capitalize', color: '$accents7' }}>
+            {product.price.toLocaleString('vi-VN')}
+          </Text>
+        );
+
+      case 'amount':
+        return (
+          <Row align='center'>
+            <div
+              onClick={() => handleDecreaseAmount(product.id)}
+              style={{
+                width: 27,
+                height: 27,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: '1px solid #f5f5f5',
+                color: '#666',
+              }}
+            >
+              <MdRemove fill='currentColor' size={20} />
+            </div>
+            <div
+              style={{
+                width: 38,
+                height: 27,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTop: '1px solid #f5f5f5',
+                borderBottom: '1px solid #f5f5f5',
+                color: '#666',
+              }}
+            >
+              {product.amountInCart}
+            </div>
+            <div
+              onClick={() => handleIncreaseAmount(product.id)}
+              style={{
+                width: 27,
+                height: 27,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                border: '1px solid #f5f5f5',
+                color: '#666',
+              }}
+            >
+              <MdAdd fill='currentColor' size={20} />
+            </div>
+          </Row>
+        );
+
+      case 'total':
+        return (
+          <Text b size={14} color='secondary'>
+            {(product.price * product.amountInCart).toLocaleString('vi-VN')} đ
+          </Text>
+        );
+
+      default:
+        return (
+          <Row justify='center' align='center'>
+            <Col css={{ d: 'flex' }}>
+              <Tooltip
+                content='Xóa'
+                color='error'
+                onClick={() => handleCartRemoveItem(product.id)}
+              >
+                <IconButton>
+                  <AiOutlineDelete size={20} fill='#FF0080' />
+                </IconButton>
+              </Tooltip>
+            </Col>
+          </Row>
+        );
+    }
+  };
+
   return (
     <>
       <Head>
@@ -126,243 +261,89 @@ export default function Cart() {
               TỔNG SỐ LƯỢNG | {totalAmount} SẢN PHẨM
             </Text>
           </Row>
+
           <div className='bottom'>
             <div className='info'>
-              {data?.map((item) => (
-                <div key={item.id}>
-                  <div className='product'>
-                    <div className='productDetail'>
-                      <Image
-                        onClick={() => router.push(`/${item.slug}`)}
-                        src={item.images[0].url}
-                        width={200}
-                        height={200}
-                        objectFit='cover'
-                        css={{ cursor: 'pointer' }}
-                      />
-                      <div className='details'>
-                        <Text>
-                          <b>Sản phẩm:</b> {item.name}
-                        </Text>
-                        <Spacer y={1} />
-                        <Text>
-                          <b>ID:</b> {item.id}
-                        </Text>
-                        {item.attributeValues.length > 0 && (
-                          <>
-                            <Spacer y={1} />
-                            <Row css={{ columnGap: 20 }}>
-                              {item.attributeValues.map((i) => (
-                                <Text key={i.id + i.value}>
-                                  <b>{i.attribute.name}:</b> {i.value}
-                                </Text>
-                              ))}
-                            </Row>
-                          </>
-                        )}
-
-                        <Spacer y={1} />
-                        <Text>
-                          <Text b>Đơn giá: </Text>
-                          <Text as='span'>
-                            {item.price.toLocaleString('vi-VN')} đ
-                          </Text>
-                        </Text>
-                        <Spacer y={1} />
-                        <Text>
-                          <Text b>Tổng: </Text>
-                          <Text b color='secondary'>
-                            {(
-                              item.price * findAmountMemorized(item.id)
-                            ).toLocaleString('vi-VN')}{' '}
-                            đ
-                          </Text>
-                        </Text>
-                      </div>
-                    </div>
-                    <div className='productDetail'>
-                      <div className='productAmountContainer '>
-                        <Button
-                          onPress={() => handleDecreaseAmount(item.id)}
-                          color='secondary'
-                          auto
-                          flat
-                          icon={<MdRemove fill='currentColor' size={24} />}
-                        />
-                        <div className='amount'>
-                          {findAmountMemorized(item.id)}
-                        </div>
-                        <Button
-                          onPress={() => handleIncreaseAmount(item.id)}
-                          color='secondary'
-                          auto
-                          flat
-                          icon={<MdAdd fill='currentColor' size={24} />}
-                        />
-                      </div>
-                    </div>
-
-                    <div className='close'>
-                      <AiOutlineClose
-                        size={20}
-                        onClick={() => handleCartRemoveItem(item.id)}
-                      />
-                    </div>
-                  </div>
-                  <hr className='hr' />
-                </div>
-              ))}
+              <Table
+                aria-label='Products cart table'
+                css={{
+                  height: 'auto',
+                  minWidth: '100%',
+                }}
+                selectionMode='none'
+              >
+                <Table.Header columns={columns}>
+                  {(column) => (
+                    <Table.Column
+                      key={column.uid}
+                      hideHeader={column.uid === 'actions'}
+                      align={column.uid === 'actions' ? 'center' : 'start'}
+                    >
+                      {column.name}
+                    </Table.Column>
+                  )}
+                </Table.Header>
+                <Table.Body items={cartItems}>
+                  {(item: CustomCartItemType) => (
+                    <Table.Row>
+                      {(columnKey) => (
+                        <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>
+                      )}
+                    </Table.Row>
+                  )}
+                </Table.Body>
+              </Table>
             </div>
             <div className='summary'>
-              <Text
-                h2
-                color='secondary'
-                weight='normal'
-                css={{ textAlign: 'center' }}
-              >
-                TỔNG ĐƠN HÀNG
-              </Text>
-              <div className='summaryItem'>
-                <Text>Phí vận chuyển</Text>
-                <Text b color='secondary'>
-                  {0} đ
-                </Text>
-              </div>
-              <div className='summaryItem'>
-                <Text>Tổng cộng</Text>
-                <Text b color='secondary'>
-                  {totalPriceMemorized?.toLocaleString('vi-VN')} đ
-                </Text>
-              </div>
-              <Row
-                css={{
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: 5,
-                  paddingTop: 25,
-                }}
-              >
-                <Button onPress={handlePay} size='lg' color='secondary'>
-                  THANH TOÁN NGAY
-                </Button>
-                <Button
-                  onPress={() => router.push('/')}
-                  size='lg'
-                  bordered
-                  color='secondary'
-                >
-                  TIẾP TỤC MUA SẮM
-                </Button>
-              </Row>
+              <Card>
+                <Card.Body>
+                  <Row justify='space-between'>
+                    <Text size={20} b css={{ color: '$accents9' }}>
+                      Tổng:
+                    </Text>
+                    <Text size={20} b color='secondary'>
+                      {totalPrice(cartItems)?.toLocaleString('vi-VN')} đ
+                    </Text>
+                  </Row>
+                  <Row
+                    css={{
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 5,
+                      paddingTop: 25,
+                      borderTop: '1px solid rbga(0,0,0,.2)',
+                    }}
+                  >
+                    <Button
+                      onPress={handlePay}
+                      shadow
+                      size='lg'
+                      color='secondary'
+                    >
+                      THANH TOÁN NGAY
+                    </Button>
+                  </Row>
+                </Card.Body>
+              </Card>
             </div>
           </div>
         </Container>
       </UserLayout>
       <style jsx>{`
-        .amount {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          border: 1px solid #7828c8;
-          color: #7828c8;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0px 5px;
-        }
-
-        .wrapper {
-          padding: 20px;
-        }
-
-        .topText {
-          font-weight: bold;
-          font-size: 20px;
-          margin: 0px 10px;
-        }
-
         .bottom {
           display: flex;
           column-gap: 30px;
           justify-content: space-between;
+          align-items: flex-start;
         }
 
         .info {
           flex: 3;
         }
 
-        .product {
-          display: flex;
-          justify-content: space-between;
-          position: relative;
-          padding-top: 10px;
-          padding-bottom: 10px;
-        }
-
-        .productDetail {
-          display: flex;
-        }
-
-        .image {
-          width: 200px;
-        }
-
-        .details {
-          padding: 20px;
-          padding-top: 0;
-        }
-
-        .priceDetail {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .productAmountContainer {
-          display: flex;
-          align-items: center;
-        }
-
-        .productAmount {
-          font-size: 24px;
-          margin: 5px;
-        }
-
-        .productPrice {
-          font-size: 30px;
-          font-weight: 200;
-        }
-
-        .hr {
-          background-color: #eee;
-          border: none;
-          height: 1px;
-        }
-
         .summary {
           flex: 1;
-          border: 0.5px solid lightgray;
-          border-radius: 10px;
-          padding: 20px;
-          max-height: 400px;
-        }
-
-        .summaryTitle {
-          font-weight: 200;
-        }
-
-        .summaryItem {
-          margin: 30px 0px;
-          display: flex;
-          justify-content: space-between;
-        }
-
-        .close {
-          position: absolute;
-          right: 0;
         }
       `}</style>
     </>
