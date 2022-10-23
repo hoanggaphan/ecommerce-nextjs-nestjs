@@ -6,7 +6,7 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
@@ -16,6 +16,7 @@ import { Key } from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { HiOutlineUserCircle } from 'react-icons/hi';
 import ScrollToTop from 'react-scroll-to-top';
+import useAuthUser from '../../libs/hooks/useAuthUser';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
 import { useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
@@ -37,13 +38,13 @@ const Cart = () => {
 };
 
 const MyNavbar = () => {
+  useAuthUser(false);
   const { data: category } = useCategory();
   const router = useRouter();
   const { data: session } = useSession();
 
   const handleAction = (key: Key) => {
     if (key === 'logout') {
-      console.log(key);
       signOut({ redirect: false });
     }
   };

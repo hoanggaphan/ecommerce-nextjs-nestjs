@@ -21,6 +21,7 @@
     "react-icons": "^4.4.0",
     "react-redux": "^8.0.4",
     "react-scroll-to-top": "^3.0.0",
+    "react-select": "^5.5.4",
     "react-slugify": "^2.1.0",
     "redux-persist": "^6.0.0",
     "sweetalert2": "^11.4.37",

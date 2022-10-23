@@ -78,6 +78,7 @@ const callbacks = {
     // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
     // before 1 hours
     const shouldRefreshTime = Math.round(
+      // token.accessTokenExpiry - Date.now() / 1000 // seconds
       token.accessTokenExpiry - 60 * 60 - Date.now() / 1000 // seconds
     );
 

@@ -244,7 +244,7 @@ export default function Cart() {
       </Head>
 
       <UserLayout>
-        <Container md>
+        <Container md css={{ mt: 50 }}>
           <Text
             h2
             size={50}
