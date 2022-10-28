@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Button,
   Card,
@@ -12,7 +11,6 @@ import {
   Spacer,
   Text,
   Textarea,
-  User,
 } from '@nextui-org/react';
 import { unstable_getServerSession } from 'next-auth/next';
 import { useSession } from 'next-auth/react';
@@ -182,7 +180,116 @@ export default function Checkout() {
                     Thông tin giỏ hàng
                   </Text>
                 </Card.Header>
+
                 <Card.Body>
+                  <div>
+                    <Row css={{ columnGap: 15, mb: 25 }} align='center'>
+                      <Badge
+                        color='secondary'
+                        content={5}
+                        shape='rectangle'
+                        size='md'
+                      >
+                        <Image
+                          width={40}
+                          height={40}
+                          alt=''
+                          src='https://cdn-dgcei.nitrocdn.com/QaFavQVnaqgHtiSsAelwGDKVguOuACXM/assets/static/optimized/rev-6ceb543/wp-content/uploads/2022/09/iP14-ProM.png'
+                        />
+                      </Badge>
+                      <div>
+                        <Text
+                          css={{
+                            lineHeight: 1,
+                            fontWeight: 500,
+                            color: '$gray900',
+                          }}
+                          size={14}
+                        >
+                          Product Name
+                        </Text>
+                        <Text
+                          color='$accents7'
+                          b
+                          css={{ lineHeight: 1 }}
+                          size={13}
+                        >
+                          Blue, 32GB - 9.000.000 đ
+                        </Text>
+                      </div>
+                    </Row>
+                    <Row css={{ columnGap: 15, mb: 25 }} align='center'>
+                      <Badge
+                        color='secondary'
+                        content={5}
+                        shape='rectangle'
+                        size='md'
+                      >
+                        <Image
+                          width={40}
+                          height={40}
+                          alt=''
+                          src='https://cdn-dgcei.nitrocdn.com/QaFavQVnaqgHtiSsAelwGDKVguOuACXM/assets/static/optimized/rev-6ceb543/wp-content/uploads/2022/09/iP14-ProM.png'
+                        />
+                      </Badge>
+                      <div>
+                        <Text
+                          css={{
+                            lineHeight: 1,
+                            fontWeight: 500,
+                            color: '$gray900',
+                          }}
+                          size={14}
+                        >
+                          Product Name
+                        </Text>
+                        <Text
+                          color='$accents7'
+                          b
+                          css={{ lineHeight: 1 }}
+                          size={13}
+                        >
+                          Blue, 32GB - 9.000.000 đ
+                        </Text>
+                      </div>
+                    </Row>
+                    <Row css={{ columnGap: 15, mb: 25 }} align='center'>
+                      <Badge
+                        color='secondary'
+                        content={5}
+                        shape='rectangle'
+                        size='md'
+                      >
+                        <Image
+                          width={40}
+                          height={40}
+                          alt=''
+                          src='https://cdn-dgcei.nitrocdn.com/QaFavQVnaqgHtiSsAelwGDKVguOuACXM/assets/static/optimized/rev-6ceb543/wp-content/uploads/2022/09/iP14-ProM.png'
+                        />
+                      </Badge>
+                      <div>
+                        <Text
+                          css={{
+                            lineHeight: 1,
+                            fontWeight: 500,
+                            color: '$gray900',
+                          }}
+                          size={14}
+                        >
+                          Product Name
+                        </Text>
+                        <Text
+                          color='$accents7'
+                          b
+                          css={{ lineHeight: 1 }}
+                          size={13}
+                        >
+                          Blue, 32GB - 9.000.000 đ
+                        </Text>
+                      </div>
+                    </Row>
+                  </div>
+
                   <div>
                     <Row css={{ columnGap: 5 }} align='flex-end'>
                       <Input
@@ -218,68 +325,19 @@ export default function Checkout() {
                         0 đ
                       </Text>
                     </Row>
+
+                    <Row css={{ mt: 20 }}>
+                      <Button
+                        css={{ w: '100%' }}
+                        shadow
+                        color='secondary'
+                        size='md'
+                      >
+                        Đặt hàng
+                      </Button>
+                    </Row>
                   </div>
                 </Card.Body>
-                <Card.Footer>
-                  <div>
-                    <Row css={{ columnGap: 20, mb: 20 }} align='center'>
-                      <Badge
-                        color='secondary'
-                        content={5}
-                        shape='rectangle'
-                        size='lg'
-                      >
-                        <Image
-                          width={60}
-                          height={60}
-                          alt=''
-                          src='https://cdn-dgcei.nitrocdn.com/QaFavQVnaqgHtiSsAelwGDKVguOuACXM/assets/static/optimized/rev-6ceb543/wp-content/uploads/2022/09/iP14-ProM.png'
-                        />
-                      </Badge>
-                      <div>
-                        <Text css={{ lineHeight: 1 }} size=''>
-                          Product Name
-                        </Text>
-                        <Text
-                          color='$accents7'
-                          b
-                          css={{ lineHeight: 1 }}
-                          size='$sm'
-                        >
-                          9.000.000 đ
-                        </Text>
-                      </div>
-                    </Row>
-                    <Row css={{ columnGap: 20 }} align='center'>
-                      <Badge
-                        color='secondary'
-                        content={5}
-                        shape='rectangle'
-                        size='lg'
-                      >
-                        <Image
-                          width={60}
-                          height={60}
-                          alt=''
-                          src='https://cdn-dgcei.nitrocdn.com/QaFavQVnaqgHtiSsAelwGDKVguOuACXM/assets/static/optimized/rev-6ceb543/wp-content/uploads/2022/09/iP14-ProM.png'
-                        />
-                      </Badge>
-                      <div>
-                        <Text css={{ lineHeight: 1 }} size=''>
-                          Product Name
-                        </Text>
-                        <Text
-                          color='$accents7'
-                          b
-                          css={{ lineHeight: 1 }}
-                          size='$sm'
-                        >
-                          9.000.000 đ
-                        </Text>
-                      </div>
-                    </Row>
-                  </div>
-                </Card.Footer>
               </Card>
             </div>
           </div>
@@ -304,13 +362,13 @@ export default function Checkout() {
           column-gap: 30px;
         }
         .info {
-          flex: 5;
+          flex: 4;
         }
         .payment {
           flex: 4;
         }
         .summary {
-          flex: 4;
+          flex: 3;
         }
       `}</style>
       <style jsx global>{`
