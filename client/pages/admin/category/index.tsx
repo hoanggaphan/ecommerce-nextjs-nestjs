@@ -73,9 +73,6 @@ const IndexPage: NextPage = () => {
         const slug = (
           document.getElementById('category-slug') as HTMLInputElement
         )?.value;
-        const img = (
-          document.getElementById('category-img') as HTMLInputElement
-        )?.value;
         const des = (
           document.getElementById('category-des') as HTMLInputElement
         )?.value;
@@ -90,7 +87,6 @@ const IndexPage: NextPage = () => {
         const data = {
           name,
           slug,
-          image: img,
           description: des,
           isActive,
         };

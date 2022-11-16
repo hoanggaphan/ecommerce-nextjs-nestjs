@@ -6,11 +6,11 @@ import {
   Image,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdAdd, MdRemove } from 'react-icons/md';
 import UserLayout from '../components/common/UserLayout';
 import { useProduct } from '../libs/swr/useProduct';
@@ -26,15 +26,23 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import { addItemToCart, selectCart } from '../libs/redux/reducers/cartReducer';
 import { useAppDispatch, useAppSelector } from '../libs/redux/store';
+import { VariantType } from '../types';
 
 export default function Product() {
   const router = useRouter();
   const { slug } = router.query;
-  const { data: product, error, isValidating, mutate } = useProduct({ slug });
+  const { data: product, error, mutate } = useProduct({ slug });
   const [amount, setAmount] = useState(1);
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCart);
+  const [selected, setSelected] = useState<VariantType>();
+
+  useEffect(() => {
+    if (product) {
+      setSelected(product.variants[0]);
+    }
+  }, [product]);
 
   // If Product not found, redirect user
   if (
@@ -45,14 +53,12 @@ export default function Product() {
     router.push('/');
   }
 
-  const handleCartAddItem = () => {
-    if (!product) return;
-
+  const handleCartAddItem = (variantId: number) => {
     // If the current product is not in the cart
-    const currentProduct = cart.find((i) => i.productId === product.id);
-    if (!currentProduct) {
+    const currentVariant = cart.find((i) => i.variantId === variantId);
+    if (!currentVariant) {
       const newItem = {
-        productId: product.id,
+        variantId,
         quantity: amount,
       };
 
@@ -62,7 +68,7 @@ export default function Product() {
 
     // If product is in the cart
     // amount > 3, throw error
-    if (currentProduct.quantity + amount > 3) {
+    if (currentVariant.quantity + amount > 3) {
       Swal.fire({
         title: 'Không thêm được vào giỏ hàng!',
         text: 'Số lượng sản phẩm này trong giỏ quá lớn',
@@ -72,7 +78,7 @@ export default function Product() {
     }
 
     const newItem = {
-      productId: product.id,
+      variantId,
       quantity: amount,
     };
 
@@ -136,23 +142,35 @@ export default function Product() {
               <Spacer y={2} />
               <Col span={6}>
                 <Text h2>{product.name}</Text>
-                <Row>
-                  {product.attributeValues.map((i) => (
-                    <Col key={i.id}>
-                      <Text size='$xl'>
-                        {i.attribute.name.toUpperCase()}:{' '}
-                        {i.value.toUpperCase()}
-                      </Text>
-                    </Col>
-                  ))}
-                </Row>
+                {product.variants.length === 1 &&
+                product.variants[0].attributeValues.length === 0 ? null : (
+                  <>
+                    <Spacer y={1} />
+                    <Card.Divider />
+                    <Spacer y={1} />
+                    <Row css={{ columnGap: 10 }}>
+                      {product.variants.map((v, i) => (
+                        <div
+                          className={`attribute-item ${
+                            v.id === selected?.id ? 'active' : ''
+                          }`}
+                          key={v.id}
+                          onClick={() => setSelected(v)}
+                        >
+                          {v.attributeValues.map(
+                            (at, index) => (index ? ' - ' : '') + at.value
+                          )}
+                        </div>
+                      ))}
+                    </Row>
+                  </>
+                )}
                 <Spacer y={1} />
                 <Card.Divider />
                 <Spacer y={1} />
                 <Row>
-                  <Text size='$3xl'>Giá: &nbsp;</Text>
                   <Text h2 color='secondary' css={{ mb: 0 }}>
-                    {product.price.toLocaleString('vi-VN')} đ
+                    {selected?.price.toLocaleString('vi-VN')} đ
                   </Text>
                 </Row>
                 <Spacer y={2} />
@@ -175,14 +193,16 @@ export default function Product() {
                     />
                   </div>
                   <Spacer x={2} />
-                  <Button
-                    onPress={handleCartAddItem}
-                    shadow
-                    color='secondary'
-                    auto
-                  >
-                    Thêm vào giỏ
-                  </Button>
+                  {selected && (
+                    <Button
+                      onPress={() => handleCartAddItem(selected.id)}
+                      shadow
+                      color='secondary'
+                      auto
+                    >
+                      Thêm vào giỏ
+                    </Button>
+                  )}
                 </Row>
               </Col>
             </Row>
@@ -210,6 +230,24 @@ export default function Product() {
             align-items: center;
             justify-content: center;
             margin: 0px 5px;
+          }
+
+          .attribute-item {
+            cursor: pointer;
+            padding: 3px 7px;
+            border: 2px solid #7828c8;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-size: 14px;
+          }
+
+          .attribute-item:hover {
+            background-color: #7828c8;
+            color: white;
+          }
+          .attribute-item.active {
+            background-color: #7828c8;
+            color: white;
           }
         `}</style>
       </UserLayout>

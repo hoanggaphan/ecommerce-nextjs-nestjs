@@ -27,4 +27,4 @@ export function useAdminProducts(queryParams?: string, token?: string) {
     mutate,
   };
 }
-export type categoryState = ReturnType<typeof useAdminProducts>;
+export type productsState = ReturnType<typeof useAdminProducts>;

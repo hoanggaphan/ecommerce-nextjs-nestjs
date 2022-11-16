@@ -8,6 +8,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import RefreshTokenHandler from '../components/refreshTokenHandler';
 import { persistor, store } from '../libs/redux/store';
 import { theme } from '../libs/theme';
+import NextNProgress from 'nextjs-progressbar';
 
 const globalStyles = globalCss({
   body: { backgroundColor: '#f5f7fa' },
@@ -30,12 +31,19 @@ function MyApp({
             session={pageProps.session}
             refetchInterval={interval}
           >
+            <NextNProgress color='#BC8EE9' height={4} />
             <Component {...pageProps} />
             <RefreshTokenHandler setInterval={setInterval} />
           </SessionProvider>
           <style jsx global>{`
             .w100 {
               width: 100%;
+            }
+            .line-clamp-2 {
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
             }
           `}</style>
         </NextUIProvider>

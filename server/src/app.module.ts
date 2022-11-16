@@ -8,6 +8,7 @@ import { AttributeValueModule } from './attribute-value/attribute-value.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
+import { VariantModule } from './variant/variant.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UserModule } from './user/user.module';
     AttributeModule,
     AttributeValueModule,
     OrderModule,
+    VariantModule,
   ],
 })
 export class AppModule {}

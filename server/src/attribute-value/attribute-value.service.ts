@@ -1,6 +1,12 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Variant } from './../variant/entities/variant.entity';
 import { CreateAttributeValueDto } from './dto/create-attribute-value.dto';
 import { UpdateAttributeValueDto } from './dto/update-attribute-value.dto';
 import { AttributeValue } from './entities/attribute-value.entity';
@@ -10,6 +16,8 @@ export class AttributeValueService {
   constructor(
     @InjectRepository(AttributeValue)
     private attributeValuesRepository: Repository<AttributeValue>,
+    @InjectRepository(Variant)
+    private variantRepo: Repository<Variant>,
   ) {}
 
   async create(createAttributeValueDto: CreateAttributeValueDto) {
@@ -55,9 +63,30 @@ export class AttributeValueService {
       throw new NotFoundException('Not found.');
     }
 
-    return this.attributeValuesRepository.delete({ id }).then((res) => ({
-      statusCode: HttpStatus.OK,
-      message: 'Delete success',
-    }));
+    const existVariants = await this.variantRepo.findBy({
+      attributeValues: { id },
+    });
+
+    if (existVariants.length > 0) {
+      throw new InternalServerErrorException(
+        "Can't delete because it's linked",
+      );
+    }
+
+    try {
+      return await this.attributeValuesRepository
+        .delete({ id })
+        .then((res) => ({
+          statusCode: HttpStatus.OK,
+          message: 'Delete success',
+        }));
+    } catch (error) {
+      if (error.errno === 1451) {
+        throw new InternalServerErrorException(
+          "Can't delete because it's linked",
+        );
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }

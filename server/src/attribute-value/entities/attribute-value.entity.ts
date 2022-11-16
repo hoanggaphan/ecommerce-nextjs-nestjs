@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Attribute } from '../../attribute/entities/attribute.entity';
+import { Variant } from './../../variant/entities/variant.entity';
 
 @Entity()
 export class AttributeValue {
@@ -9,6 +16,13 @@ export class AttributeValue {
   @Column({ nullable: false })
   value: string;
 
-  @ManyToOne(() => Attribute, (attribute) => attribute.attributeValues)
+  @ManyToOne(() => Attribute, (attribute) => attribute.attributeValues, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   attribute: Attribute;
+
+  @ManyToMany(() => Variant)
+  variants: Variant[];
 }

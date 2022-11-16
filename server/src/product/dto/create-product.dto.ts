@@ -15,13 +15,38 @@ class CategoryDto {
   id: number;
 }
 
+class AttributeDto {
+  @IsInt()
+  id: number;
+}
+
 class ImageDto {
   @IsOptional()
   @IsInt()
   id: number;
 
+  @IsOptional()
+  @IsString()
+  publicId: string;
+
   @IsString()
   url: string;
+}
+
+class VariantDto {
+  @IsOptional()
+  @IsInt()
+  id: number;
+
+  @IsInt()
+  price: number;
+
+  @IsInt()
+  quantity: number;
+
+  @ValidateNested()
+  @Type(() => AttributeDto)
+  attributeValues: AttributeDto[];
 }
 
 class AttributeValueDto {
@@ -41,18 +66,16 @@ export class CreateProductDto {
   })
   slug: string;
 
-  @IsInt()
-  price: number;
-
-  @IsInt()
-  quantity: number;
+  @IsString()
+  description: string;
 
   @ValidateNested()
   @Type(() => ImageDto)
   images: ImageDto[];
 
-  @IsString()
-  description: string;
+  @ValidateNested()
+  @Type(() => VariantDto)
+  variants: VariantDto[];
 
   @IsOptional()
   @IsBoolean()

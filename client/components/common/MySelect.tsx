@@ -4,7 +4,9 @@ export default function MySelect(props: any) {
   return (
     <Select
       {...props}
-      menuPortalTarget={document.querySelector('body')}
+      // menuPortalTarget={document.querySelector('body')}
+      menuPortalTarget={document.body}
+      menuPosition={'fixed'}
       components={{
         Control: (base) => (
           <>
@@ -35,7 +37,7 @@ export default function MySelect(props: any) {
           fontSize: 14,
           borderRadius: 12,
           overflow: 'hidden',
-          minWidth: 360,
+          minWidth: props.minW ? props.minW : 'unset',
         }),
         menuList: (base) => ({
           ...base,

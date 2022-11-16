@@ -5,9 +5,10 @@ import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
   AiOutlineSetting,
-  AiOutlineShoppingCart
+  AiOutlineShoppingCart,
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
+import { GiFlowerTwirl } from 'react-icons/gi';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { RiProductHuntLine } from 'react-icons/ri';
 import Logo from './Logo';
@@ -43,6 +44,20 @@ const SideBar = () => {
           ripple={false}
         >
           Danh mục
+        </Button>
+        <Spacer y={1} />
+        <Button
+          onPress={() => router.push('/admin/attribute')}
+          icon={<GiFlowerTwirl />}
+          light={router.pathname.includes('/admin/attribute') ? false : true}
+          css={{
+            backgroundColor: router.pathname.includes('/admin/attribute')
+              ? '$secondary'
+              : '',
+          }}
+          ripple={false}
+        >
+          Thuộc tính
         </Button>
         <Spacer y={1} />
         <Button

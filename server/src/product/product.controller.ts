@@ -73,6 +73,11 @@ export class ProductController {
   findBySlug(@Param('slug') slug: string) {
     return this.productService.findBySlugForUser(slug);
   }
+
+  @Get('/category/:slug')
+  findProductByCategory(@Param('slug') slug: string) {
+    return this.productService.findByCategoryForUser(slug);
+  }
 }
 
 @Controller('admin/product')

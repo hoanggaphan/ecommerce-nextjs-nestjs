@@ -25,11 +25,6 @@ export default function CategoryAddForm() {
   const [slug, setSlug] = useState('');
 
   const {
-    value: imgValue,
-    reset: resetImg,
-    bindings: imgBindings,
-  } = useInput('');
-  const {
     value: desValue,
     reset: resetDes,
     bindings: desBindings,
@@ -45,7 +40,6 @@ export default function CategoryAddForm() {
       const newItem = {
         name,
         slug,
-        image: imgValue,
         description: desValue,
         isActive: checkbox,
       };
@@ -60,7 +54,6 @@ export default function CategoryAddForm() {
       });
       setName('');
       setSlug('');
-      resetImg();
       resetDes();
       mutate();
     } catch (error: any) {
@@ -85,16 +78,14 @@ export default function CategoryAddForm() {
           labelPlaceholder='Tên'
           clearable
         />
-        <Spacer y={3} />
+        <Spacer y={2} />
         <Input
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
           labelPlaceholder='Slug'
           clearable
         />
-        <Spacer y={3} />
-        <Input {...imgBindings} labelPlaceholder='Hình ảnh' type='url' />
-        <Spacer y={3} />
+        <Spacer y={2} />
         <Textarea {...desBindings} labelPlaceholder='Mô tả' rows={4} />
         <Spacer y={1} />
         <Row>

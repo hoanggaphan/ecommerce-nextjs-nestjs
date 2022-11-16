@@ -21,11 +21,6 @@ export default function SweetHtmlCategory({
   const [slug, setSlug] = useState(category.slug || '');
 
   const {
-    value: imgValueModal,
-    reset: resetImgModal,
-    bindings: imgBindingsModal,
-  } = useInput(category.image || '');
-  const {
     value: desValueModal,
     reset: resetDesModal,
     bindings: desBindingsModal,
@@ -49,7 +44,7 @@ export default function SweetHtmlCategory({
           }}
         />
 
-        <Spacer y={3} />
+        <Spacer y={2} />
         <Input
           id='category-slug'
           name='category-slug'
@@ -58,16 +53,8 @@ export default function SweetHtmlCategory({
           labelPlaceholder='Slug'
           onChange={(e) => setSlug(e.target.value)}
         />
-        <Spacer y={3} />
-        <Input
-          id='category-img'
-          name='category-img'
-          initialValue={imgValueModal}
-          {...imgBindingsModal}
-          labelPlaceholder='Hình ảnh'
-          type='url'
-        />
-        <Spacer y={3} />
+
+        <Spacer y={2} />
         <Textarea
           id='category-des'
           name='category-des'

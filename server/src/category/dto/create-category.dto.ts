@@ -20,9 +20,6 @@ export class CreateCategoryDto {
   })
   slug: string;
 
-  @IsString()
-  image: string;
-
   @IsOptional()
   @IsBoolean()
   isActive: boolean;
