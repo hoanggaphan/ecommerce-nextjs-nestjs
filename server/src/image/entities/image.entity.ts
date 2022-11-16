@@ -7,6 +7,9 @@ export class Image {
   id: number;
 
   @Column({ nullable: false })
+  publicId: string;
+
+  @Column({ nullable: false })
   url: string;
 
   @ManyToOne(() => Product, (product) => product.images, {

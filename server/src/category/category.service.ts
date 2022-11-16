@@ -46,19 +46,13 @@ export class CategoryService {
     });
   }
 
-  async findAllProductsBySLugForUser(slug: string) {
+  async findBySlugForUser(slug: string) {
     const exist = await this.categoriesRepository.findOne({
       where: { slug, isActive: true },
-      relations: {
-        products: {
-          images: true,
-        },
-      },
     });
     if (!exist) {
       throw new NotFoundException('Category not found.');
     }
-
     return exist;
   }
 

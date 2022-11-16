@@ -13,9 +13,6 @@ export class Category {
   slug: string;
 
   @Column({ nullable: true })
-  image: string;
-
-  @Column({ nullable: true })
   description: string;
 
   @Column({ nullable: false, default: false })

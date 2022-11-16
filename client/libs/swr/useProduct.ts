@@ -18,4 +18,4 @@ export function useProduct({ slug }: { slug: string | string[] | undefined }) {
     isValidating,
   };
 }
-export type categoryState = ReturnType<typeof useProduct>;
+export type productState = ReturnType<typeof useProduct>;

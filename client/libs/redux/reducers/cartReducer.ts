@@ -17,7 +17,7 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     updateCart: (state, { payload }) => {
-      state.cart = state.cart.filter((c) => payload.ids.includes(c.productId));
+      state.cart = state.cart.filter((c) => payload.ids.includes(c.variantId));
       state.totalAmount = state.cart.reduce(
         (prev, curr) => prev + curr.quantity,
         0
@@ -25,7 +25,7 @@ export const cartSlice = createSlice({
     },
     addItemToCart: (state, { payload }) => {
       const index = state.cart.findIndex(
-        (item: CartItemType) => item.productId === payload.productId
+        (item: CartItemType) => item.variantId === payload.variantId
       );
 
       let newCart;
@@ -44,7 +44,7 @@ export const cartSlice = createSlice({
     },
     removeItemFromCart: (state, { payload }) => {
       const index = state.cart.findIndex(
-        (item: CartItemType) => item.productId === payload.productId
+        (item: CartItemType) => item.variantId === payload.variantId
       );
 
       if (index !== -1) {
@@ -58,10 +58,9 @@ export const cartSlice = createSlice({
         );
       }
     },
-    clearCart: (state) => {},
     increaseAmount: (state, { payload }) => {
       state.cart = state.cart.map((i) => {
-        if (i.productId === payload.productId) {
+        if (i.variantId === payload.variantId) {
           i.quantity++;
         }
         return i;
@@ -73,7 +72,7 @@ export const cartSlice = createSlice({
     },
     decreaseAmount: (state, { payload }) => {
       state.cart = state.cart.map((i) => {
-        if (i.productId === payload.productId) {
+        if (i.variantId === payload.variantId) {
           i.quantity--;
         }
         return i;
@@ -83,6 +82,7 @@ export const cartSlice = createSlice({
         0
       );
     },
+    clearCart: () => initialState,
   },
 });
 

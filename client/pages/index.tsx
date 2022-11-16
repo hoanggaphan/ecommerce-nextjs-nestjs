@@ -111,7 +111,7 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
             <Link href={`/${i.slug}`}>
               <a style={{ width: '100%' }}>
                 <Card variant='bordered' isHoverable css={{ mw: '315px' }}>
-                  <Card.Header>
+                  <Card.Header css={{ pb: 0, minHeight: 40}}>
                     {i.isNew && (
                       <Badge isSquared variant='flat' color='secondary'>
                         Mới
@@ -126,11 +126,15 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
                   <Card.Body css={{ py: '$10' }}>
                     <Image width={235} height={235} src={i.images[0].url} />
                     <Spacer y={1} />
-                    <Text h3 css={{ textAlign: 'center', minHeight: 72 }}>
+                    <Text
+                      h3
+                      css={{ textAlign: 'center', minHeight: 72 }}
+                      className='line-clamp-2'
+                    >
                       {i.name}
                     </Text>
                     <Text h3 color='secondary' css={{ textAlign: 'center' }}>
-                      {i.price.toLocaleString('vi-VN')} đ
+                      {i.variants[0].price.toLocaleString('vi-VN')} đ
                     </Text>
                   </Card.Body>
                 </Card>

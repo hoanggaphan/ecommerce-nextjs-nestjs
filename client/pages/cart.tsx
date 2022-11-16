@@ -29,15 +29,26 @@ import {
   updateCart,
 } from '../libs/redux/reducers/cartReducer';
 import { useAppDispatch, useAppSelector } from '../libs/redux/store';
-import { CartItemType, ProductType } from '../types';
+import { CartItemType, VariantType } from '../types';
 import { IconButton } from './admin/category';
 
-type CustomCartItemType = ProductType & {
+export type CustomCartItemType = VariantType & {
   amountInCart: number;
 };
 
 const fetcher = (url: string, ids: number[]) => {
   return axios.post(url, ids).then((res) => res.data);
+};
+
+export const useCheckVariantIds = (ids: number[]) => {
+  const { data } = useSWR<VariantType[]>(
+    ids.length ? [`${server}/variant/active`, ids] : null,
+    fetcher
+  );
+
+  return {
+    data,
+  };
 };
 
 const columns = [
@@ -48,8 +59,8 @@ const columns = [
   { name: 'hành động', uid: 'actions' },
 ];
 
-const findAmount = (productId: number, cart: CartItemType[]) => {
-  const amount = cart.find((c) => c.productId === productId)?.quantity;
+const findAmount = (variantId: number, cart: CartItemType[]) => {
+  const amount = cart.find((c) => c.variantId === variantId)?.quantity;
   return amount || 0;
 };
 
@@ -63,11 +74,8 @@ export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCart);
   const totalAmount = useAppSelector(selectTotalAmount);
-  const ids = cart.map((i: any) => i.productId);
-  const { data } = useSWR<ProductType[]>(
-    ids.length ? [`${server}/product/cart-items`, ids] : null,
-    fetcher
-  );
+  const ids = cart.map((i) => i.variantId);
+  const { data } = useCheckVariantIds(ids);
   const { data: session } = useSession();
 
   const cartItems: CustomCartItemType[] = useMemo(() => {
@@ -88,19 +96,19 @@ export default function Cart() {
     }
   }, [data]);
 
-  const handleIncreaseAmount = (productId: number) => {
-    const amount = findAmount(productId, cart);
+  const handleIncreaseAmount = (variantId: number) => {
+    const amount = findAmount(variantId, cart);
     if (amount >= 3) return;
-    dispatch(increaseAmount({ productId }));
+    dispatch(increaseAmount({ variantId }));
   };
 
-  const handleDecreaseAmount = (productId: number) => {
-    const amount = findAmount(productId, cart);
+  const handleDecreaseAmount = (variantId: number) => {
+    const amount = findAmount(variantId, cart);
     if (amount <= 1) return;
-    dispatch(decreaseAmount({ productId }));
+    dispatch(decreaseAmount({ variantId }));
   };
 
-  const handleCartRemoveItem = (productId: number) => {
+  const handleCartRemoveItem = (variantId: number) => {
     Swal.fire({
       title: 'Bạn có chắc?',
       text: 'Hành động này không thể hoàn tác!',
@@ -110,7 +118,7 @@ export default function Cart() {
       cancelButtonText: 'Đóng',
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(removeItemFromCart({ productId }));
+        dispatch(removeItemFromCart({ variantId }));
       }
     });
   };
@@ -126,39 +134,36 @@ export default function Cart() {
     }
   };
 
-  const renderCell = (product: CustomCartItemType, columnKey: React.Key) => {
+  const renderCell = (variant: CustomCartItemType, columnKey: React.Key) => {
     switch (columnKey) {
       case 'product':
         return (
           <User
             squared
-            src={product.images.length > 0 ? product.images[0].url : ''}
-            name={product.name}
+            src={variant.product?.images[0].url || ''}
+            name={variant.product?.name}
             css={{ p: 0 }}
           >
-            {product.attributeValues.length > 0 && (
-              <>
-                <Row>
-                  {product.attributeValues.map((i, index) => (
-                    <Text
-                      key={i.id + i.value}
-                      b
-                      size={13}
-                      css={{ tt: 'capitalize', color: '$accents7' }}
-                    >
-                      {(index ? ', ' : '') + i.value}
-                    </Text>
-                  ))}
-                </Row>
-              </>
-            )}
+            <Row>
+              {variant.attributeValues.length > 0 &&
+                variant.attributeValues.map((i, index) => (
+                  <Text
+                    key={i.id + i.value}
+                    b
+                    size={13}
+                    css={{ tt: 'capitalize', color: '$accents7' }}
+                  >
+                    {(index ? ', ' : '') + i.value}
+                  </Text>
+                ))}
+            </Row>
           </User>
         );
 
       case 'price':
         return (
           <Text b size={13} css={{ tt: 'capitalize', color: '$accents7' }}>
-            {product.price.toLocaleString('vi-VN')}
+            {variant.price.toLocaleString('vi-VN')}
           </Text>
         );
 
@@ -166,7 +171,7 @@ export default function Cart() {
         return (
           <Row align='center'>
             <div
-              onClick={() => handleDecreaseAmount(product.id)}
+              onClick={() => handleDecreaseAmount(variant.id)}
               style={{
                 width: 27,
                 height: 27,
@@ -191,10 +196,10 @@ export default function Cart() {
                 color: '#666',
               }}
             >
-              {product.amountInCart}
+              {variant.amountInCart}
             </div>
             <div
-              onClick={() => handleIncreaseAmount(product.id)}
+              onClick={() => handleIncreaseAmount(variant.id)}
               style={{
                 width: 27,
                 height: 27,
@@ -213,7 +218,7 @@ export default function Cart() {
       case 'total':
         return (
           <Text b size={14} color='secondary'>
-            {(product.price * product.amountInCart).toLocaleString('vi-VN')} đ
+            {(variant.price * variant.amountInCart).toLocaleString('vi-VN')} đ
           </Text>
         );
 
@@ -224,7 +229,7 @@ export default function Cart() {
               <Tooltip
                 content='Xóa'
                 color='error'
-                onClick={() => handleCartRemoveItem(product.id)}
+                onClick={() => handleCartRemoveItem(variant.id)}
               >
                 <IconButton>
                   <AiOutlineDelete size={20} fill='#FF0080' />

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,6 +33,9 @@ export class AttributeService {
   findAll(): Promise<Attribute[]> {
     return this.attributesRepository.find({
       relations: { attributeValues: true },
+      order: {
+        id: 'DESC',
+      },
     });
   }
 
@@ -73,9 +77,18 @@ export class AttributeService {
       throw new NotFoundException('Product not found.');
     }
 
-    return this.attributesRepository.delete({ id }).then((res) => ({
-      statusCode: HttpStatus.OK,
-      message: 'Delete success',
-    }));
+    try {
+      return await this.attributesRepository.delete({ id }).then((res) => ({
+        statusCode: HttpStatus.OK,
+        message: 'Delete success',
+      }));
+    } catch (error) {
+      if (error.errno === 1451) {
+        throw new InternalServerErrorException(
+          "Can't delete because it's linked",
+        );
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -12,6 +12,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { In, Repository } from 'typeorm';
 import { Image } from './../image/entities/image.entity';
+import { Variant } from './../variant/entities/variant.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -20,21 +21,21 @@ import { Product } from './entities/product.entity';
 export class ProductService {
   constructor(
     @InjectRepository(Product)
-    private productsRepository: Repository<Product>,
+    private productRepo: Repository<Product>,
     @InjectRepository(Image)
-    private imagesRepository: Repository<Image>,
+    private imageRepo: Repository<Image>,
+    @InjectRepository(Variant)
+    private variantRepo: Repository<Variant>,
   ) {}
 
   async findAllForAdmin(
     options: IPaginationOptions,
   ): Promise<Pagination<Product>> {
-    return paginate<Product>(this.productsRepository, options, {
+    return paginate<Product>(this.productRepo, options, {
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
-        },
+        variants: true,
       },
       order: {
         updatedDate: 'DESC',
@@ -45,7 +46,7 @@ export class ProductService {
   async findAllForUser(
     options: IPaginationOptions,
   ): Promise<Pagination<Product>> {
-    return paginate<Product>(this.productsRepository, options, {
+    return paginate<Product>(this.productRepo, options, {
       where: {
         isActive: true,
       },
@@ -55,15 +56,13 @@ export class ProductService {
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
-        },
+        variants: true,
       },
     });
   }
 
   async findNew(options: IPaginationOptions): Promise<Pagination<Product>> {
-    return paginate<Product>(this.productsRepository, options, {
+    return paginate<Product>(this.productRepo, options, {
       where: {
         isNew: true,
         isActive: true,
@@ -73,12 +72,13 @@ export class ProductService {
       },
       relations: {
         images: true,
+        variants: true,
       },
     });
   }
 
   async findPopular(options: IPaginationOptions): Promise<Pagination<Product>> {
-    return paginate<Product>(this.productsRepository, options, {
+    return paginate<Product>(this.productRepo, options, {
       where: {
         isPopular: true,
         isActive: true,
@@ -88,48 +88,28 @@ export class ProductService {
       },
       relations: {
         images: true,
+        variants: true,
       },
     });
   }
 
-  async create(createProductDto: CreateProductDto) {
-    const name = await this.productsRepository.findOneBy({
-      name: createProductDto.name,
-    });
-    if (name) throw new BadRequestException('Name already exist');
-
-    const slug = await this.productsRepository.findOneBy({
-      slug: createProductDto.slug,
-    });
-    if (slug) throw new BadRequestException('Slug already exist');
-
-    const { images } = createProductDto;
-
-    await this.imagesRepository.save(images);
-    return this.productsRepository.save({ ...createProductDto });
-  }
-
   findAll(): Promise<Product[]> {
-    return this.productsRepository.find({
+    return this.productRepo.find({
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
-        },
+        variants: true,
       },
     });
   }
 
   async findByIds(ids: number[]): Promise<Product[]> {
-    const exist = await this.productsRepository.find({
+    const exist = await this.productRepo.find({
       where: { id: In(ids), isActive: true },
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
-        },
+        variants: true,
       },
     });
     if (!exist) {
@@ -140,13 +120,15 @@ export class ProductService {
   }
 
   async findById(id: number): Promise<Product> {
-    const exist = await this.productsRepository.findOne({
+    const exist = await this.productRepo.findOne({
       where: { id },
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
+        variants: {
+          attributeValues: {
+            attribute: true,
+          },
         },
       },
     });
@@ -158,13 +140,15 @@ export class ProductService {
   }
 
   async findBySlugForUser(slug: string): Promise<Product> {
-    const exist = await this.productsRepository.findOne({
+    const exist = await this.productRepo.findOne({
       where: { slug, isActive: true },
       relations: {
         category: true,
         images: true,
-        attributeValues: {
-          attribute: true,
+        variants: {
+          attributeValues: {
+            attribute: true,
+          },
         },
       },
     });
@@ -175,12 +159,63 @@ export class ProductService {
     return exist;
   }
 
+  async findByCategoryForUser(slug: string): Promise<Product[]> {
+    return await this.productRepo.find({
+      where: {
+        category: {
+          slug,
+        },
+        isActive: true,
+      },
+      relations: {
+        images: true,
+        variants: {
+          attributeValues: {
+            attribute: true,
+          },
+        },
+      },
+    });
+  }
+
+  async create(createProductDto: CreateProductDto) {
+    const name = await this.productRepo.findOneBy({
+      name: createProductDto.name,
+    });
+    if (name) throw new BadRequestException('Name already exist');
+
+    const slug = await this.productRepo.findOneBy({
+      slug: createProductDto.slug,
+    });
+    if (slug) throw new BadRequestException('Slug already exist');
+
+    const { images, variants } = createProductDto;
+
+    let duplicateVariant = false;
+    for (let i = 0; i < variants.length; i++) {
+      const curr = variants[i].attributeValues;
+      for (let j = i + 1; j < variants.length; j++) {
+        const next = variants[j].attributeValues;
+        if (JSON.stringify(curr) === JSON.stringify(next)) {
+          duplicateVariant = true;
+          break;
+        }
+      }
+    }
+    if (duplicateVariant)
+      throw new BadRequestException('Duplicate variant attributes');
+
+    await this.imageRepo.save(images);
+    await this.variantRepo.save(variants);
+    return this.productRepo.save({ ...createProductDto });
+  }
+
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const exist = await this.productsRepository.findOneBy({ id });
+    const exist = await this.productRepo.findOneBy({ id });
     if (!exist) {
       throw new NotFoundException('Product not found.');
     }
-    const name = await this.productsRepository
+    const name = await this.productRepo
       .createQueryBuilder('product')
       .where('product.name = :nameUpdate and product.name != :nameExist', {
         nameUpdate: updateProductDto.name,
@@ -190,7 +225,7 @@ export class ProductService {
 
     if (name) throw new BadRequestException('Name already exist');
 
-    const slug = await this.productsRepository
+    const slug = await this.productRepo
       .createQueryBuilder('product')
       .where('product.slug = :slugUpdate and product.slug != :slugExist', {
         slugUpdate: updateProductDto.slug,
@@ -199,19 +234,34 @@ export class ProductService {
       .getOne();
     if (slug) throw new BadRequestException('Slug already exist');
 
-    const { images } = updateProductDto;
+    const { images, variants } = updateProductDto;
 
-    await this.imagesRepository.save(images);
-    return this.productsRepository.save({ id, ...updateProductDto });
+    let duplicateVariant = false;
+    for (let i = 0; i < variants.length; i++) {
+      const curr = variants[i].attributeValues;
+      for (let j = i + 1; j < variants.length; j++) {
+        const next = variants[j].attributeValues;
+        if (JSON.stringify(curr) === JSON.stringify(next)) {
+          duplicateVariant = true;
+          break;
+        }
+      }
+    }
+    if (duplicateVariant)
+      throw new BadRequestException('Duplicate variant attributes');
+
+    await this.imageRepo.save(images);
+    await this.variantRepo.save(variants);
+    return this.productRepo.save({ id, ...updateProductDto });
   }
 
   async remove(id: number) {
-    const exist = await this.productsRepository.findOneBy({ id });
+    const exist = await this.productRepo.findOneBy({ id });
     if (!exist) {
       throw new NotFoundException('Product not found.');
     }
 
-    return this.productsRepository.delete({ id }).then((res) => ({
+    return this.productRepo.delete({ id }).then((res) => ({
       statusCode: HttpStatus.OK,
       message: 'Delete success',
     }));

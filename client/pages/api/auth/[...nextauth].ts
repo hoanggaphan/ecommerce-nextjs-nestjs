@@ -73,6 +73,7 @@ const callbacks = {
       token.phone = user.phone;
       token.address = user.address;
       token.username = user.username;
+      token.userId = user.id;
     }
 
     // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
@@ -93,6 +94,7 @@ const callbacks = {
   },
   session: async ({ session, token }: any) => {
     // Here we pass accessToken to the client to be used in authentication with your API
+    session.userId = token.userId;
     session.fullName = token.fullName;
     session.phone = token.phone;
     session.address = token.address;
@@ -113,7 +115,10 @@ export const options = {
   pages: {
     signIn: '/auth/login',
   },
-  secret: 'your_secret',
+  secret: process.env.AUTH_SECRET,
+  session: {
+    maxAge: 31 * 24 * 60 * 60, // 30 days
+  },
 };
 
 const Auth = (req: any, res: any) => NextAuth(req, res, options);

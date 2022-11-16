@@ -138,9 +138,7 @@ const MyNavbar = () => {
                 <Dropdown.Item key='account' withDivider>
                   Tài khoản
                 </Dropdown.Item>
-                <Dropdown.Item key='orders_history'>
-                  Lịch sử đặt hàng
-                </Dropdown.Item>
+                <Dropdown.Item key='my_orders'>Đơn hàng của tôi</Dropdown.Item>
                 <Dropdown.Item key='logout' color='error' withDivider>
                   Đăng xuất
                 </Dropdown.Item>

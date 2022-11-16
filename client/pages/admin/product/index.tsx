@@ -1,25 +1,71 @@
 import {
   Badge,
   Button,
-  Card,
-  Grid,
+  Dropdown,
   Input,
   Pagination,
   Row,
   styled,
-  Text
+  Table,
+  Text,
+  User,
 } from '@nextui-org/react';
 import axios from 'axios';
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { server } from '../../../libs/constants';
 import { useAdminProducts } from '../../../libs/swr/useAdminProducts';
+import { ImageType, ProductType } from '../../../types';
+
+const columns = [
+  { name: 'Sản phẩm', uid: 'product' },
+  { name: 'Kho', uid: 'stock' },
+  { name: 'Danh mục', uid: 'category' },
+  { name: 'Trạng thái', uid: 'status' },
+  { name: 'hành động', uid: 'actions' },
+];
+
+// Badge component will be available as part of the core library soon
+export const StyledBadge = styled('span', {
+  display: 'inline-block',
+  textTransform: 'uppercase',
+  padding: '$2 $3',
+  margin: '0 2px',
+  fontSize: '10px',
+  fontWeight: '$bold',
+  borderRadius: '14px',
+  letterSpacing: '0.6px',
+  lineHeight: 1,
+  boxShadow: '1px 2px 5px 0px rgb(0 0 0 / 5%)',
+  alignItems: 'center',
+  alignSelf: 'center',
+  color: '$white',
+  variants: {
+    type: {
+      active: {
+        bg: '$successLight',
+        color: '$successLightContrast',
+      },
+      paused: {
+        bg: '$errorLight',
+        color: '$errorLightContrast',
+      },
+      vacation: {
+        bg: '$warningLight',
+        color: '$warningLightContrast',
+      },
+    },
+  },
+  defaultVariants: {
+    type: 'active',
+  },
+});
 
 export const IconButton = styled('button', {
   dflex: 'center',
@@ -38,16 +84,72 @@ export const IconButton = styled('button', {
   },
 });
 
-const IndexPage: NextPage = () => {
-  const router = useRouter();
-  const [pageIndex, setPageIndex] = useState(1);
-  const { data: session } = useSession();
-  const { data, error, mutate } = useAdminProducts(
-    `?limit=12&page=${pageIndex}`,
-    session?.accessToken
-  );
+const deleteImg = async (imgId: string) => {
+  return await axios
+    .delete('/api/images/' + imgId)
+    .then((res: any) => res.data);
+};
 
-  const handleDelete = async (id: number) => {
+const deleteImgsFromCloud = async (images: ImageType[]) => {
+  return await Promise.all(images.map((img) => deleteImg(img.publicId)));
+};
+
+const IndexPage: NextPage = () => {
+  const [pageIndex, setPageIndex] = useState(1);
+  const router = useRouter();
+
+  return (
+    <SecureAdminPages>
+      <>
+        <Head>
+          <title>Sản phẩm</title>
+          <link rel='icon' href='/favicon.ico' />
+        </Head>
+
+        <AdminLayout title='Sản phẩm'>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Input
+              aria-label='product-search'
+              placeholder='Tìm kiếm'
+              size='lg'
+            />
+            <Button
+              onPress={() => router.push('/admin/product/add')}
+              shadow
+              color='secondary'
+            >
+              Tạo mới
+            </Button>
+          </div>
+
+          <div style={{ marginTop: 20 }}>
+            <Page pageIndex={pageIndex} setPageIndex={setPageIndex} />
+            <div style={{ display: 'none' }}>
+              <Page pageIndex={pageIndex + 1} setPageIndex={setPageIndex} />
+            </div>
+          </div>
+        </AdminLayout>
+      </>
+    </SecureAdminPages>
+  );
+};
+
+const Page = ({
+  pageIndex,
+  setPageIndex,
+}: {
+  pageIndex: number;
+  setPageIndex: Dispatch<SetStateAction<number>>;
+}) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const {
+    data: products,
+    error,
+    mutate,
+  } = useAdminProducts(`?limit=20&page=${pageIndex}`, session?.accessToken);
+
+  const handleDelete = async (id: number, images: ImageType[]) => {
     Swal.fire({
       title: 'Bạn có chắc?',
       text: 'Hành động này không thể hoàn tác!',
@@ -57,6 +159,7 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
+          await deleteImgsFromCloud(images);
           const res = await axios.delete(`${server}/admin/product/${id}`, {
             headers: {
               Authorization: `Bearer ${session?.accessToken}`,
@@ -85,145 +188,150 @@ const IndexPage: NextPage = () => {
     setPageIndex(page);
   };
 
+  const renderCell = (product: ProductType, columnKey: React.Key) => {
+    switch (columnKey) {
+      case 'product':
+        return (
+          <User
+            squared
+            src={product.images.length > 0 ? product.images[0].url : ''}
+            name={product.name}
+            css={{ p: 0 }}
+          />
+        );
+
+      case 'stock':
+        return (
+          <Text b size={13} css={{ color: '$accents7' }}>
+            {product.variants.reduce((curr, next) => curr + next.quantity, 0)}{' '}
+            sản phẩm của {product.variants.length} loại
+          </Text>
+        );
+
+      case 'category':
+        return (
+          <Text b size={13} css={{ tt: 'capitalize', color: '$accents7' }}>
+            {product.category.name}
+          </Text>
+        );
+
+      case 'status':
+        return (
+          <Row>
+            {product.isNew && (
+              <Badge variant='flat' isSquared color='secondary'>
+                Mới
+              </Badge>
+            )}
+            {product.isPopular && (
+              <Badge variant='flat' isSquared color='secondary'>
+                Nổi bật
+              </Badge>
+            )}
+            {product.isActive ? (
+              <Badge variant='flat' isSquared color='secondary'>
+                Đang hiển thị
+              </Badge>
+            ) : (
+              <Badge variant='flat' isSquared color='error'>
+                Chưa hiển thị
+              </Badge>
+            )}
+            {product.category === null && (
+              <Badge variant='flat' isSquared color='error'>
+                Chưa có danh mục
+              </Badge>
+            )}
+          </Row>
+        );
+
+      default:
+        return (
+          <Row justify='center' align='center'>
+            <Dropdown placement='bottom-right'>
+              <Dropdown.Button
+                ripple={false}
+                css={{
+                  background: '$gray100',
+                  color: '$gray800',
+                  '&:hover': {
+                    background: '$gray200',
+                  },
+                  '&:active': {
+                    background: '$gray300',
+                  },
+                  '&:focus': {
+                    borderColor: '$gray400',
+                  },
+                }}
+                flat
+              ></Dropdown.Button>
+              <Dropdown.Menu aria-label='Static Actions'>
+                <Dropdown.Item key='edit' textValue='Sửa'>
+                  <Text
+                    color='inherit'
+                    onClick={() => {
+                      router.push('/admin/product/update/' + product.id);
+                    }}
+                  >
+                    Sửa
+                  </Text>
+                </Dropdown.Item>
+                <Dropdown.Item key='delete' color='error' textValue='Xóa'>
+                  <Text
+                    color='inherit'
+                    onClick={(e) => {
+                      handleDelete(product.id, product.images);
+                    }}
+                  >
+                    Xóa
+                  </Text>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </Row>
+        );
+    }
+  };
+
   return (
-    <SecureAdminPages>
-      <>
-        <Head>
-          <title>Sản phẩm</title>
-          <link rel='icon' href='/favicon.ico' />
-        </Head>
-
-        <AdminLayout title='Sản phẩm'>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Input
-              aria-label='product-search'
-              placeholder='Tìm kiếm'
-              size='lg'
-            />
-            <Button
-              onPress={() => router.push('/admin/product/add')}
-              shadow
-              color='secondary'
-            >
-              Tạo mới
-            </Button>
-          </div>
-
-          <div style={{ minHeight: 437, marginTop: 20 }}>
-            <Grid.Container gap={1}>
-              {data?.items.map((i) => (
-                <Grid key={i.id} xs={6} sm={4} md={3} lg={2}>
-                  <Card isHoverable variant='bordered' css={{ mw: '330px' }}>
-                    <Card.Header
-                      css={{
-                        flexWrap: 'wrap',
-                        minHeight: 80,
-                        alignItems: 'baseline',
-                      }}
-                    >
-                      {i.isNew && (
-                        <Badge variant='flat' isSquared color='secondary'>
-                          Mới
-                        </Badge>
-                      )}
-                      {i.isPopular && (
-                        <Badge variant='flat' isSquared color='secondary'>
-                          Nổi bật
-                        </Badge>
-                      )}
-                      {i.isActive ? (
-                        <Badge variant='flat' isSquared color='secondary'>
-                          Đang hiển thị
-                        </Badge>
-                      ) : (
-                        <Badge variant='flat' isSquared color='error'>
-                          Chưa hiển thị
-                        </Badge>
-                      )}
-                      {i.category === null && (
-                        <Badge variant='flat' isSquared color='error'>
-                          Chưa có danh mục
-                        </Badge>
-                      )}
-                    </Card.Header>
-                    <Card.Body css={{ p: 0 }}>
-                      <Card.Image
-                        src={i.images[0].url}
-                        width='100%'
-                        height={140}
-                        alt=''
-                      />
-                    </Card.Body>
-                    <Card.Body>
-                      <Text
-                        b
-                        css={{
-                          fontSize: 18,
-                          textAlign: 'center',
-                          minHeight: 54,
-                        }}
-                      >
-                        {i.name}
-                      </Text>
-                      <Text
-                        b
-                        color='secondary'
-                        css={{ fontSize: 18, textAlign: 'center' }}
-                      >
-                        {i.price.toLocaleString('vi-VN')} đ
-                      </Text>
-                      <Text
-                        b
-                        color=''
-                        css={{ fontSize: 14, textAlign: 'center' }}
-                      >
-                        Số lượng: {i.quantity}
-                      </Text>
-                    </Card.Body>
-                    <Card.Divider />
-                    <Card.Footer>
-                      <div style={{ width: '100%' }}>
-                        <Row justify='space-between'>
-                          <Button
-                            onPress={() =>
-                              router.push('/admin/product/update/' + i.id)
-                            }
-                            size='xs'
-                            color='secondary'
-                            flat
-                          >
-                            Sửa
-                          </Button>
-                          <Button
-                            onPress={() => handleDelete(i.id)}
-                            size='xs'
-                            color='secondary'
-                          >
-                            Xóa
-                          </Button>
-                        </Row>
-                      </div>
-                    </Card.Footer>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid.Container>
-          </div>
-
-          {data && data?.meta.totalPages > 1 && (
-            <Row justify='center' css={{ marginTop: 20, marginBottom: 20 }}>
-              <Pagination
-                shadow
-                color='secondary'
-                total={data?.meta.totalPages}
-                onChange={(page) => handleChange(page)}
-                page={pageIndex}
-              />
-            </Row>
+    <>
+      <Table
+        aria-label='Example table with custom cells'
+        css={{
+          height: 'auto',
+          minWidth: '100%',
+        }}
+        color='secondary'
+        selectionMode='multiple'
+      >
+        <Table.Header columns={columns}>
+          {(column) => (
+            <Table.Column key={column.uid}>{column.name}</Table.Column>
           )}
-        </AdminLayout>
-      </>
-    </SecureAdminPages>
+        </Table.Header>
+        <Table.Body items={products?.items || []}>
+          {(item: ProductType) => (
+            <Table.Row>
+              {(columnKey) => (
+                <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>
+              )}
+            </Table.Row>
+          )}
+        </Table.Body>
+      </Table>
+      {products && (
+        <Row justify='center' css={{ marginTop: 20, marginBottom: 20 }}>
+          <Pagination
+            shadow
+            color='secondary'
+            total={products?.meta.totalPages}
+            onChange={(page) => handleChange(page)}
+            page={pageIndex}
+          />
+        </Row>
+      )}
+    </>
   );
 };
 

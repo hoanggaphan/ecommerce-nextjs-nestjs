@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Status } from './../../enums/status.enum';
+import { OrderStatus } from '../../enums/orderStatus.enum';
 import { User } from './../../user/entities/user.entity';
 import { OrderItem } from './orderItem.entity';
 
@@ -25,22 +25,31 @@ export class Order {
   @Column({ nullable: false })
   address: string;
 
-  @Column({ nullable: false })
-  orderDate: Date;
+  @Column()
+  note: string;
 
-  @Column({ nullable: false })
-  shipCost: number;
+  @Column({ nullable: false, default: 0 })
+  shippingCost: number;
 
   @Column({
     type: 'enum',
     nullable: false,
-    enum: Status,
-    default: Status.Pending,
+    enum: OrderStatus,
+    default: OrderStatus.Processing,
   })
-  status: Status;
+  orderStatus: OrderStatus;
 
   @Column({ nullable: false })
   totalPrice: number;
+
+  @Column({ nullable: false, default: 'COD' })
+  paymentMethod: string;
+
+  @Column({
+    nullable: false,
+    default: false,
+  })
+  isPaid: boolean;
 
   @ManyToOne(() => User, (user) => user.orders)
   user: User;

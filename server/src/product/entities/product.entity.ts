@@ -1,19 +1,16 @@
-import { OrderItem } from './../../order/entities/orderItem.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { AttributeValue } from '../../attribute-value/entities/attribute-value.entity';
 import { Category } from './../../category/entities/category.entity';
 import { Image } from './../../image/entities/image.entity';
 import { CartItem } from './../../user/entities/cartItem.entity';
+import { Variant } from './../../variant/entities/variant.entity';
 
 @Entity()
 export class Product {
@@ -28,12 +25,6 @@ export class Product {
 
   @Column({ type: 'text', nullable: true })
   description: string;
-
-  @Column({ nullable: false })
-  price: number;
-
-  @Column({ nullable: false })
-  quantity: number;
 
   @Column({ nullable: false, default: false })
   isNew: boolean;
@@ -50,17 +41,11 @@ export class Product {
   })
   category: Category;
 
-  @ManyToMany(() => AttributeValue)
-  @JoinTable({
-    name: 'product_attribute_value',
-  })
-  attributeValues: AttributeValue[];
-
   @OneToMany(() => Image, (image) => image.product)
   images: Image[];
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
-  public orderItems!: OrderItem[];
+  @OneToMany(() => Variant, (variant) => variant.product)
+  variants: Variant[];
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   public cartItems!: CartItem[];

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Product } from './../../product/entities/product.entity';
+import { Variant } from './../../variant/entities/variant.entity';
 import { Order } from './order.entity';
 
 @Entity()
@@ -11,7 +11,7 @@ export class OrderItem {
   public orderId!: number;
 
   @Column()
-  public productId!: number;
+  public variantId!: number;
 
   @Column({ nullable: false })
   orderedPrice: number;
@@ -22,6 +22,6 @@ export class OrderItem {
   @ManyToOne(() => Order, (order) => order.orderItems)
   public order!: Order;
 
-  @ManyToOne(() => Product, (product) => product.orderItems)
-  public product!: Product;
+  @ManyToOne(() => Variant, (variant) => variant.orderItems)
+  public variant!: Variant;
 }
