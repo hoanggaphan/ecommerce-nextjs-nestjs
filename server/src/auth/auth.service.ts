@@ -43,7 +43,11 @@ export class AuthService {
   }
 
   async refresh(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = {
+      username: user.username,
+      sub: user.id,
+      roles: user.roles,
+    };
     return {
       accessToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_ACCESS_SECRET,

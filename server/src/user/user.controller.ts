@@ -16,6 +16,7 @@ import { AccessTokenGuard } from './../auth/access-token.guard';
 import { Role } from './../enums/role.enum';
 import { RolesGuard } from './../guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
@@ -28,6 +29,14 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Roles(Role.Admin, Role.User)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Patch('update-password')
+  updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
+    return this.userService.updatePassword(updatePasswordDto);
+  }
+
   @Roles(Role.Admin)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -36,14 +45,16 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @UseGuards(AccessTokenGuard)
+  @Roles(Role.Admin, Role.User)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @Roles(Role.Admin, Role.User)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

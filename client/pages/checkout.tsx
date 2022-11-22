@@ -13,7 +13,6 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import axios from 'axios';
-import confetti from 'canvas-confetti';
 import { unstable_getServerSession } from 'next-auth/next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
@@ -255,6 +254,9 @@ const Payment = () => {
               <Radio color='secondary' value='ZALOPAY' size='xs'>
                 Thanh toán qua Zalo Pay
               </Radio>
+              {/* <Radio color='secondary' value='MOMO' size='xs'>
+                Thanh toán qua Momo
+              </Radio> */}
             </Radio.Group>
           )}
         />
@@ -515,12 +517,8 @@ export default function Checkout() {
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',
-      }).then(() => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.8 },
-        });
+      }).then(async () => {
+        router.replace(`/order/${res.data.id}`);
       });
 
       dispatch(clearCart());

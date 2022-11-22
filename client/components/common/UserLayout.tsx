@@ -46,6 +46,12 @@ const MyNavbar = () => {
   const handleAction = (key: Key) => {
     if (key === 'logout') {
       signOut({ redirect: false });
+    } else if (key === 'my_orders') {
+      router.push('/my-orders');
+    } else if (key === 'profile') {
+      router.push('/profile');
+    } else if (key === 'update-password') {
+      router.push('/update-password');
     }
   };
 
@@ -108,12 +114,12 @@ const MyNavbar = () => {
                 onAction={handleAction}
                 color='secondary'
                 aria-label='Avatar Actions'
-                disabledKeys={['profile']}
+                disabledKeys={['general']}
               >
                 <Dropdown.Item
                   as='div'
-                  aria-label='profile'
-                  key='profile'
+                  aria-label='general'
+                  key='general'
                   css={{ height: '$18' }}
                 >
                   <Row align='center'>
@@ -135,10 +141,13 @@ const MyNavbar = () => {
                     )}
                   </Row>
                 </Dropdown.Item>
-                <Dropdown.Item key='account' withDivider>
-                  Tài khoản
+                <Dropdown.Item key='my_orders' withDivider>
+                  Đơn hàng của tôi
                 </Dropdown.Item>
-                <Dropdown.Item key='my_orders'>Đơn hàng của tôi</Dropdown.Item>
+                <Dropdown.Item key='profile'>Thông tin cá nhân</Dropdown.Item>
+                <Dropdown.Item key='update-password'>
+                  Cập nhật mật khẩu
+                </Dropdown.Item>
                 <Dropdown.Item key='logout' color='error' withDivider>
                   Đăng xuất
                 </Dropdown.Item>

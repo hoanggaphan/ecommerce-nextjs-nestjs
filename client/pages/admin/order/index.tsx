@@ -6,7 +6,7 @@ import {
   Row,
   styled,
   Table,
-  Text
+  Text,
 } from '@nextui-org/react';
 import axios from 'axios';
 import type { NextPage } from 'next';

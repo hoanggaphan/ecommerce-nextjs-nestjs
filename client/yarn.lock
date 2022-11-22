@@ -1137,6 +1137,11 @@
   "resolved" "https://registry.npmjs.org/@types/canvas-confetti/-/canvas-confetti-1.6.0.tgz"
   "version" "1.6.0"
 
+"@types/crypto-js@^4.1.1":
+  "integrity" "sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA=="
+  "resolved" "https://registry.npmjs.org/@types/crypto-js/-/crypto-js-4.1.1.tgz"
+  "version" "4.1.1"
+
 "@types/hoist-non-react-statics@^3.3.1":
   "integrity" "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA=="
   "resolved" "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz"
@@ -1498,7 +1503,7 @@
   optionalDependencies:
     "proxy-agent" "^5.0.0"
 
-"clsx@^1.1.1":
+"clsx@^1.1.0", "clsx@^1.1.1":
   "integrity" "sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg=="
   "resolved" "https://registry.npmjs.org/clsx/-/clsx-1.2.1.tgz"
   "version" "1.2.1"
@@ -1583,6 +1588,11 @@
     "path-key" "^3.1.0"
     "shebang-command" "^2.0.0"
     "which" "^2.0.1"
+
+"crypto-js@^4.1.1":
+  "integrity" "sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw=="
+  "resolved" "https://registry.npmjs.org/crypto-js/-/crypto-js-4.1.1.tgz"
+  "version" "4.1.1"
 
 "csstype@^3.0.2":
   "integrity" "sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw=="
@@ -3012,7 +3022,7 @@
   "resolved" "https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz"
   "version" "3.8.0"
 
-"prop-types@^15.6.0", "prop-types@^15.6.2", "prop-types@^15.8.1":
+"prop-types@^15.5.0", "prop-types@^15.6.0", "prop-types@^15.6.2", "prop-types@^15.8.1":
   "integrity" "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="
   "resolved" "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   "version" "15.8.1"
@@ -3073,10 +3083,10 @@
     "loose-envify" "^1.1.0"
     "scheduler" "^0.23.0"
 
-"react-hook-form@^7.37.0":
-  "integrity" "sha512-6NFTxsnw+EXSpNNvLr5nFMjPdYKRryQcelTHg7zwBB6vAzfPIcZq4AExP4heVlwdzntepQgwiOQW4z7Mr99Lsg=="
-  "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.37.0.tgz"
-  "version" "7.37.0"
+"react-hook-form@^7.39.4":
+  "integrity" "sha512-B0e78r9kR9L2M4A4AXGbHoA/vyv34sB/n8QWJAw33TFz8f5t9helBbYAeqnbvcQf1EYzJxKX/bGQQh9K+evCyQ=="
+  "resolved" "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.39.4.tgz"
+  "version" "7.39.4"
 
 "react-icons@^4.4.0":
   "integrity" "sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg=="
@@ -3129,6 +3139,14 @@
   "integrity" "sha512-X+kYdGP1WumAX2exool+1lwjLSZ1dDCaCzwF0KvDWHjPfCD4hxtHvok4oyZEZro2lioaR+lCtyVG8ti2Yvpnsg=="
   "resolved" "https://registry.npmjs.org/react-slugify/-/react-slugify-2.1.0.tgz"
   "version" "2.1.0"
+
+"react-tabs@^5.1.0":
+  "integrity" "sha512-jsPVEPuhG7JljTo8Q4ujz4UKRpG90nHlDClAdvV5KrLxCHU+MT/kg7dmhq8fDv8+frciDtaYeFFlTVRLm4N5AQ=="
+  "resolved" "https://registry.npmjs.org/react-tabs/-/react-tabs-5.1.0.tgz"
+  "version" "5.1.0"
+  dependencies:
+    "clsx" "^1.1.0"
+    "prop-types" "^15.5.0"
 
 "react-transition-group@^4.3.0":
   "integrity" "sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g=="

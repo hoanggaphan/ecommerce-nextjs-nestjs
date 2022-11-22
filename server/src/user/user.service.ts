@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -70,6 +71,33 @@ export class UserService {
       statusCode: HttpStatus.OK,
       message: 'Update success',
     }));
+  }
+
+  async updatePassword(updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.findOne(updatePasswordDto.userId);
+    const result = await bcrypt.compare(
+      updatePasswordDto.oldPass,
+      user.password,
+    );
+    if (!result) {
+      throw new BadRequestException('Password not exactly');
+    }
+
+    if (updatePasswordDto.newPass !== updatePasswordDto.confirmPass) {
+      throw new BadRequestException('Confirm password not equal new password');
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      updatePasswordDto.newPass,
+      saltOrRounds,
+    );
+
+    return this.usersRepository
+      .update(updatePasswordDto.userId, { password: hashedPassword })
+      .then((res) => ({
+        statusCode: HttpStatus.OK,
+        message: 'Update password success',
+      }));
   }
 
   async remove(id: number) {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { server } from '../constants';
-import { OrderPaginateType } from './../../types/index';
+import { OrderPaginateType } from '../../types/index';
 
 const fetchWithToken = (
   url: string,
