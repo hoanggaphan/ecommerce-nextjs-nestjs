@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { OrderType } from '../../types/index';
 import { server } from '../constants';
+import { UserType } from './../../types/index';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -10,15 +10,9 @@ const fetcher = (url: string, token: string) =>
     })
     .then((res) => res.data);
 
-export function useOrder({
-  id,
-  token,
-}: {
-  id: string | string[] | undefined;
-  token?: string;
-}) {
-  const { data, error, isValidating, mutate } = useSWR<OrderType>(
-    token ? [`${server}/order/${id}`, token] : null,
+export function useUser(id: string | string[] | undefined, token?: string) {
+  const { data, error, isValidating, mutate } = useSWR<UserType>(
+    id && token ? [`${server}/user/${id}`, token] : null,
     fetcher
   );
 
@@ -29,4 +23,4 @@ export function useOrder({
     isValidating,
   };
 }
-export type orderState = ReturnType<typeof useOrder>;
+export type userState = ReturnType<typeof useUser>;

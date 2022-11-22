@@ -7,7 +7,7 @@ import {
   Spacer,
   Table,
   Text,
-  User
+  User,
 } from '@nextui-org/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -48,9 +48,9 @@ type OptionType = {
 export default function Index() {
   const router = useRouter();
   const { id } = router.query;
-  const { data: order, mutate } = useOrder({ id });
-  const [selected, setSelected] = useState<OptionType | null>(null);
   const { data: session } = useSession();
+  const { data: order, mutate } = useOrder({ id, token: session?.accessToken });
+  const [selected, setSelected] = useState<OptionType | null>(null);
 
   const handleSelect = async (newValue: OptionType | null) => {
     setSelected(newValue);
@@ -61,7 +61,7 @@ export default function Index() {
         isPaid:
           order?.paymentMethod === 'COD' && newValue?.value === 'delivered'
             ? true
-            : false,
+            : order?.isPaid,
       },
       {
         headers: {

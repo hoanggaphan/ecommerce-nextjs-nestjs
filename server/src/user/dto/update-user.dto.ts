@@ -1,14 +1,15 @@
-import { Length, Matches } from 'class-validator';
+import { IsInt, IsOptional, Length } from 'class-validator';
 
 export class UpdateUserDto {
+  @IsOptional()
   @Length(0, 32)
   fullName: string;
 
-  @Matches(/((03|05|07|08|09)+([0-9]{8})\b)/, {
-    message: 'Phone number not valid',
-  })
+  @IsOptional()
+  @IsInt()
   phone: string;
 
+  @IsOptional()
   @Length(0, 300)
   address: string;
 }

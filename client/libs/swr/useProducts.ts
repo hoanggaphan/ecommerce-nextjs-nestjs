@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { server } from '../constants';
-import { ProductPaginateType } from './../../types/index';
+import { ProductPaginateType } from '../../types/index';
 
 const fetcher = (url: string, queryParams: string = '') => {
   return axios.get(`${url}${queryParams}`).then((res) => res.data);
@@ -19,4 +19,4 @@ export function useProducts(queryParams?: string) {
     mutate,
   };
 }
-export type categoryState = ReturnType<typeof useProducts>;
+export type productsState = ReturnType<typeof useProducts>;

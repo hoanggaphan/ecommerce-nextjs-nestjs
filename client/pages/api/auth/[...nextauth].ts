@@ -117,7 +117,7 @@ export const options = {
   },
   secret: process.env.AUTH_SECRET,
   session: {
-    maxAge: 31 * 24 * 60 * 60, // 30 days
+    maxAge: 31 * 24 * 60 * 60, // Cookie save token expires after 31 day
   },
 };
 

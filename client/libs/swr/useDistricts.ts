@@ -1,4 +1,4 @@
-import { CityType } from './../../types/index';
+import { CityType } from '../../types/index';
 import axios from 'axios';
 import useSWR from 'swr';
 
