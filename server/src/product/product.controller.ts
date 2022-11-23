@@ -27,15 +27,19 @@ export class ProductController {
 
   @Get()
   async findAllForUser(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('name') name = '',
   ): Promise<Pagination<Product>> {
     limit = limit > 100 ? 100 : limit;
-    return this.productService.findAllForUser({
-      page,
-      limit,
-      route: `${process.env.SERVER}/product`,
-    });
+    return this.productService.findAllForUser(
+      {
+        page,
+        limit,
+        route: `${process.env.SERVER}/product`,
+      },
+      name,
+    );
   }
 
   @Post('cart-items')

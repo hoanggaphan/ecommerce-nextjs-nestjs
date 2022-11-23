@@ -3,23 +3,27 @@ import {
   Badge,
   Button,
   Dropdown,
+  FormElement,
+  Input,
   Navbar,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Key } from 'react';
+import { ChangeEvent, Key, useRef, useState } from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { HiOutlineUserCircle } from 'react-icons/hi';
+import { RiSearchLine } from 'react-icons/ri';
 import ScrollToTop from 'react-scroll-to-top';
 import useAuthUser from '../../libs/hooks/useAuthUser';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
 import { useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
+import { useProducts } from '../../libs/swr/useProducts';
 import Footer from './Footer';
 import Logo from './Logo';
 
@@ -34,6 +38,168 @@ const Cart = () => {
     <Badge color='secondary' content={totalAmount} shape='circle' size='sm'>
       <FaShoppingCart fill='#687076' size={25} />
     </Badge>
+  );
+};
+
+const Search = () => {
+  const [focus, setFocus] = useState(false);
+  const timeoutRef = useRef<any>(null);
+  const [keyword, setKeyword] = useState('');
+  const query = `?name=${keyword}`;
+  const { data } = useProducts(query, !!keyword);
+  const router = useRouter();
+
+  const handleChange = (e: ChangeEvent<FormElement>) => {
+    const q = e.target.value;
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setKeyword(q);
+    }, 500);
+  };
+
+  const renderList = () => {
+    if (!data)
+      return (
+        <Row
+          align='center'
+          justify='center'
+          css={{ h: '100%', p: 10, position: 'absolute' }}
+        >
+          <Text size={16}>Nhập tên sản phẩm cần tìm</Text>
+        </Row>
+      );
+
+    if (data && data.items.length === 0)
+      return (
+        <Row
+          align='center'
+          justify='center'
+          css={{ h: '100%', p: 10, position: 'absolute' }}
+        >
+          <Text size={16}>Không tìm thấy sản phẩm</Text>
+        </Row>
+      );
+
+    return (
+      <ul className='result-item-container'>
+        {data?.items.map((i) => (
+          <li className='result-item'>
+            <Text
+              onClick={() => router.push(`/${i.slug}`)}
+              size={14}
+              css={{
+                padding: '8px',
+                borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                wordBreak: 'break-word',
+                cursor: 'pointer',
+                transition: 'all.2s ease',
+                '&:hover': {
+                  background: 'rgba(17, 24,28,0.1)',
+                },
+                borderRadius: 4,
+                userSelect: 'none',
+
+                '&:active': {
+                  transform: 'scale(.97)',
+                },
+              }}
+            >
+              {i.name}
+            </Text>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  return (
+    <>
+      <div className='search-container'>
+        <Input
+          aria-labelledby='search'
+          onChange={handleChange}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          clearable
+          contentLeft={
+            <RiSearchLine fill='var(--nextui-colors-accents6)' size={16} />
+          }
+          contentLeftStyling={false}
+          css={{
+            w: '100%',
+            '@xsMax': {
+              mw: '300px',
+            },
+            '& .nextui-input-content--left': {
+              h: '100%',
+              ml: '$4',
+              dflex: 'center',
+            },
+          }}
+          placeholder='Tìm kiếm...'
+        />
+
+        <div className={`search-result ${focus ? 'show' : ''}`}>
+          {renderList()}
+        </div>
+      </div>
+      <style jsx>{`
+        .search-container {
+          position: relative;
+        }
+
+        .search-result {
+          width: 100%;
+          max-height: calc(100vh - 334px);
+          min-height: 168px;
+          border-radius: 8px;
+
+          z-index: 1001;
+          margin-top: 7px;
+          position: absolute;
+
+          background: var(--nextui-colors-accents0);
+          color: var(--nextui-colors-text);
+          box-shadow: 0px 5px 20px -5px rgb(0 0 0 / 10%);
+
+          overflow-y: auto;
+          visibility: hidden;
+          opacity: 0;
+          transition: all 0.25s ease;
+        }
+
+        .search-result::-webkit-scrollbar {
+          width: 0;
+        }
+
+        @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+          .search-result {
+            backdrop-filter: saturate(180%) blur(10px) !important;
+            background: rgba(236, 238, 240, 0.9);
+          }
+        }
+
+        .show {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        .result-item-container {
+          padding: 10px;
+          margin: 0;
+        }
+
+        .result-item {
+          margin-bottom: var(--nextui-space-5);
+          font-size: var(--nextui-fontSizes-base);
+          line-height: var(--nextui-lineHeights-lg);
+        }
+      `}</style>
+    </>
   );
 };
 
@@ -56,8 +222,8 @@ const MyNavbar = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#fdfdff' }}>
-      <Navbar isBordered>
+    <>
+      <Navbar>
         <Navbar.Brand>
           <Logo url='/' />
         </Navbar.Brand>
@@ -77,7 +243,18 @@ const MyNavbar = () => {
             </Link>
           ))}
         </Navbar.Content>
-        <Navbar.Content gap={15} css={{ w: 240, justifyContent: 'end' }}>
+        <Navbar.Content gap={15} css={{ justifyContent: 'end' }}>
+          <Navbar.Item
+            css={{
+              '@xsMax': {
+                w: '100%',
+                jc: 'center',
+              },
+            }}
+          >
+            <Search />
+          </Navbar.Item>
+
           {session ? (
             <Dropdown placement='bottom-right'>
               <Dropdown.Trigger>
@@ -181,7 +358,7 @@ const MyNavbar = () => {
           </Link>
         </Navbar.Content>
       </Navbar>
-    </div>
+    </>
   );
 };
 

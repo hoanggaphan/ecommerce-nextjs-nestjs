@@ -7,9 +7,9 @@ const fetcher = (url: string, queryParams: string = '') => {
   return axios.get(`${url}${queryParams}`).then((res) => res.data);
 };
 
-export function useProducts(queryParams?: string) {
-  const { data, error, mutate } = useSWR<ProductPaginateType>(
-    [`${server}/product`, queryParams],
+export function useProducts(queryParams?: string, isFetch: boolean = true) {
+  const { data, error, mutate, isValidating } = useSWR<ProductPaginateType>(
+    isFetch ? [`${server}/product`, queryParams] : null,
     fetcher
   );
 
@@ -17,6 +17,7 @@ export function useProducts(queryParams?: string) {
     data,
     error,
     mutate,
+    isValidating,
   };
 }
 export type productsState = ReturnType<typeof useProducts>;

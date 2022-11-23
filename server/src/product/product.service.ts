@@ -10,7 +10,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { Image } from './../image/entities/image.entity';
 import { Variant } from './../variant/entities/variant.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -45,10 +45,12 @@ export class ProductService {
 
   async findAllForUser(
     options: IPaginationOptions,
+    name: string,
   ): Promise<Pagination<Product>> {
     return paginate<Product>(this.productRepo, options, {
       where: {
         isActive: true,
+        name: Like(`%${name}%`),
       },
       order: {
         createdDate: 'DESC',
