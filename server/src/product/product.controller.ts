@@ -94,13 +94,17 @@ export class ProductAdminController {
   async findAllForAdmin(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('name') name = '',
   ): Promise<Pagination<Product>> {
     limit = limit > 100 ? 100 : limit;
-    return this.productService.findAllForAdmin({
-      page,
-      limit,
-      route: `${process.env.SERVER}/admin/product`,
-    });
+    return this.productService.findAllForAdmin(
+      {
+        page,
+        limit,
+        route: `${process.env.SERVER}/admin/product`,
+      },
+      name,
+    );
   }
 
   @Post()

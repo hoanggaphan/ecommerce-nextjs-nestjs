@@ -2,6 +2,7 @@ import {
   Badge,
   Button,
   Dropdown,
+  FormElement,
   Input,
   Pagination,
   Row,
@@ -15,7 +16,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { ChangeEvent, Dispatch, memo, SetStateAction, useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
@@ -96,7 +97,17 @@ const deleteImgsFromCloud = async (images: ImageType[]) => {
 
 const IndexPage: NextPage = () => {
   const [pageIndex, setPageIndex] = useState(1);
+  const [keyword, setKeyword] = useState('');
+  const [temp, setTemp] = useState('');
   const router = useRouter();
+
+  const handleEnter = async (e: React.KeyboardEvent<FormElement>) => {
+    if (e.key === 'Enter') {
+      setKeyword(temp);
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<FormElement>) => setTemp(e.target.value);
 
   return (
     <SecureAdminPages>
@@ -109,6 +120,8 @@ const IndexPage: NextPage = () => {
         <AdminLayout title='Sản phẩm'>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Input
+              onChange={handleChange}
+              onKeyUp={handleEnter}
               aria-label='product-search'
               placeholder='Tìm kiếm'
               size='lg'
@@ -123,9 +136,17 @@ const IndexPage: NextPage = () => {
           </div>
 
           <div style={{ marginTop: 20 }}>
-            <Page pageIndex={pageIndex} setPageIndex={setPageIndex} />
+            <Page
+              keyword={keyword}
+              pageIndex={pageIndex}
+              setPageIndex={setPageIndex}
+            />
             <div style={{ display: 'none' }}>
-              <Page pageIndex={pageIndex + 1} setPageIndex={setPageIndex} />
+              <Page
+                keyword={keyword}
+                pageIndex={pageIndex + 1}
+                setPageIndex={setPageIndex}
+              />
             </div>
           </div>
         </AdminLayout>
@@ -134,205 +155,208 @@ const IndexPage: NextPage = () => {
   );
 };
 
-const Page = ({
-  pageIndex,
-  setPageIndex,
-}: {
-  pageIndex: number;
-  setPageIndex: Dispatch<SetStateAction<number>>;
-}) => {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const {
-    data: products,
-    error,
-    mutate,
-  } = useAdminProducts(`?limit=20&page=${pageIndex}`, session?.accessToken);
+const Page = memo(
+  ({
+    keyword,
+    pageIndex,
+    setPageIndex,
+  }: {
+    keyword: string;
+    pageIndex: number;
+    setPageIndex: Dispatch<SetStateAction<number>>;
+  }) => {
+    const router = useRouter();
+    const { data: session } = useSession();
+    const { data: products, mutate } = useAdminProducts(
+      `?limit=20&page=${pageIndex}&name=${keyword}`,
+      session?.accessToken
+    );
 
-  const handleDelete = async (id: number, images: ImageType[]) => {
-    Swal.fire({
-      title: 'Bạn có chắc?',
-      text: 'Hành động này không thể hoàn tác!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Xóa!',
-      cancelButtonText: 'Đóng',
-      preConfirm: async (login) => {
-        try {
-          await deleteImgsFromCloud(images);
-          const res = await axios.delete(`${server}/admin/product/${id}`, {
-            headers: {
-              Authorization: `Bearer ${session?.accessToken}`,
-            },
+    const handleDelete = async (id: number, images: ImageType[]) => {
+      Swal.fire({
+        title: 'Bạn có chắc?',
+        text: 'Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xóa!',
+        cancelButtonText: 'Đóng',
+        preConfirm: async (login) => {
+          try {
+            await deleteImgsFromCloud(images);
+            const res = await axios.delete(`${server}/admin/product/${id}`, {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            });
+            return res;
+          } catch (error: any) {
+            Swal.showValidationMessage(`Xóa thất bại`);
+          }
+        },
+      }).then(async (result) => {
+        if (result.isConfirmed && result.value?.status == 200) {
+          Swal.fire({
+            title: 'Xóa thành công!',
+            icon: 'success',
           });
-          return res;
-        } catch (error: any) {
-          Swal.showValidationMessage(`Xóa thất bại`);
+          const res: any = await mutate();
+          if (res.meta.itemCount === 0 && pageIndex > 1) {
+            setPageIndex(pageIndex - 1);
+          }
         }
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed && result.value?.status == 200) {
-        Swal.fire({
-          title: 'Xóa thành công!',
-          icon: 'success',
-        });
-        const res: any = await mutate();
-        if (res.meta.itemCount === 0 && pageIndex > 1) {
-          setPageIndex(pageIndex - 1);
-        }
-      }
-    });
-  };
+      });
+    };
 
-  const handleChange = (page: number) => {
-    setPageIndex(page);
-  };
+    const handleChange = (page: number) => {
+      setPageIndex(page);
+    };
 
-  const renderCell = (product: ProductType, columnKey: React.Key) => {
-    switch (columnKey) {
-      case 'product':
-        return (
-          <User
-            squared
-            src={product.images.length > 0 ? product.images[0].url : ''}
-            name={product.name}
-            css={{ p: 0 }}
-          />
-        );
+    const renderCell = (product: ProductType, columnKey: React.Key) => {
+      switch (columnKey) {
+        case 'product':
+          return (
+            <User
+              squared
+              src={product.images.length > 0 ? product.images[0].url : ''}
+              name={product.name}
+              css={{ p: 0 }}
+            />
+          );
 
-      case 'stock':
-        return (
-          <Text b size={13} css={{ color: '$accents7' }}>
-            {product.variants.reduce((curr, next) => curr + next.quantity, 0)}{' '}
-            sản phẩm của {product.variants.length} loại
-          </Text>
-        );
+        case 'stock':
+          return (
+            <Text b size={13} css={{ color: '$accents7' }}>
+              {product.variants.reduce((curr, next) => curr + next.quantity, 0)}{' '}
+              sản phẩm của {product.variants.length} loại
+            </Text>
+          );
 
-      case 'category':
-        return (
-          <Text b size={13} css={{ tt: 'capitalize', color: '$accents7' }}>
-            {product.category.name}
-          </Text>
-        );
+        case 'category':
+          return (
+            <Text b size={13} css={{ tt: 'capitalize', color: '$accents7' }}>
+              {product.category.name}
+            </Text>
+          );
 
-      case 'status':
-        return (
-          <Row>
-            {product.isNew && (
-              <Badge variant='flat' isSquared color='secondary'>
-                Mới
-              </Badge>
-            )}
-            {product.isPopular && (
-              <Badge variant='flat' isSquared color='secondary'>
-                Nổi bật
-              </Badge>
-            )}
-            {product.isActive ? (
-              <Badge variant='flat' isSquared color='secondary'>
-                Đang hiển thị
-              </Badge>
-            ) : (
-              <Badge variant='flat' isSquared color='error'>
-                Chưa hiển thị
-              </Badge>
-            )}
-            {product.category === null && (
-              <Badge variant='flat' isSquared color='error'>
-                Chưa có danh mục
-              </Badge>
-            )}
-          </Row>
-        );
-
-      default:
-        return (
-          <Row justify='center' align='center'>
-            <Dropdown placement='bottom-right'>
-              <Dropdown.Button
-                ripple={false}
-                css={{
-                  background: '$gray100',
-                  color: '$gray800',
-                  '&:hover': {
-                    background: '$gray200',
-                  },
-                  '&:active': {
-                    background: '$gray300',
-                  },
-                  '&:focus': {
-                    borderColor: '$gray400',
-                  },
-                }}
-                flat
-              ></Dropdown.Button>
-              <Dropdown.Menu aria-label='Static Actions'>
-                <Dropdown.Item key='edit' textValue='Sửa'>
-                  <Text
-                    color='inherit'
-                    onClick={() => {
-                      router.push('/admin/product/update/' + product.id);
-                    }}
-                  >
-                    Sửa
-                  </Text>
-                </Dropdown.Item>
-                <Dropdown.Item key='delete' color='error' textValue='Xóa'>
-                  <Text
-                    color='inherit'
-                    onClick={(e) => {
-                      handleDelete(product.id, product.images);
-                    }}
-                  >
-                    Xóa
-                  </Text>
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Row>
-        );
-    }
-  };
-
-  return (
-    <>
-      <Table
-        aria-label='Example table with custom cells'
-        css={{
-          height: 'auto',
-          minWidth: '100%',
-        }}
-        color='secondary'
-        selectionMode='multiple'
-      >
-        <Table.Header columns={columns}>
-          {(column) => (
-            <Table.Column key={column.uid}>{column.name}</Table.Column>
-          )}
-        </Table.Header>
-        <Table.Body items={products?.items || []}>
-          {(item: ProductType) => (
-            <Table.Row>
-              {(columnKey) => (
-                <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>
+        case 'status':
+          return (
+            <Row>
+              {product.isNew && (
+                <Badge variant='flat' isSquared color='secondary'>
+                  Mới
+                </Badge>
               )}
-            </Table.Row>
-          )}
-        </Table.Body>
-      </Table>
-      {products && (
-        <Row justify='center' css={{ marginTop: 20, marginBottom: 20 }}>
-          <Pagination
-            shadow
-            color='secondary'
-            total={products?.meta.totalPages}
-            onChange={(page) => handleChange(page)}
-            page={pageIndex}
-          />
-        </Row>
-      )}
-    </>
-  );
-};
+              {product.isPopular && (
+                <Badge variant='flat' isSquared color='secondary'>
+                  Nổi bật
+                </Badge>
+              )}
+              {product.isActive ? (
+                <Badge variant='flat' isSquared color='secondary'>
+                  Đang hiển thị
+                </Badge>
+              ) : (
+                <Badge variant='flat' isSquared color='error'>
+                  Chưa hiển thị
+                </Badge>
+              )}
+              {product.category === null && (
+                <Badge variant='flat' isSquared color='error'>
+                  Chưa có danh mục
+                </Badge>
+              )}
+            </Row>
+          );
+
+        default:
+          return (
+            <Row justify='center' align='center'>
+              <Dropdown placement='bottom-right'>
+                <Dropdown.Button
+                  ripple={false}
+                  css={{
+                    background: '$gray100',
+                    color: '$gray800',
+                    '&:hover': {
+                      background: '$gray200',
+                    },
+                    '&:active': {
+                      background: '$gray300',
+                    },
+                    '&:focus': {
+                      borderColor: '$gray400',
+                    },
+                  }}
+                  flat
+                ></Dropdown.Button>
+                <Dropdown.Menu aria-label='Static Actions'>
+                  <Dropdown.Item key='edit' textValue='Sửa'>
+                    <Text
+                      color='inherit'
+                      onClick={() => {
+                        router.push('/admin/product/update/' + product.id);
+                      }}
+                    >
+                      Sửa
+                    </Text>
+                  </Dropdown.Item>
+                  <Dropdown.Item key='delete' color='error' textValue='Xóa'>
+                    <Text
+                      color='inherit'
+                      onClick={(e) => {
+                        handleDelete(product.id, product.images);
+                      }}
+                    >
+                      Xóa
+                    </Text>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Row>
+          );
+      }
+    };
+
+    return (
+      <>
+        <Table
+          aria-label='Example table with custom cells'
+          css={{
+            height: 'auto',
+            minWidth: '100%',
+          }}
+          color='secondary'
+          selectionMode='multiple'
+        >
+          <Table.Header columns={columns}>
+            {(column) => (
+              <Table.Column key={column.uid}>{column.name}</Table.Column>
+            )}
+          </Table.Header>
+          <Table.Body items={products?.items || []}>
+            {(item: ProductType) => (
+              <Table.Row>
+                {(columnKey) => (
+                  <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>
+                )}
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table>
+        {products && (
+          <Row justify='center' css={{ marginTop: 20, marginBottom: 20 }}>
+            <Pagination
+              shadow
+              color='secondary'
+              total={products?.meta.totalPages}
+              onChange={(page) => handleChange(page)}
+              page={pageIndex}
+            />
+          </Row>
+        )}
+      </>
+    );
+  }
+);
 
 export default IndexPage;

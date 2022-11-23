@@ -30,8 +30,12 @@ export class ProductService {
 
   async findAllForAdmin(
     options: IPaginationOptions,
+    name: string,
   ): Promise<Pagination<Product>> {
     return paginate<Product>(this.productRepo, options, {
+      where: {
+        name: Like(`%${name}%`),
+      },
       relations: {
         category: true,
         images: true,

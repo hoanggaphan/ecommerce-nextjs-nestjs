@@ -13,7 +13,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { firstValueFrom } from 'rxjs';
-import { Repository } from 'typeorm';
+import { Like, Raw, Repository } from 'typeorm';
 import { OrderStatus } from './../enums/orderStatus.enum';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
@@ -60,8 +60,24 @@ export class OrderService {
     return this.ordersRepo.update(id, { ...updateOrderStatus });
   }
 
-  async findAll(options: IPaginationOptions): Promise<Pagination<Order>> {
+  async findAll(
+    options: IPaginationOptions,
+    name: string,
+  ): Promise<Pagination<Order>> {
     return paginate<Order>(this.ordersRepo, options, {
+      where: [
+        {
+          id: Raw((alias) => `CAST(${alias} as char(20)) Like '%${name}%'`), // Ép id kiểu int thành string, tìm kiếm gần giống
+        },
+        {
+          fullName: Like(`%${name}%`),
+        },
+        {
+          user: {
+            username: Like(`%${name}%`),
+          },
+        },
+      ],
       relations: {
         orderItems: true,
         user: true,

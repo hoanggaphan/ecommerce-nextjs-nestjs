@@ -138,13 +138,17 @@ export class OrderAdminController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('name') name = '',
   ): Promise<Pagination<Order>> {
     limit = limit > 100 ? 100 : limit;
-    return this.orderService.findAll({
-      page,
-      limit,
-      route: `${process.env.SERVER}/admin/order`,
-    });
+    return this.orderService.findAll(
+      {
+        page,
+        limit,
+        route: `${process.env.SERVER}/admin/order`,
+      },
+      name,
+    );
   }
 
   @Patch(':id')

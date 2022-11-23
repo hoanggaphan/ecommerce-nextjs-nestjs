@@ -1,6 +1,7 @@
 import {
   Badge,
   Dropdown,
+  FormElement,
   Input,
   Pagination,
   Row,
@@ -13,7 +14,7 @@ import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { server } from '../../../libs/constants';
@@ -75,6 +76,16 @@ export const IconButton = styled('button', {
 
 const IndexPage: NextPage = () => {
   const [pageIndex, setPageIndex] = useState(1);
+  const [keyword, setKeyword] = useState('');
+  const [temp, setTemp] = useState('');
+
+  const handleEnter = async (e: React.KeyboardEvent<FormElement>) => {
+    if (e.key === 'Enter') {
+      setKeyword(temp);
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<FormElement>) => setTemp(e.target.value);
 
   return (
     <SecureAdminPages>
@@ -86,13 +97,27 @@ const IndexPage: NextPage = () => {
 
         <AdminLayout title='Đơn hàng'>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Input aria-label='order-search' placeholder='Tìm kiếm' size='lg' />
+            <Input
+              onChange={handleChange}
+              onKeyUp={handleEnter}
+              aria-label='order-search'
+              placeholder='Nhập id | tên | tài khoản'
+              size='lg'
+            />
           </div>
 
           <div style={{ marginTop: 20 }}>
-            <Page pageIndex={pageIndex} setPageIndex={setPageIndex} />
+            <Page
+              keyword={keyword}
+              pageIndex={pageIndex}
+              setPageIndex={setPageIndex}
+            />
             <div style={{ display: 'none' }}>
-              <Page pageIndex={pageIndex + 1} setPageIndex={setPageIndex} />
+              <Page
+                keyword={keyword}
+                pageIndex={pageIndex + 1}
+                setPageIndex={setPageIndex}
+              />
             </div>
           </div>
         </AdminLayout>
@@ -132,9 +157,11 @@ const orderStatusColor = (status: string) => {
 };
 
 const Page = ({
+  keyword,
   pageIndex,
   setPageIndex,
 }: {
+  keyword: string;
   pageIndex: number;
   setPageIndex: Dispatch<SetStateAction<number>>;
 }) => {
@@ -144,7 +171,10 @@ const Page = ({
     data: orders,
     error,
     mutate,
-  } = useAdminOrders(`?limit=20&page=${pageIndex}`, session?.accessToken);
+  } = useAdminOrders(
+    `?limit=20&page=${pageIndex}&name=${keyword}`,
+    session?.accessToken
+  );
 
   const handleChange = (page: number) => {
     setPageIndex(page);

@@ -8,7 +8,7 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
@@ -25,7 +25,7 @@ import {
   selectKeyAsync,
   selectKeySync,
   setKeyASync,
-  setKeySync,
+  setKeySync
 } from '../../libs/redux/reducers/searchReducer';
 import { useAppDispatch, useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
