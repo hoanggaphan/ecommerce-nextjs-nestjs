@@ -8,7 +8,7 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
@@ -21,7 +21,13 @@ import { RiSearchLine } from 'react-icons/ri';
 import ScrollToTop from 'react-scroll-to-top';
 import useAuthUser from '../../libs/hooks/useAuthUser';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
-import { useAppSelector } from '../../libs/redux/store';
+import {
+  selectKeyAsync,
+  selectKeySync,
+  setKeyASync,
+  setKeySync,
+} from '../../libs/redux/reducers/searchReducer';
+import { useAppDispatch, useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
 import { useProducts } from '../../libs/swr/useProducts';
 import Footer from './Footer';
@@ -42,22 +48,32 @@ const Cart = () => {
 };
 
 const Search = () => {
+  const dispatch = useAppDispatch();
+  const keySync = useAppSelector(selectKeySync);
+  const keyASync = useAppSelector(selectKeyAsync);
+
   const [focus, setFocus] = useState(false);
   const timeoutRef = useRef<any>(null);
-  const [keyword, setKeyword] = useState('');
-  const query = `?name=${keyword}`;
-  const { data } = useProducts(query, !!keyword);
+  const query = `?name=${keyASync}`;
+  const { data } = useProducts(query, !!keyASync);
   const router = useRouter();
+
+  const handleEnter = async (e: React.KeyboardEvent<FormElement>) => {
+    if (e.key === 'Enter') {
+      router.push(`/search?key=${keySync}`);
+    }
+  };
 
   const handleChange = (e: ChangeEvent<FormElement>) => {
     const q = e.target.value;
+    dispatch(setKeySync({ key: q }));
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      setKeyword(q);
+      dispatch(setKeyASync({ key: q }));
     }, 500);
   };
 
@@ -85,9 +101,9 @@ const Search = () => {
       );
 
     return (
-      <ul className='result-item-container'>
+      <ul style={{ margin: 0, padding: 10 }}>
         {data?.items.map((i) => (
-          <li className='result-item'>
+          <li key={i.id} className='result-item'>
             <Text
               onClick={() => router.push(`/${i.slug}`)}
               size={14}
@@ -120,7 +136,9 @@ const Search = () => {
     <>
       <div className='search-container'>
         <Input
+          initialValue={keySync}
           aria-labelledby='search'
+          onKeyUp={handleEnter}
           onChange={handleChange}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
@@ -186,11 +204,6 @@ const Search = () => {
         .show {
           visibility: visible;
           opacity: 1;
-        }
-
-        .result-item-container {
-          padding: 10px;
-          margin: 0;
         }
 
         .result-item {

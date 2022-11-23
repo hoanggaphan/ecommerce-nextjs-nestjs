@@ -17,15 +17,18 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import cartReducer from './reducers/cartReducer';
+import searchReducer from './reducers/searchReducer';
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
+  whitelist: ['cart'], // only navigation will be persisted
 };
 
 const rootReducer = combineReducers({
   cart: cartReducer,
+  search: searchReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
