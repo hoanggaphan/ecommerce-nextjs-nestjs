@@ -28,6 +28,7 @@ const SideBar = () => {
               : '',
           }}
           light={router.pathname.includes('/admin/dashboard') ? false : true}
+          ripple={false}
         >
           Thống kê
         </Button>

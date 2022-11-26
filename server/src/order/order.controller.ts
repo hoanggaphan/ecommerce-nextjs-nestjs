@@ -89,6 +89,7 @@ export class OrderController {
         const orderId = JSON.parse(dataJson['embed_data']).orderId;
         const orderUpdate = new UpdateOrderStatusDto();
         orderUpdate.isPaid = true;
+        orderUpdate.paidDate = new Date().toISOString();
         await this.orderService.updateOrderStatus(orderId, orderUpdate);
 
         result.returncode = 1;
@@ -133,6 +134,13 @@ export class OrderController {
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
+
+  @Get('sales-statistic')
+  async salesStatistic(
+    @Query('year') year = new Date().getFullYear().toString(),
+  ) {
+    return this.orderService.salesStatistic(year);
+  }
 
   @Get('overview')
   async overview() {

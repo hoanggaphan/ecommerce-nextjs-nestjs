@@ -7,7 +7,7 @@ import {
   Spacer,
   Table,
   Text,
-  User,
+  User
 } from '@nextui-org/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -54,37 +54,68 @@ export default function Index() {
 
   const handleSelect = async (newValue: OptionType | null) => {
     setSelected(newValue);
-    await axios.patch(
-      `${server}/admin/order/update-status/${order?.id}`,
-      {
-        orderStatus: newValue?.value,
-        isPaid:
-          order?.paymentMethod === 'COD' && newValue?.value === 'delivered'
-            ? true
-            : order?.isPaid,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
+
+    if (order?.paymentMethod === 'COD') {
+      await axios.patch(
+        `${server}/admin/order/update-status/${order?.id}`,
+        {
+          orderStatus: newValue?.value,
+          isPaid: newValue?.value === 'delivered' ? true : false,
+          paidDate:
+            newValue?.value === 'delivered' ? new Date().toISOString() : null,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+    } else {
+      await axios.patch(
+        `${server}/admin/order/update-status/${order?.id}`,
+        {
+          orderStatus: newValue?.value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+    }
+
     await mutate();
   };
 
   const handleShipped = async () => {
-    await axios.patch(
-      `${server}/admin/order/update-status/${order?.id}`,
-      {
-        orderStatus: 'delivered',
-        isPaid: order?.paymentMethod === 'COD' ? true : false,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
+    if (order?.paymentMethod === 'COD') {
+      await axios.patch(
+        `${server}/admin/order/update-status/${order?.id}`,
+        {
+          orderStatus: 'delivered',
+          isPaid: true,
+          paidDate: new Date().toISOString(),
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+    } else {
+      await axios.patch(
+        `${server}/admin/order/update-status/${order?.id}`,
+        {
+          orderStatus: 'delivered',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+    }
+
     await mutate();
   };
 

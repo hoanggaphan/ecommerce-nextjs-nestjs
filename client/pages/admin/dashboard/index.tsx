@@ -148,6 +148,60 @@ ChartJS.register(
 );
 
 const SalesStatistic = () => {
+  const { data: session } = useSession();
+  const { data: sales } = useSWR<
+    {
+      method: string;
+      month: number;
+      total: string;
+    }[]
+  >(
+    session?.accessToken
+      ? [
+          `${server}/admin/order/sales-statistic?year=${new Date().getFullYear()}`,
+          session?.accessToken,
+        ]
+      : null,
+    (url: string, token: string) =>
+      axios
+        .get(url, {
+          headers: { Authorization: 'Bearer ' + token },
+        })
+        .then((res) => res.data)
+  );
+
+  const colors = [
+    {
+      borderColor: 'rgb(53, 162, 235)',
+      backgroundColor: 'rgba(53, 162, 235, 0.2)',
+    },
+    {
+      borderColor: 'rgb(255, 159, 64)',
+      backgroundColor: 'rgba(255, 159, 64, 0.2)',
+    },
+  ];
+  let datasets: any = [];
+  sales?.forEach((s) => {
+    const label = s.method;
+    const result = datasets.find((d: any) => d.label === label);
+    if (!result) {
+      datasets.push({
+        fill: true,
+        label,
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      });
+    }
+  });
+  datasets = datasets.map((d: any, i: number) => ({ ...d, ...colors[i] }));
+
+  sales?.forEach((s) => {
+    const label = s.method;
+    const index = datasets.findIndex((d: any) => d.label === label);
+    if (index !== -1) {
+      datasets[index].data[s.month - 1] = s.total;
+    }
+  });
+
   const options = {
     scales: {
       y: {
@@ -196,22 +250,7 @@ const SalesStatistic = () => {
 
   const data = {
     labels,
-    datasets: [
-      {
-        fill: true,
-        label: 'COD',
-        data: labels.map(() => Math.random() * 1000000),
-        borderColor: 'rgb(255, 159, 64)',
-        backgroundColor: 'rgba(255, 159, 64, 0.2)',
-      },
-      {
-        fill: true,
-        label: 'ZALOPAY',
-        data: labels.map(() => Math.random() * 1000000),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.2)',
-      },
-    ],
+    datasets,
   };
   return <Line options={options} data={data} />;
 };

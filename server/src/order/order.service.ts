@@ -110,6 +110,9 @@ export class OrderService {
       case 5:
         orderStatus = OrderStatus.Return;
         break;
+      case 6:
+        orderStatus = OrderStatus.Refund;
+        break;
     }
 
     return paginate<Order>(this.ordersRepo, options, {
@@ -174,6 +177,24 @@ export class OrderService {
       .getRawOne();
   }
 
+  async salesStatistic(year: string) {
+    // Select paymentMethod as method, SUM(totalPrice) as total
+    // from Order
+    // where isPaid = true and paidDate IS NOT NULL and YEAR(paidDate) = @year
+    // group by paymentMethod
+
+    return this.ordersRepo
+      .createQueryBuilder('order')
+      .select('paymentMethod', 'method')
+      .addSelect('MONTH(paidDate)', 'month')
+      .addSelect('SUM(totalPrice)', 'total')
+      .where(
+        `isPaid = true and paidDate IS NOT NULL and YEAR(paidDate) = ${year}`,
+      )
+      .groupBy('paymentMethod, MONTH(paidDate)')
+      .getRawMany();
+  }
+
   async count() {
     return await this.ordersRepo.count();
   }
@@ -226,7 +247,7 @@ export class OrderService {
       address: order.address,
       description: `Thanh toán đơn hàng ${order.id}`,
       mac: '',
-      callback_url: `https://3e8a-115-73-178-192.ap.ngrok.io/order/zalopay/callback`, // ngrok http --host-header=localhost http://localhost:4000
+      callback_url: `https://8d1d-115-73-234-252.ap.ngrok.io/order/zalopay/callback`, // ngrok http --host-header=localhost http://localhost:4000
     };
 
     const data =

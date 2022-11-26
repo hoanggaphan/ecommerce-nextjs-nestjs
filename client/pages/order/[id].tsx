@@ -182,11 +182,14 @@ export default function Id() {
                 </Text>
               </Text>
 
-              {!order?.isPaid && (
-                <Button size='lg' css={{ mt: 20 }} onPress={handlePay}>
-                  Thanh toán
-                </Button>
-              )}
+              {!order?.isPaid &&
+                order?.paymentMethod === 'ZALOPAY' &&
+                (order.orderStatus === 'processing' ||
+                  order.orderStatus === 'delivering') && (
+                  <Button size='lg' css={{ mt: 20 }} onPress={handlePay}>
+                    Thanh toán
+                  </Button>
+                )}
             </Card.Body>
           </Card>
 

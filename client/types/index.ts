@@ -138,6 +138,7 @@ export type OrderType = {
   orderStatus: string;
   paymentMethod: string;
   isPaid: boolean;
+  paidDate: string;
   note: string;
   createdDate: string;
   updatedDate: string;

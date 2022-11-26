@@ -57,6 +57,9 @@ export class Order {
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   public orderItems!: OrderItem[];
 
+  @Column({ nullable: true })
+  paidDate: Date;
+
   @CreateDateColumn()
   createdDate: Date;
 

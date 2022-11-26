@@ -18,7 +18,7 @@ export function useOrder({
   token?: string;
 }) {
   const { data, error, isValidating, mutate } = useSWR<OrderType>(
-    token ? [`${server}/order/${id}`, token] : null,
+    token && id ? [`${server}/order/${id}`, token] : null,
     fetcher
   );
 

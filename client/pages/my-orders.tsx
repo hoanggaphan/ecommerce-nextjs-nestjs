@@ -154,6 +154,7 @@ export default function MyOrders() {
   const [deliveredPage, setDeliveredPage] = useState(1);
   const [cancelPage, setCancelPage] = useState(1);
   const [returnPage, setReturnPage] = useState(1);
+  const [refundPage, setRefundPage] = useState(1);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -216,7 +217,12 @@ export default function MyOrders() {
                   </Tab>
                   <Tab>
                     <Text size={14} color='inherit'>
-                      Trả hàng/Hoàn tiền
+                      Trả hàng
+                    </Text>
+                  </Tab>
+                  <Tab>
+                    <Text size={14} color='inherit'>
+                      Hoàn tiền
                     </Text>
                   </Tab>
                 </TabList>
@@ -300,6 +306,20 @@ export default function MyOrders() {
                       page={returnPage + 1}
                       setPage={setReturnPage}
                       type={5}
+                    />
+                  </div>
+                </TabPanel>
+                <TabPanel>
+                  <AllTabContent
+                    page={refundPage}
+                    setPage={setRefundPage}
+                    type={6}
+                  />
+                  <div style={{ display: 'none' }}>
+                    <AllTabContent
+                      page={refundPage + 1}
+                      setPage={setRefundPage}
+                      type={6}
                     />
                   </div>
                 </TabPanel>
