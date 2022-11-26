@@ -8,7 +8,7 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
@@ -21,13 +21,7 @@ import { RiSearchLine } from 'react-icons/ri';
 import ScrollToTop from 'react-scroll-to-top';
 import useAuthUser from '../../libs/hooks/useAuthUser';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
-import {
-  selectKeyAsync,
-  selectKeySync,
-  setKeyASync,
-  setKeySync
-} from '../../libs/redux/reducers/searchReducer';
-import { useAppDispatch, useAppSelector } from '../../libs/redux/store';
+import { useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
 import { useProducts } from '../../libs/swr/useProducts';
 import Footer from './Footer';
@@ -48,32 +42,35 @@ const Cart = () => {
 };
 
 const Search = () => {
-  const dispatch = useAppDispatch();
-  const keySync = useAppSelector(selectKeySync);
-  const keyASync = useAppSelector(selectKeyAsync);
-
   const [focus, setFocus] = useState(false);
+  const [keyword, setKeyword] = useState('');
+  const [temp, setTemp] = useState('');
   const timeoutRef = useRef<any>(null);
-  const query = `?name=${keyASync}`;
-  const { data } = useProducts(query, !!keyASync);
+  const inputRef = useRef<any>(null);
+  const query = `?name=${keyword}`;
+  const { data } = useProducts(query, !!keyword);
   const router = useRouter();
 
-  const handleEnter = async (e: React.KeyboardEvent<FormElement>) => {
+  const handleSubmit = async (e: React.KeyboardEvent<FormElement>) => {
     if (e.key === 'Enter') {
-      router.push(`/search?key=${keySync}`);
+      router.push(`/search?key=${temp}`);
+      setTemp('');
+      setKeyword('');
+      clearTimeout(timeoutRef.current);
+      inputRef.current.blur();
     }
   };
 
   const handleChange = (e: ChangeEvent<FormElement>) => {
     const q = e.target.value;
-    dispatch(setKeySync({ key: q }));
+    setTemp(q);
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      dispatch(setKeyASync({ key: q }));
+      setKeyword(q);
     }, 500);
   };
 
@@ -136,9 +133,10 @@ const Search = () => {
     <>
       <div className='search-container'>
         <Input
-          initialValue={keySync}
+          ref={inputRef}
+          value={temp}
           aria-labelledby='search'
-          onKeyUp={handleEnter}
+          onKeyUp={handleSubmit}
           onChange={handleChange}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}

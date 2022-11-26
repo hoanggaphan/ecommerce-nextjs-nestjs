@@ -90,6 +90,16 @@ export class ProductController {
 export class ProductAdminController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('top-selling')
+  async topSelling() {
+    return this.productService.topSelling();
+  }
+
+  @Get('total-product')
+  async totalProduct() {
+    return this.productService.count();
+  }
+
   @Get()
   async findAllForAdmin(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,

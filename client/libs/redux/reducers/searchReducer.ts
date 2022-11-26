@@ -21,11 +21,11 @@ export const searchSlice = createSlice({
     setKeyASync: (state, { payload }) => {
       state.keyAsync = payload.key;
     },
-    clear: () => initialState,
+    clearSearch: () => initialState,
   },
 });
 
-export const { setKeySync, setKeyASync, clear } = searchSlice.actions;
+export const { setKeySync, setKeyASync, clearSearch } = searchSlice.actions;
 
 export const selectKeyAsync = (state: AppState) => state.search.keySync;
 export const selectKeySync = (state: AppState) => state.search.keyAsync;

@@ -134,6 +134,21 @@ export class OrderController {
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get('overview')
+  async overview() {
+    return this.orderService.overview();
+  }
+
+  @Get('total-revenue')
+  async totalRevenue() {
+    return this.orderService.calculateTotalRevenue();
+  }
+
+  @Get('total-order')
+  async totalOrder() {
+    return this.orderService.count();
+  }
+
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,

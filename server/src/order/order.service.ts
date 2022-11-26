@@ -166,6 +166,27 @@ export class OrderService {
     }));
   }
 
+  async calculateTotalRevenue() {
+    return await this.ordersRepo
+      .createQueryBuilder('order')
+      .select('SUM(order.totalPrice)', 'totalRevenue')
+      .where('order.isPaid = true')
+      .getRawOne();
+  }
+
+  async count() {
+    return await this.ordersRepo.count();
+  }
+
+  async overview() {
+    return await this.ordersRepo
+      .createQueryBuilder('order')
+      .select('orderStatus')
+      .addSelect('COUNT(order.id)', 'total')
+      .groupBy('orderStatus')
+      .getRawMany();
+  }
+
   async createZaloPayOrder(order) {
     const yy = new Date().getFullYear().toString().slice(-2);
     const mm = String(new Date(Date.now()).getMonth() + 1).padStart(2, '0');

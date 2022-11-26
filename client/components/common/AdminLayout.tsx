@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
   AiOutlineSetting,
-  AiOutlineShoppingCart,
+  AiOutlineShoppingCart
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { GiFlowerTwirl } from 'react-icons/gi';
@@ -29,7 +29,7 @@ const SideBar = () => {
           }}
           light={router.pathname.includes('/admin/dashboard') ? false : true}
         >
-          Trang chủ
+          Thống kê
         </Button>
         <Spacer y={1} />
         <Button
