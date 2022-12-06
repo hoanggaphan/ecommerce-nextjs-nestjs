@@ -5,7 +5,14 @@ export default function Logo({ url }: { url: string }) {
     <>
       {' '}
       <Link href={url}>
-        <a className='logo'>ETOET</a>
+        <img
+          width={120}
+          height={70}
+          src='/logo.png'
+          alt='Logo image'
+          style={{ objectFit: 'contain' }}
+        />
+        {/* <a className='logo'>ETOET</a> */}
       </Link>
       <style jsx>{`
         .logo {
