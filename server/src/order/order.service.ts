@@ -247,7 +247,7 @@ export class OrderService {
       address: order.address,
       description: `Thanh toán đơn hàng ${order.id}`,
       mac: '',
-      callback_url: `https://8d1d-115-73-234-252.ap.ngrok.io/order/zalopay/callback`, // ngrok http --host-header=localhost http://localhost:4000
+      callback_url: `https://de2e-115-73-234-252.ap.ngrok.io/order/zalopay/callback`, // ngrok http --host-header=localhost http://localhost:4000
     };
 
     const data =

@@ -23,7 +23,8 @@ class MyDocument extends Document {
   render(): JSX.Element {
     return (
       <Html>
-        <Head>{CssBaseline.flush()}</Head>
+        <Head>{CssBaseline.flush()} </Head>
+
         <body>
           <Main />
           <NextScript />

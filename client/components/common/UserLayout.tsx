@@ -12,8 +12,10 @@ import {
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Script from 'next/script';
 import { ChangeEvent, Key, useRef, useState } from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { HiOutlineUserCircle } from 'react-icons/hi';
@@ -383,6 +385,11 @@ const UserLayout: NextPage<Props> = ({ children }) => {
       <Spacer y={6} />
       <Footer />
       <ScrollToTop smooth color='#6f00ff' />
+      <style jsx global>{`
+        .scroll-to-top {
+          right: 100px;
+        }
+      `}</style>
     </>
   );
 };
