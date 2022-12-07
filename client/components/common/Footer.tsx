@@ -75,7 +75,9 @@ const Footer = () => {
           </div>
         </div>
         <div className='copyright'>
-          <Text size={14}>Copyright © {new Date().getUTCFullYear()} ETOET.</Text>
+          <Text size={14}>
+            Copyright © {new Date().getUTCFullYear()} ETOET.
+          </Text>
         </div>
       </footer>
       <style jsx>{`

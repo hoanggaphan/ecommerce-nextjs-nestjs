@@ -28,28 +28,6 @@ function MyApp({
 
   return (
     <>
-      {!router.asPath.includes('/admin') && (
-        <>
-          <Script>
-            {`window.fbAsyncInit = function() {
-            FB.init({
-                appId: "1784956665094089",
-                xfbml: true,
-                version: "v2.6"
-            });
-        };
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));`}
-          </Script>
-          <div className='fb-customerchat' page_id='106479618973931'></div>
-        </>
-      )}
-
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <NextUIProvider theme={theme}>
@@ -71,10 +49,35 @@ function MyApp({
                 -webkit-box-orient: vertical;
                 overflow: hidden;
               }
+              .fb-like iframe {
+                min-width: 172px !important;
+              }
             `}</style>
           </NextUIProvider>
         </PersistGate>
       </Provider>
+
+      {!router.asPath.includes('/admin') && (
+        <>
+          <Script>
+            {` window.fbAsyncInit = function() {
+                  FB.init({
+                      appId: "1784956665094089",
+                      xfbml: true,
+                      version: "v15.0"
+                  });
+              };
+              (function(d, s, id){
+                  var js, fjs = d.getElementsByTagName(s)[0];
+                  if (d.getElementById(id)) { return; }
+                  js = d.createElement(s); js.id = id;
+                  js.src = "//connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js";
+                  fjs.parentNode.insertBefore(js, fjs);
+              }(document, 'script', 'facebook-jssdk'));`}
+          </Script>
+          <div className='fb-customerchat' page_id='106479618973931'></div>
+        </>
+      )}
     </>
   );
 }
