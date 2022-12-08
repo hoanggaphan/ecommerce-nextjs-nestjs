@@ -23,7 +23,6 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useAdminAttribute } from '../../../libs/swr/useAdminAttribute';
 import { validateName } from '../../../libs/validate';
 import { AttributeType, AttributeValues } from '../../../types';
@@ -89,11 +88,15 @@ const InputAdd = () => {
     if (e.key === 'Enter') {
       try {
         const postData = { name: value };
-        const res = await axios.post(`${server}/admin/attribute`, postData, {
-          headers: {
-            Authorization: `Bearer ${session?.accessToken}`,
-          },
-        });
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute`,
+          postData,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.accessToken}`,
+            },
+          }
+        );
         Swal.fire({
           title: 'Tạo thành công!',
           icon: 'success',
@@ -123,11 +126,15 @@ const InputAdd = () => {
   const handleClick = async () => {
     try {
       const postData = { name: value };
-      const res = await axios.post(`${server}/admin/attribute`, postData, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',
@@ -213,7 +220,7 @@ const IndexPage: NextPage = () => {
         };
         try {
           const res = await axios.post(
-            `${server}/admin/attribute-value`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute-value`,
             data,
             {
               headers: {
@@ -272,7 +279,7 @@ const IndexPage: NextPage = () => {
         };
         try {
           const res = await axios.patch(
-            `${server}/admin/attribute-value/${att.id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute-value/${att.id}`,
             data,
             {
               headers: {
@@ -307,7 +314,7 @@ const IndexPage: NextPage = () => {
       preConfirm: async (login) => {
         try {
           const res = await axios.delete(
-            `${server}/admin/attribute-value/${id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute-value/${id}`,
             {
               headers: {
                 Authorization: `Bearer ${session?.accessToken}`,
@@ -368,7 +375,7 @@ const IndexPage: NextPage = () => {
         };
         try {
           const res = await axios.patch(
-            `${server}/admin/attribute/${att.id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute/${att.id}`,
             data,
             {
               headers: {
@@ -402,11 +409,14 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
-          const res = await axios.delete(`${server}/admin/attribute/${id}`, {
-            headers: {
-              Authorization: `Bearer ${session?.accessToken}`,
-            },
-          });
+          const res = await axios.delete(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/attribute/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            }
+          );
           return res;
         } catch (error: any) {
           if (error.response.data.message) {

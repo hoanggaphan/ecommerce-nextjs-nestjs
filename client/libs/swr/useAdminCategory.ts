@@ -1,7 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { CategoryType } from '../../types';
-import { server } from '../constants';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -12,7 +11,7 @@ const fetcher = (url: string, token: string) =>
 
 export function useAdminCategory(token?: string) {
   const { data, error, mutate } = useSWR<CategoryType[]>(
-    token ? [`${server}/admin/category`, token] : null,
+    token ? [`${process.env.NEXT_PUBLIC_API_URL}/admin/category`, token] : null,
     fetcher
   );
 

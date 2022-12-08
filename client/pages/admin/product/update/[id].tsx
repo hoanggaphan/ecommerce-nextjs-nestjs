@@ -32,7 +32,6 @@ import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../../components/SecureAdminPages';
-import { server } from '../../../../libs/constants';
 import { useAdminAttribute } from '../../../../libs/swr/useAdminAttribute';
 import { useAdminCategory } from '../../../../libs/swr/useAdminCategory';
 import { useAdminProduct } from '../../../../libs/swr/useAdminProduct';
@@ -262,7 +261,7 @@ export default function Update() {
 
       const postData = { ...newData, variants, category: newCategory, images };
       const res = await axios.patch(
-        `${server}/admin/product/${product?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/product/${product?.id}`,
         postData,
         {
           headers: {
@@ -890,7 +889,7 @@ const CategorySelect = (props: any) => {
       options={category}
       // menuPortalTarget={document.querySelector('body')}
       menuPortalTarget={document.body}
-      menuPosition={'fixed'} 
+      menuPosition={'fixed'}
       components={{
         Control: (base) => (
           <>

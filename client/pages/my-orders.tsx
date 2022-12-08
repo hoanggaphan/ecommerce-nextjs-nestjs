@@ -19,7 +19,6 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
-import { server } from '../libs/constants';
 import { OrderPaginateType } from '../types';
 import { options } from './api/auth/[...nextauth]';
 
@@ -45,7 +44,7 @@ const AllTabContent = ({
   const { data } = useSWR<OrderPaginateType>(
     session?.accessToken
       ? [
-          `${server}/order/list?page=${page}&limit=10&type=${type}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/order/list?page=${page}&limit=10&type=${type}`,
           {
             userId: session.userId,
           },

@@ -29,7 +29,6 @@ import {
 import Swal from 'sweetalert2';
 import MySelect from '../components/common/MySelect';
 import UserLayout from '../components/common/UserLayout';
-import { server } from '../libs/constants';
 import useAuthUser from '../libs/hooks/useAuthUser';
 import {
   clearCart,
@@ -508,11 +507,15 @@ export default function Checkout() {
     try {
       setIsLoading(true);
 
-      const res = await axios.post(`${server}/order`, postData, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/order`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
 
       Swal.fire({
         title: 'Tạo thành công!',

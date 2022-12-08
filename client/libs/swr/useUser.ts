@@ -1,6 +1,5 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { server } from '../constants';
 import { UserType } from './../../types/index';
 
 const fetcher = (url: string, token: string) =>
@@ -12,7 +11,9 @@ const fetcher = (url: string, token: string) =>
 
 export function useUser(id: string | string[] | undefined, token?: string) {
   const { data, error, isValidating, mutate } = useSWR<UserType>(
-    id && token ? [`${server}/user/${id}`, token] : null,
+    id && token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/user/${id}`, token]
+      : null,
     fetcher
   );
 

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { AttributeType } from '../../types/index';
-import { server } from '../constants';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -12,7 +11,9 @@ const fetcher = (url: string, token: string) =>
 
 export function useAdminAttribute(token?: string) {
   const { data, error, mutate } = useSWR<AttributeType[]>(
-    token ? [`${server}/admin/attribute`, token] : null,
+    token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/admin/attribute`, token]
+      : null,
     fetcher
   );
 

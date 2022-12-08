@@ -1,7 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { OrderType } from '../../types/index';
-import { server } from '../constants';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -18,7 +17,9 @@ export function useOrder({
   token?: string;
 }) {
   const { data, error, isValidating, mutate } = useSWR<OrderType>(
-    token && id ? [`${server}/order/${id}`, token] : null,
+    token && id
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/order/${id}`, token]
+      : null,
     fetcher
   );
 

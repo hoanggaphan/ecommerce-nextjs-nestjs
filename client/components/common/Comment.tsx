@@ -12,7 +12,7 @@ export default function Comment({ url }: { url: string }) {
       <div
         className='fb-comments'
         data-href={url}
-        data-width='1000'
+        data-width='100%'
         data-numposts='3'
       ></div>
     </div>

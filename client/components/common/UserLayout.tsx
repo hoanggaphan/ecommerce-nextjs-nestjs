@@ -8,14 +8,12 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
-import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Script from 'next/script';
 import { ChangeEvent, Key, useRef, useState } from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
 import { HiOutlineUserCircle } from 'react-icons/hi';
@@ -26,6 +24,7 @@ import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
 import { useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
 import { useProducts } from '../../libs/swr/useProducts';
+import { BotChat, useBotChat } from './BotChat';
 import Footer from './Footer';
 import Logo from './Logo';
 
@@ -376,6 +375,8 @@ const MyNavbar = () => {
 };
 
 const UserLayout: NextPage<Props> = ({ children }) => {
+  useBotChat(true);
+
   return (
     <>
       <MyNavbar />
@@ -385,6 +386,8 @@ const UserLayout: NextPage<Props> = ({ children }) => {
       <Spacer y={6} />
       <Footer />
       <ScrollToTop smooth color='#6f00ff' />
+      <BotChat />
+
       <style jsx global>{`
         .scroll-to-top {
           right: 100px;

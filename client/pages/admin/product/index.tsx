@@ -20,7 +20,6 @@ import { ChangeEvent, Dispatch, memo, SetStateAction, useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useAdminProducts } from '../../../libs/swr/useAdminProducts';
 import { ImageType, ProductType } from '../../../types';
 
@@ -183,11 +182,14 @@ const Page = memo(
         preConfirm: async (login) => {
           try {
             await deleteImgsFromCloud(images);
-            const res = await axios.delete(`${server}/admin/product/${id}`, {
-              headers: {
-                Authorization: `Bearer ${session?.accessToken}`,
-              },
-            });
+            const res = await axios.delete(
+              `${process.env.NEXT_PUBLIC_API_URL}/admin/product/${id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${session?.accessToken}`,
+                },
+              }
+            );
             return res;
           } catch (error: any) {
             Swal.showValidationMessage(`Xóa thất bại`);

@@ -19,7 +19,6 @@ import { MdAdd, MdRemove } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
-import { server } from '../libs/constants';
 import {
   decreaseAmount,
   increaseAmount,
@@ -42,7 +41,9 @@ const fetcher = (url: string, ids: number[]) => {
 
 export const useCheckVariantIds = (ids: number[]) => {
   const { data } = useSWR<VariantType[]>(
-    ids.length ? [`${server}/variant/active`, ids] : null,
+    ids.length
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/variant/active`, ids]
+      : null,
     fetcher
   );
 

@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { ItemsList } from '..';
 import UserLayout from '../../components/common/UserLayout';
-import { server } from '../../libs/constants';
 import { CategoryType, ProductType } from '../../types';
 
 const proFetcher = (url: string) => axios.get(url).then((res) => res.data);
@@ -14,7 +13,7 @@ export default function Slug() {
   const router = useRouter();
   const { slug } = router.query;
   const { data: products } = useSWR<ProductType[]>(
-    slug ? `${server}/product/category/${slug}` : null,
+    slug ? `${process.env.NEXT_PUBLIC_API_URL}/product/category/${slug}` : null,
     proFetcher
   );
   const {
@@ -22,7 +21,7 @@ export default function Slug() {
     error: errorCate,
     mutate: mutateCate,
   } = useSWR<CategoryType>(
-    slug ? `${server}/category/${slug}` : null,
+    slug ? `${process.env.NEXT_PUBLIC_API_URL}/category/${slug}` : null,
     proFetcher
   );
 
