@@ -1,6 +1,5 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { server } from '../constants';
 import { ProductPaginateType } from '../../types/index';
 
 const fetchWithToken = (
@@ -17,7 +16,9 @@ const fetchWithToken = (
 
 export function useAdminProducts(queryParams?: string, token?: string) {
   const { data, error, mutate } = useSWR<ProductPaginateType>(
-    token ? [`${server}/admin/product`, token, queryParams] : null,
+    token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/admin/product`, token, queryParams]
+      : null,
     fetchWithToken
   );
 

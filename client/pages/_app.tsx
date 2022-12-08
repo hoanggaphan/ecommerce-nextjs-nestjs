@@ -2,7 +2,6 @@ import { globalCss, NextUIProvider } from '@nextui-org/react';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 import Script from 'next/script';
 import NextNProgress from 'nextjs-progressbar';
 import { useState } from 'react';
@@ -24,7 +23,6 @@ function MyApp({
 }>) {
   const [interval, setInterval] = useState(0);
   globalStyles();
-  const router = useRouter();
 
   return (
     <>
@@ -57,10 +55,8 @@ function MyApp({
         </PersistGate>
       </Provider>
 
-      {!router.asPath.includes('/admin') && (
-        <>
-          <Script>
-            {` window.fbAsyncInit = function() {
+      <Script>
+        {` window.fbAsyncInit = function() {
                   FB.init({
                       appId: "1784956665094089",
                       xfbml: true,
@@ -74,10 +70,7 @@ function MyApp({
                   js.src = "//connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js";
                   fjs.parentNode.insertBefore(js, fjs);
               }(document, 'script', 'facebook-jssdk'));`}
-          </Script>
-          <div className='fb-customerchat' page_id='106479618973931'></div>
-        </>
-      )}
+      </Script>
     </>
   );
 }

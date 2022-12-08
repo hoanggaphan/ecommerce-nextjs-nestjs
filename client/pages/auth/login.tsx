@@ -5,7 +5,7 @@ import {
   Input,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession } from 'next-auth';
@@ -14,9 +14,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
 
 export default function Login() {
+  useBotChat(false);
   const [error, setError] = useState<string | null>();
   const router = useRouter();
 

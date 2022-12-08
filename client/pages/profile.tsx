@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import UserLayout from '../components/common/UserLayout';
-import { server } from '../libs/constants';
 import { useUser } from '../libs/swr/useUser';
 import { options } from './api/auth/[...nextauth]';
 
@@ -36,9 +35,13 @@ export default function Profile() {
 
   const onSubmit = async (data: any) => {
     try {
-      await axios.patch(`${server}/user/${session?.userId}`, data, {
-        headers: { Authorization: 'Bearer ' + session?.accessToken },
-      });
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/${session?.userId}`,
+        data,
+        {
+          headers: { Authorization: 'Bearer ' + session?.accessToken },
+        }
+      );
       await mutate();
 
       Swal.fire({

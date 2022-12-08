@@ -1,6 +1,5 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { server } from '../constants';
 import { OrderPaginateType } from '../../types/index';
 
 const fetchWithToken = (
@@ -17,7 +16,9 @@ const fetchWithToken = (
 
 export function useAdminOrders(queryParams?: string, token?: string) {
   const { data, error, mutate } = useSWR<OrderPaginateType>(
-    token ? [`${server}/admin/order`, token, queryParams] : null,
+    token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/admin/order`, token, queryParams]
+      : null,
     fetchWithToken
   );
 

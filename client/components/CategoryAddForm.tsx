@@ -14,7 +14,6 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
-import { server } from '../libs/constants';
 import { useAdminCategory } from '../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../libs/validate';
 
@@ -43,11 +42,15 @@ export default function CategoryAddForm() {
         description: desValue,
         isActive: checkbox,
       };
-      const res = await axios.post(`${server}/admin/category`, newItem, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/category`,
+        newItem,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',

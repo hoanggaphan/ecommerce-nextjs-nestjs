@@ -1,6 +1,5 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { server } from '../constants';
 import { ProductPaginateType } from '../../types/index';
 
 const fetcher = (url: string, queryParams: string = '') => {
@@ -9,7 +8,9 @@ const fetcher = (url: string, queryParams: string = '') => {
 
 export function useProducts(queryParams?: string, isFetch: boolean = true) {
   const { data, error, mutate, isValidating } = useSWR<ProductPaginateType>(
-    isFetch ? [`${server}/product`, queryParams] : null,
+    isFetch
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/product`, queryParams]
+      : null,
     fetcher
   );
 

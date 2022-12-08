@@ -19,7 +19,6 @@ import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
-import { server } from '../../../libs/constants';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
@@ -92,7 +91,7 @@ const IndexPage: NextPage = () => {
         };
         try {
           const res = await axios.patch(
-            `${server}/admin/category/${category.id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/category/${category.id}`,
             data,
             {
               headers: {
@@ -126,11 +125,14 @@ const IndexPage: NextPage = () => {
       cancelButtonText: 'Đóng',
       preConfirm: async (login) => {
         try {
-          const res = await axios.delete(`${server}/admin/category/${id}`, {
-            headers: {
-              Authorization: `Bearer ${session?.accessToken}`,
-            },
-          });
+          const res = await axios.delete(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/category/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            }
+          );
           return res;
         } catch (error: any) {
           Swal.showValidationMessage(`Xóa thất bại`);

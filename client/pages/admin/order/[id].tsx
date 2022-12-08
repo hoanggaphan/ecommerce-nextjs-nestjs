@@ -7,7 +7,7 @@ import {
   Spacer,
   Table,
   Text,
-  User
+  User,
 } from '@nextui-org/react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -21,7 +21,6 @@ import { MdLocationOn } from 'react-icons/md';
 import Select from 'react-select';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useOrder } from '../../../libs/swr/useOrder';
 import { OrderItemType } from '../../../types';
 
@@ -57,7 +56,7 @@ export default function Index() {
 
     if (order?.paymentMethod === 'COD') {
       await axios.patch(
-        `${server}/admin/order/update-status/${order?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order?.id}`,
         {
           orderStatus: newValue?.value,
           isPaid: newValue?.value === 'delivered' ? true : false,
@@ -72,7 +71,7 @@ export default function Index() {
       );
     } else {
       await axios.patch(
-        `${server}/admin/order/update-status/${order?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order?.id}`,
         {
           orderStatus: newValue?.value,
         },
@@ -90,7 +89,7 @@ export default function Index() {
   const handleShipped = async () => {
     if (order?.paymentMethod === 'COD') {
       await axios.patch(
-        `${server}/admin/order/update-status/${order?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order?.id}`,
         {
           orderStatus: 'delivered',
           isPaid: true,
@@ -104,7 +103,7 @@ export default function Index() {
       );
     } else {
       await axios.patch(
-        `${server}/admin/order/update-status/${order?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order?.id}`,
         {
           orderStatus: 'delivered',
         },

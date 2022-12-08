@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import UserLayout from '../components/common/UserLayout';
-import { server } from '../libs/constants';
 import { options } from './api/auth/[...nextauth]';
 
 export default function UpdatePassword() {
@@ -27,7 +26,7 @@ export default function UpdatePassword() {
   const onSubmit = async (data: any) => {
     try {
       const res = await axios.patch(
-        `${server}/user/update-password`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/update-password`,
         { userId: session?.userId, ...data },
         {
           headers: { Authorization: 'Bearer ' + session?.accessToken },

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { ProductType } from '../../types/index';
-import { server } from '../constants';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -15,7 +14,9 @@ export function useAdminProduct(
   token?: string
 ) {
   const { data, error, isValidating, mutate } = useSWR<ProductType>(
-    id && token ? [`${server}/admin/product/${id}`, token] : null,
+    id && token
+      ? [`${process.env.NEXT_PUBLIC_API_URL}/admin/product/${id}`, token]
+      : null,
     fetcher
   );
 

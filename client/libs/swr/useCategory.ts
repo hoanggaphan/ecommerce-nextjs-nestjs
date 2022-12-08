@@ -1,13 +1,12 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { CategoryType } from '../../types';
-import { server } from '../constants';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export function useCategory() {
   const { data, error, mutate } = useSWR<CategoryType[]>(
-    `${server}/category`,
+    `${process.env.NEXT_PUBLIC_API_URL}/category`,
     fetcher
   );
 

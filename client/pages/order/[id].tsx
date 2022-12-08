@@ -21,7 +21,6 @@ import { CgMenuBoxed } from 'react-icons/cg';
 import { GiReceiveMoney } from 'react-icons/gi';
 import { TbTruckDelivery } from 'react-icons/tb';
 import UserLayout from '../../components/common/UserLayout';
-import { server } from '../../libs/constants';
 import { useOrder } from '../../libs/swr/useOrder';
 import { options } from '../api/auth/[...nextauth]';
 
@@ -42,7 +41,7 @@ export default function Id() {
 
     try {
       const { data }: any = await axios.post(
-        `${server}/order/zalopay/create-order`,
+        `${process.env.NEXT_PUBLIC_API_URL}/order/zalopay/create-order`,
         order,
         {
           headers: {
@@ -64,7 +63,7 @@ export default function Id() {
 
     try {
       const { data }: any = await axios.post(
-        `${server}/order/momo/create-order`,
+        `${process.env.NEXT_PUBLIC_API_URL}/order/momo/create-order`,
         order,
         {
           headers: {
@@ -409,7 +408,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Check order of user is existing in database
   try {
     await axios.post(
-      `${server}/order/check-order-user`,
+      `${process.env.NEXT_PUBLIC_API_URL}/order/check-order-user`,
       {
         orderId: context.params?.id,
         userId: session.userId,

@@ -31,7 +31,6 @@ import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useAdminAttribute } from '../../../libs/swr/useAdminAttribute';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { IconButton } from '../category';
@@ -215,11 +214,15 @@ export default function Add() {
         ...newData
       } = data;
       const postData = { ...newData, category, variants, images: postImg };
-      const res = await axios.post(`${server}/admin/product`, postData, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/product`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
 
       resetForm();
 

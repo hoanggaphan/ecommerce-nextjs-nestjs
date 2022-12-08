@@ -162,3 +162,21 @@ export type OrderPaginateType = {
     last: string;
   };
 };
+
+export type ArticleType = {
+  publishedAt: string;
+  slug: string;
+  title: string;
+  bannerImage: {
+    url: string;
+  };
+  content: {
+    json: {
+      children: any;
+    };
+  };
+  createdBy: {
+    name: string;
+    picture: string;
+  };
+};

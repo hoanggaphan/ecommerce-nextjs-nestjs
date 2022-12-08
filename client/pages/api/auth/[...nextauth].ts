@@ -2,13 +2,12 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { server } from '../../../libs/constants';
 
 async function refreshAccessToken(tokenObject: any) {
   try {
     // Get a new set of tokens with a refreshToken
     const tokenResponse = await axios.post(
-      server + '/auth/refreshToken',
+      process.env.NEXT_PUBLIC_API_URL + '/auth/refreshToken',
       {},
       {
         headers: {
@@ -39,10 +38,13 @@ const providers = [
     authorize: async (credentials) => {
       try {
         // Authenticate user with credentials
-        const user = await axios.post(server + '/auth/login', {
-          username: credentials?.username,
-          password: credentials?.password,
-        });
+        const user = await axios.post(
+          process.env.NEXT_PUBLIC_API_URL + '/auth/login',
+          {
+            username: credentials?.username,
+            password: credentials?.password,
+          }
+        );
 
         if (user.data.accessToken) {
           return user.data;

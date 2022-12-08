@@ -31,7 +31,6 @@ import { GrBitcoin } from 'react-icons/gr';
 import useSWR from 'swr';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useAdminOrders } from '../../../libs/swr/useAdminOrders';
 import { OrderType } from '../../../types';
 
@@ -46,7 +45,10 @@ const OrderOverview = () => {
     }[]
   >(
     session?.accessToken
-      ? [`${server}/admin/order/overview`, session?.accessToken]
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/order/overview`,
+          session?.accessToken,
+        ]
       : null,
     (url: string, token: string) =>
       axios
@@ -158,7 +160,9 @@ const SalesStatistic = () => {
   >(
     session?.accessToken
       ? [
-          `${server}/admin/order/sales-statistic?year=${new Date().getFullYear()}`,
+          `${
+            process.env.NEXT_PUBLIC_API_URL
+          }/admin/order/sales-statistic?year=${new Date().getFullYear()}`,
           session?.accessToken,
         ]
       : null,
@@ -293,7 +297,7 @@ const LatestOrders = () => {
 
   const handleCancle = async (order: OrderType) => {
     await axios.patch(
-      `${server}/admin/order/update-status/${order.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order.id}`,
       {
         orderStatus: 'cancel',
         isPaid: order.paymentMethod === 'COD' ? false : order.isPaid,
@@ -465,7 +469,10 @@ const TopSellingProduct = () => {
   const { data: session } = useSession();
   const { data: topSelling } = useSWR<TopSelling[]>(
     session?.accessToken
-      ? [`${server}/admin/product/top-selling`, session?.accessToken]
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/product/top-selling`,
+          session?.accessToken,
+        ]
       : null,
     (url: string, token: string) =>
       axios
@@ -513,7 +520,10 @@ const TotalRevenue = () => {
     totalRevenue: string;
   }>(
     session?.accessToken
-      ? [`${server}/admin/order/total-revenue`, session?.accessToken]
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/order/total-revenue`,
+          session?.accessToken,
+        ]
       : null,
     (url: string, token: string) =>
       axios
@@ -539,7 +549,10 @@ const TotalOrders = () => {
   const { data: session } = useSession();
   const { data } = useSWR<string>(
     session?.accessToken
-      ? [`${server}/admin/order/total-order`, session?.accessToken]
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/order/total-order`,
+          session?.accessToken,
+        ]
       : null,
     (url: string, token: string) =>
       axios
@@ -565,7 +578,10 @@ const TotalProduct = () => {
   const { data: session } = useSession();
   const { data } = useSWR<string>(
     session?.accessToken
-      ? [`${server}/admin/product/total-product`, session?.accessToken]
+      ? [
+          `${process.env.NEXT_PUBLIC_API_URL}/admin/product/total-product`,
+          session?.accessToken,
+        ]
       : null,
     (url: string, token: string) =>
       axios

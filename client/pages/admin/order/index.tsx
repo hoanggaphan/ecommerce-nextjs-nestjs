@@ -17,7 +17,6 @@ import { useRouter } from 'next/router';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
-import { server } from '../../../libs/constants';
 import { useAdminOrders } from '../../../libs/swr/useAdminOrders';
 import { OrderType } from '../../../types';
 
@@ -182,7 +181,7 @@ const Page = ({
 
   const handleCancle = async (order: OrderType) => {
     await axios.patch(
-      `${server}/admin/order/update-status/${order.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/order/update-status/${order.id}`,
       {
         orderStatus: 'cancel',
         isPaid: order.paymentMethod === 'COD' ? false : order.isPaid,

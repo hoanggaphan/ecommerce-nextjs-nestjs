@@ -16,11 +16,14 @@ import { Autoplay, Navigation } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
+import { dayFromNow } from '../libs/dayjs';
+import { getAllArticlesForHome } from '../libs/graphcms';
 import { useProducts } from '../libs/swr/useProducts';
-import { ProductType } from '../types';
+import { ArticleType, ProductType } from '../types';
 
-const Carouse = () => (
+const Carousel = () => (
   <Swiper
     autoplay={{
       delay: 4000,
@@ -111,7 +114,7 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
             <Link href={`/${i.slug}`}>
               <a style={{ width: '100%' }}>
                 <Card variant='bordered' isHoverable css={{ mw: '315px' }}>
-                  <Card.Header css={{ pb: 0, minHeight: 40}}>
+                  <Card.Header css={{ pb: 0, minHeight: 40 }}>
                     {i.isNew && (
                       <Badge isSquared variant='flat' color='secondary'>
                         Mới
@@ -147,10 +150,82 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
   );
 };
 
-const IndexPage: NextPage = () => {
+const ProductNew = () => {
   const { data: productNew } = useProducts('/new?limit=8');
-  const { data: productPopular } = useProducts('/popular?limit=8');
+  return <ItemsList title='Sản phẩm mới' data={productNew?.items} />;
+};
 
+const ProductPopular = () => {
+  const { data: productPopular } = useProducts('/popular?limit=8');
+  return <ItemsList title='Sản phẩm nổi bật' data={productPopular?.items} />;
+};
+
+const Articles = () => {
+  const {
+    data: articles,
+    error,
+    mutate,
+    isValidating,
+  } = useSWR<ArticleType[]>('/articles/home', getAllArticlesForHome);
+
+  return (
+    <>
+      <Text
+        h2
+        size={50}
+        css={{
+          textAlign: 'center',
+          textGradient: '45deg, $purple600 -20%, $pink600 100%',
+        }}
+        weight='bold'
+      >
+        Bài viết mới nhất
+      </Text>
+
+      <Grid.Container gap={2}>
+        {articles?.map((i) => (
+          <Grid key={i.slug} xs={4}>
+            <Link href={`article/${i.slug}`}>
+              <a style={{ width: '100%' }}>
+                <Card variant='bordered' isHoverable>
+                  <Card.Body css={{ p: 0 }}>
+                    <Card.Image
+                      src={i.bannerImage.url}
+                      objectFit='cover'
+                      width='100%'
+                      height={218}
+                      alt=''
+                    />
+                  </Card.Body>
+                  <Card.Footer
+                    css={{
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <Text h3 className='line-clamp-2'>
+                      {i.title}
+                    </Text>
+                    <Text
+                      css={{
+                        color: '$accents7',
+                        fontWeight: '$semibold',
+                        fontSize: '$sm',
+                      }}
+                    >
+                      {dayFromNow(i.publishedAt)}
+                    </Text>
+                  </Card.Footer>
+                </Card>
+              </a>
+            </Link>
+          </Grid>
+        ))}
+      </Grid.Container>
+    </>
+  );
+};
+const IndexPage: NextPage = () => {
   return (
     <>
       <Head>
@@ -159,7 +234,7 @@ const IndexPage: NextPage = () => {
       </Head>
 
       <UserLayout>
-        <Carouse />
+        <Carousel />
         <Container md>
           <Row css={{ mt: 50 }}>
             <Col>
@@ -211,10 +286,13 @@ const IndexPage: NextPage = () => {
             </Col>
           </Row>
           <div style={{ marginTop: 100 }}>
-            <ItemsList title='Sản phẩm mới' data={productNew?.items} />
+            <ProductNew />
           </div>
           <div style={{ marginTop: 100 }}>
-            <ItemsList title='Sản phẩm nổi bật' data={productPopular?.items} />
+            <ProductPopular />
+          </div>
+          <div style={{ marginTop: 100 }}>
+            <Articles />
           </div>
         </Container>
       </UserLayout>

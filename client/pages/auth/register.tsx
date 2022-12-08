@@ -5,7 +5,7 @@ import {
   Input,
   Row,
   Spacer,
-  Text,
+  Text
 } from '@nextui-org/react';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
@@ -15,10 +15,11 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
-import { server } from '../../libs/constants';
+import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
 
 export default function Register() {
+  useBotChat(false);
   const router = useRouter();
   const [error, setError] = useState<string[] | string>([]);
 
@@ -31,7 +32,10 @@ export default function Register() {
   const onSubmit = async (data: any) => {
     setError([]);
     try {
-      const res = await axios.post(`${server}/user`, data);
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/user`,
+        data
+      );
       Swal.fire({
         title: 'Tạo thành công!',
         icon: 'success',
