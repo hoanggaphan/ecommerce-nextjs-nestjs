@@ -22,6 +22,8 @@ export default function Slug() {
     (url, slugPara: string) => getArticleBySlug(slugPara)
   );
 
+  if (!article) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
