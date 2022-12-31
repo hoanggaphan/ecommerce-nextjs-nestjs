@@ -13,7 +13,7 @@ const hygraph = new GraphQLClient(
 export const getAllArticlesForHome = async () => {
   const QUERY = gql`
     {
-      articles {
+      articles(orderBy: publishedAt_DESC) {
         publishedAt
         slug
         title

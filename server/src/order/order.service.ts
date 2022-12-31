@@ -231,6 +231,13 @@ export class OrderService {
       };
     });
 
+    const server_uri =
+      process.env.NODE_ENV === 'development'
+        ? 'https://57c4-101-99-32-135.ap.ngrok.io'
+        : process.env.SERVER;
+    // ngrok http --host-header=localhost http://localhost:4000
+    const callback_url = `${server_uri}/order/zalopay/callback`;
+
     const params = {
       app_id: 2553,
       app_user: order.fullName,
@@ -247,7 +254,7 @@ export class OrderService {
       address: order.address,
       description: `Thanh toán đơn hàng ${order.id}`,
       mac: '',
-      callback_url: `https://de2e-115-73-234-252.ap.ngrok.io/order/zalopay/callback`, // ngrok http --host-header=localhost http://localhost:4000
+      callback_url,
     };
 
     const data =
