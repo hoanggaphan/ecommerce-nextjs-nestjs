@@ -21,6 +21,7 @@ import { CgMenuBoxed } from 'react-icons/cg';
 import { GiReceiveMoney } from 'react-icons/gi';
 import { TbTruckDelivery } from 'react-icons/tb';
 import UserLayout from '../../components/common/UserLayout';
+import useMediaQuery from '../../libs/hooks/useMediaQuery';
 import { useOrder } from '../../libs/swr/useOrder';
 import { options } from '../api/auth/[...nextauth]';
 
@@ -92,6 +93,7 @@ export default function Id() {
         break;
     }
   };
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   return (
     <>
@@ -103,7 +105,7 @@ export default function Id() {
       <UserLayout>
         <Text
           h2
-          size={50}
+          size={isXs ? 50 : 30}
           css={{
             mt: 50,
             textAlign: 'center',
@@ -261,6 +263,7 @@ const OrderStepper = () => {
   const { id } = router.query;
   const { data: session } = useSession();
   const { data: order } = useOrder({ id, token: session?.accessToken });
+  const isMatches = useMediaQuery('(max-width: 600px)');
 
   const getPercent = (status?: string) => {
     if (status === 'processing') return 33;
@@ -280,9 +283,13 @@ const OrderStepper = () => {
               color: 'white',
             }}
           >
-            <CgMenuBoxed size={38} />
+            <CgMenuBoxed size={isMatches ? 20 : 38} />
           </div>
-          <Text css={{ textAlign: 'center', mt: 5 }}>Đơn hàng đã đặt</Text>
+          <Text
+            css={{ textAlign: 'center', mt: 5, fontSize: isMatches ? 13 : 16 }}
+          >
+            Đơn hàng đã đặt
+          </Text>
         </div>
 
         <div className='stepper-item'>
@@ -303,9 +310,13 @@ const OrderStepper = () => {
                   : '#687076',
             }}
           >
-            <AiOutlineReload size={38} />
+            <AiOutlineReload size={isMatches ? 20 : 38} />
           </div>
-          <Text css={{ textAlign: 'center', mt: 5 }}>Đang xử lý đơn</Text>
+          <Text
+            css={{ textAlign: 'center', mt: 5, fontSize: isMatches ? 13 : 16 }}
+          >
+            Đang xử lý đơn
+          </Text>
         </div>
 
         <div className='stepper-item'>
@@ -324,9 +335,13 @@ const OrderStepper = () => {
                   : '#687076',
             }}
           >
-            <TbTruckDelivery size={38} />
+            <TbTruckDelivery size={isMatches ? 20 : 38} />
           </div>
-          <Text css={{ textAlign: 'center', mt: 5 }}>Đang vận chuyển</Text>
+          <Text
+            css={{ textAlign: 'center', mt: 5, fontSize: isMatches ? 13 : 16 }}
+          >
+            Đang vận chuyển
+          </Text>
         </div>
 
         <div className='stepper-item'>
@@ -338,15 +353,19 @@ const OrderStepper = () => {
               color: order?.orderStatus === 'delivered' ? 'white' : '#687076',
             }}
           >
-            <GiReceiveMoney size={38} />
+            <GiReceiveMoney size={isMatches ? 20 : 38} />
           </div>
-          <Text css={{ textAlign: 'center', mt: 5 }}>Đã giao hàng</Text>
+          <Text
+            css={{ textAlign: 'center', mt: 5, fontSize: isMatches ? 13 : 16 }}
+          >
+            Đã giao hàng
+          </Text>
         </div>
 
         <Progress
           css={{
             position: 'absolute',
-            top: '40px',
+            top: isMatches ? '20px' : '40px',
             '--nextui--progressColor': '#BC8EE9',
             margin: '0 auto',
             width: '80%',
@@ -382,6 +401,14 @@ const OrderStepper = () => {
           align-items: center;
 
           transition: all 0.3s;
+        }
+
+        @media screen and (max-width: 600px) {
+          .stepper-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 15px;
+          }
         }
       `}</style>
     </>

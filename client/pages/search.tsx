@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ItemsList } from '.';
 import UserLayout from '../components/common/UserLayout';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { useProducts } from '../libs/swr/useProducts';
 
 export default function Search() {
@@ -42,6 +43,7 @@ const Page = ({
   const query = `?name=${key}&page=${pageIndex}&limit=12`;
   const { data } = useProducts(query, !!key);
   const handleChange = (index: number) => setPageIndex(index);
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   return (
     <>
@@ -51,7 +53,7 @@ const Page = ({
         <>
           <Text
             h2
-            size={50}
+            size={isXs ? 50 : 30}
             css={{
               textAlign: 'center',
               textGradient: '45deg, $purple600 -20%, $pink600 100%',

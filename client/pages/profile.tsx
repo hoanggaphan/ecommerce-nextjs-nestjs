@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import UserLayout from '../components/common/UserLayout';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { useUser } from '../libs/swr/useUser';
 import { options } from './api/auth/[...nextauth]';
 
@@ -72,6 +73,7 @@ export default function Profile() {
       });
     }
   };
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   return (
     <>
@@ -82,7 +84,7 @@ export default function Profile() {
       <UserLayout>
         <Text
           h2
-          size={50}
+          size={isXs ? 50 : 30}
           css={{
             mt: 50,
             textAlign: 'center',

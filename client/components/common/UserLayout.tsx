@@ -8,7 +8,7 @@ import {
   Navbar,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import { NextPage } from 'next';
 import { signOut, useSession } from 'next-auth/react';
@@ -20,6 +20,7 @@ import { HiOutlineUserCircle } from 'react-icons/hi';
 import { RiSearchLine } from 'react-icons/ri';
 import ScrollToTop from 'react-scroll-to-top';
 import useAuthUser from '../../libs/hooks/useAuthUser';
+import useMediaQuery from '../../libs/hooks/useMediaQuery';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
 import { useAppSelector } from '../../libs/redux/store';
 import { useCategory } from '../../libs/swr/useCategory';
@@ -233,16 +234,20 @@ const MyNavbar = () => {
     }
   };
 
+  const collapseItems = category ? category.map((i) => i.name) : [];
+  const isXs = useMediaQuery('(min-width: 650px)');
+
   return (
     <>
       <Navbar>
         <Navbar.Brand>
-          <Logo url='/' />
+          <Navbar.Toggle aria-label='toggle navigation' showIn='sm' />
+          {isXs && <Logo url='/' />}
         </Navbar.Brand>
         <Navbar.Content
           enableCursorHighlight
           activeColor='secondary'
-          hideIn='xs'
+          hideIn='sm'
           variant='highlight-rounded'
         >
           {category?.map((item, i) => (
@@ -343,24 +348,26 @@ const MyNavbar = () => {
               </Dropdown.Menu>
             </Dropdown>
           ) : (
-            <>
-              <Link href={`/auth/login`}>
-                <Navbar.Link color='inherit' href=''>
-                  Đăng nhập
-                </Navbar.Link>
-              </Link>
+            isXs && (
+              <>
+                <Link href={`/auth/login`}>
+                  <Navbar.Link color='inherit' href=''>
+                    Đăng nhập
+                  </Navbar.Link>
+                </Link>
 
-              <Navbar.Item>
-                <Button
-                  onPress={() => router.push('/auth/register')}
-                  color='secondary'
-                  auto
-                  flat
-                >
-                  Đăng ký
-                </Button>
-              </Navbar.Item>
-            </>
+                <Navbar.Item>
+                  <Button
+                    onPress={() => router.push('/auth/register')}
+                    color='secondary'
+                    auto
+                    flat
+                  >
+                    Đăng ký
+                  </Button>
+                </Navbar.Item>
+              </>
+            )
           )}
 
           <Link href={`/cart`}>
@@ -369,6 +376,41 @@ const MyNavbar = () => {
             </Navbar.Link>
           </Link>
         </Navbar.Content>
+
+        <Navbar.Collapse>
+          {collapseItems.map((item, index) => (
+            <Navbar.CollapseItem key={item}>
+              <Link
+                style={{
+                  minWidth: '100%',
+                }}
+                href={`/category/${item}`}
+              >
+                {item}
+              </Link>
+            </Navbar.CollapseItem>
+          ))}
+          <Navbar.CollapseItem>
+            <Link
+              style={{
+                minWidth: '100%',
+              }}
+              href={`/auth/login`}
+            >
+              Đăng nhập
+            </Link>
+          </Navbar.CollapseItem>
+          <Navbar.CollapseItem>
+            <Link
+              style={{
+                minWidth: '100%',
+              }}
+              href={`/auth/register`}
+            >
+              Đăng ký
+            </Link>
+          </Navbar.CollapseItem>
+        </Navbar.Collapse>
       </Navbar>
     </>
   );

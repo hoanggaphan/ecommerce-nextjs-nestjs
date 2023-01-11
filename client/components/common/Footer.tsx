@@ -1,13 +1,29 @@
-import { Text } from '@nextui-org/react';
+import { Grid, Text } from '@nextui-org/react';
 import { AiFillMail, AiFillPhone } from 'react-icons/ai';
 import { MdMeetingRoom } from 'react-icons/md';
+import useMediaQuery from '../../libs/hooks/useMediaQuery';
 
 const Footer = () => {
+  const isLg = useMediaQuery('(min-width: 1280px)');
+
   return (
     <>
       <footer className='container'>
-        <div className='container-top'>
-          <div className='left'>
+        <Grid.Container
+          css={{
+            borderBottom: '1px solid #e7e7e7',
+            borderTop: '1px solid #e7e7e7',
+          }}
+          justify='center'
+        >
+          <Grid
+            xs={12}
+            md={3}
+            justify='center'
+            alignItems={isLg ? 'baseline' : 'center'}
+            direction='column'
+            css={{ p: 20 }}
+          >
             <h3 className='title'>Giới thiệu</h3>
             <img
               width={170}
@@ -24,15 +40,14 @@ const Footer = () => {
             >
               TECH ETOET SAVE THE WORLD
             </Text>
-
             {/* <div className='socialContainer'>
             <MdFacebook size={40} color='7828C8' />
             <AiFillInstagram size={40} color='7828C8' />
             <AiOutlineTwitter size={40} color='7828C8' />
             <BsPinterest size={40} color='7828C8' />
           </div> */}
-          </div>
-          <div className='center'>
+          </Grid>
+          <Grid xs={12} sm={4} md={3} direction='column' css={{ p: 20 }}>
             <h3 className='title'>Liên kết</h3>
             <ul className='list'>
               <li className='listItem'>Tìm kiếm</li>
@@ -41,8 +56,8 @@ const Footer = () => {
               <li className='listItem'>Chính sách bảo mật</li>
               <li className='listItem'>Điều khoản dịch vụ</li>
             </ul>
-          </div>
-          <div className='right'>
+          </Grid>
+          <Grid xs={12} sm={4} md={3} direction='column' css={{ p: 20 }}>
             <h3 className='title'>Thông tin liên hệ</h3>
             <div className='contactItem'>
               <MdMeetingRoom color='7828C8' style={{ marginRight: '10px' }} />{' '}
@@ -56,8 +71,8 @@ const Footer = () => {
               <AiFillMail color='7828C8' style={{ marginRight: '10px' }} />{' '}
               dev.phansihoang@gmail.com
             </div>
-          </div>
-          <div className='right'>
+          </Grid>
+          <Grid xs={12} sm={4} md={3} direction='column' css={{ p: 20 }}>
             <h3 className='title'>Fanpage</h3>
 
             <div className='contactItem'>
@@ -72,8 +87,8 @@ const Footer = () => {
                 allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'
               ></iframe>
             </div>
-          </div>
-        </div>
+          </Grid>
+        </Grid.Container>
         <div className='copyright'>
           <Text size={14}>
             Copyright © {new Date().getUTCFullYear()} ETOET.
@@ -91,19 +106,6 @@ const Footer = () => {
           background-color: #fff;
         }
 
-        .container-top {
-          display: flex;
-          border-bottom: 1px solid #e7e7e7;
-          border-top: 1px solid #e7e7e7;
-        }
-
-        .left {
-          flex: 2;
-          display: flex;
-          flex-direction: column;
-          padding: 20px;
-        }
-
         .logo {
           color: #7828c8;
         }
@@ -113,14 +115,9 @@ const Footer = () => {
           gap: 5px;
         }
 
-        .center {
-          flex: 3;
-          padding: 20px;
-        }
-
         .title {
           color: #7828c8;
-          margin-bottom: 30px;
+          margin-bottom: 15px;
         }
 
         .list {
@@ -134,11 +131,6 @@ const Footer = () => {
         .listItem {
           width: 50%;
           margin-bottom: 10px;
-        }
-
-        .right {
-          flex: 3;
-          padding: 20px;
         }
 
         .contactItem {

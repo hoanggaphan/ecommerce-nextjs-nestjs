@@ -1,7 +1,6 @@
 import {
   Badge,
   Card,
-  Col,
   Container,
   Grid,
   Image,
@@ -20,6 +19,7 @@ import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
 import { dayFromNow } from '../libs/dayjs';
 import { getAllArticlesForHome } from '../libs/graphcms';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { useProducts } from '../libs/swr/useProducts';
 import { ArticleType, ProductType } from '../types';
 
@@ -95,11 +95,14 @@ type ItemsListProps = {
   data?: ProductType[];
 };
 export const ItemsList = ({ title, data }: ItemsListProps) => {
+  const isXs = useMediaQuery('(min-width: 650px)');
+  const isMobile = useMediaQuery('(max-width: 360px)');
+
   return (
     <>
       <Text
         h2
-        size={50}
+        size={isXs ? 50 : 30}
         css={{
           textAlign: 'center',
           textGradient: '45deg, $purple600 -20%, $pink600 100%',
@@ -108,12 +111,12 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
       >
         {title}
       </Text>
-      <Grid.Container gap={2}>
+      <Grid.Container gap={isXs ? 2 : 1}>
         {data?.map((i) => (
-          <Grid key={i.id} xs={3}>
+          <Grid key={i.id} xs={6} sm={3}>
             <Link href={`/${i.slug}`}>
               <a style={{ width: '100%' }}>
-                <Card variant='bordered' isHoverable css={{ mw: '315px' }}>
+                <Card variant='bordered' isHoverable>
                   <Card.Header css={{ pb: 0, minHeight: 40 }}>
                     {i.isNew && (
                       <Badge isSquared variant='flat' color='secondary'>
@@ -126,17 +129,34 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
                       </Badge>
                     )}
                   </Card.Header>
-                  <Card.Body css={{ py: '$10' }}>
-                    <Image width={235} height={235} src={i.images[0].url} />
+                  <Card.Body css={{ py: isMobile ? '$6' : '$10' }}>
+                    <Image
+                      width={isXs ? 235 : 100}
+                      height={isXs ? 235 : 100}
+                      src={i.images[0].url}
+                    />
                     <Spacer y={1} />
                     <Text
                       h3
-                      css={{ textAlign: 'center', minHeight: 72 }}
+                      css={{
+                        textAlign: 'center',
+                        fontSize: isXs ? 24 : 16,
+                        minHeight: isXs ? 72 : 48,
+                        marginBottom: isMobile ? 0 : 10,
+                      }}
                       className='line-clamp-2'
                     >
                       {i.name}
                     </Text>
-                    <Text h3 color='secondary' css={{ textAlign: 'center' }}>
+                    <Text
+                      h3
+                      color='secondary'
+                      css={{
+                        textAlign: 'center',
+                        fontSize: isXs ? 24 : 16,
+                        marginBottom: isMobile ? 0 : 10,
+                      }}
+                    >
                       {i.variants[0].price.toLocaleString('vi-VN')} đ
                     </Text>
                   </Card.Body>
@@ -167,12 +187,13 @@ const Articles = () => {
     mutate,
     isValidating,
   } = useSWR<ArticleType[]>('/articles/home', getAllArticlesForHome);
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   return (
     <>
       <Text
         h2
-        size={50}
+        size={isXs ? 50 : 30}
         css={{
           textAlign: 'center',
           textGradient: '45deg, $purple600 -20%, $pink600 100%',
@@ -182,9 +203,9 @@ const Articles = () => {
         Bài viết mới nhất
       </Text>
 
-      <Grid.Container gap={2}>
+      <Grid.Container gap={isXs ? 2 : 1}>
         {articles?.map((i) => (
-          <Grid key={i.slug} xs={4}>
+          <Grid key={i.slug} xs={12} sm={4}>
             <Link href={`article/${i.slug}`}>
               <a style={{ width: '100%' }}>
                 <Card variant='bordered' isHoverable>
@@ -226,6 +247,8 @@ const Articles = () => {
   );
 };
 const IndexPage: NextPage = () => {
+  const isXs = useMediaQuery('(min-width: 650px)');
+
   return (
     <>
       <Head>
@@ -236,16 +259,29 @@ const IndexPage: NextPage = () => {
       <UserLayout>
         <Carousel />
         <Container md>
-          <Row css={{ mt: 50 }}>
-            <Col>
+          <Grid.Container gap={1} css={{ mt: 50 }}>
+            <Grid xs={12} sm={6}>
               <Card variant='bordered' isHoverable>
-                <Card.Body css={{ p: 50 }}>
-                  <Row align='center'>
+                <Card.Body css={{ p: isXs ? 50 : 30 }}>
+                  <Row
+                    align='center'
+                    css={{ flexDirection: isXs ? 'row' : 'column' }}
+                  >
                     <div className=''>
-                      <Text h2 css={{ fontWeight: 500 }}>
+                      <Text
+                        h2
+                        css={{ fontWeight: 500, fontSize: isXs ? 36 : 24 }}
+                      >
                         Chọn điện thoại
                       </Text>
-                      <Text h3 css={{ fontWeight: 400 }}>
+                      <Text
+                        h3
+                        css={{
+                          fontWeight: 400,
+                          fontSize: isXs ? 24 : 20,
+                          textAlign: isXs ? 'start' : 'center',
+                        }}
+                      >
                         Mua ngay
                       </Text>
                     </div>
@@ -259,17 +295,29 @@ const IndexPage: NextPage = () => {
                   </Row>
                 </Card.Body>
               </Card>
-            </Col>
-            <Spacer x={1} />
-            <Col>
+            </Grid>
+            <Grid xs={12} sm={6}>
               <Card variant='bordered' isHoverable>
-                <Card.Body css={{ p: 50 }}>
-                  <Row align='center'>
+                <Card.Body css={{ p: isXs ? 50 : 30 }}>
+                  <Row
+                    align='center'
+                    css={{ flexDirection: isXs ? 'row' : 'column' }}
+                  >
                     <div className=''>
-                      <Text h2 css={{ fontWeight: 500 }}>
+                      <Text
+                        h2
+                        css={{ fontWeight: 500, fontSize: isXs ? 36 : 24 }}
+                      >
                         Chọn phụ kiện
                       </Text>
-                      <Text h3 css={{ fontWeight: 400 }}>
+                      <Text
+                        h3
+                        css={{
+                          fontWeight: 400,
+                          fontSize: isXs ? 24 : 20,
+                          textAlign: isXs ? 'start' : 'center',
+                        }}
+                      >
                         Mua ngay
                       </Text>
                     </div>
@@ -283,15 +331,15 @@ const IndexPage: NextPage = () => {
                   </Row>
                 </Card.Body>
               </Card>
-            </Col>
-          </Row>
-          <div style={{ marginTop: 100 }}>
+            </Grid>
+          </Grid.Container>
+          <div style={{ marginTop: isXs ? 100 : 50 }}>
             <ProductNew />
           </div>
-          <div style={{ marginTop: 100 }}>
+          <div style={{ marginTop: isXs ? 100 : 50 }}>
             <ProductPopular />
           </div>
-          <div style={{ marginTop: 100 }}>
+          <div style={{ marginTop: isXs ? 100 : 50 }}>
             <Articles />
           </div>
         </Container>
