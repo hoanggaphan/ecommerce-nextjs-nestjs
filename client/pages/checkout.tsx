@@ -30,6 +30,7 @@ import Swal from 'sweetalert2';
 import MySelect from '../components/common/MySelect';
 import UserLayout from '../components/common/UserLayout';
 import useAuthUser from '../libs/hooks/useAuthUser';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import {
   clearCart,
   selectCart,
@@ -329,7 +330,7 @@ const Info = () => {
       </Card.Header>
       <Card.Body>
         <Grid.Container gap={1.2}>
-          <Grid xs={6} css={{ pt: 0 }}>
+          <Grid xs={12} sm={6} css={{ pt: 0 }}>
             <Input
               {...register('fullName', { required: true })}
               fullWidth
@@ -340,7 +341,7 @@ const Info = () => {
               rounded={false}
             />
           </Grid>
-          <Grid xs={6} css={{ pt: 0 }}>
+          <Grid xs={12} sm={6} css={{ pt: 0 }}>
             <Input
               {...register('phone', { required: true, valueAsNumber: true })}
               fullWidth
@@ -360,7 +361,7 @@ const Info = () => {
               clearable
             />
           </Grid>
-          <Grid xs={6}>
+          <Grid xs={12} sm={6}>
             <Controller
               name='city'
               control={control}
@@ -378,7 +379,7 @@ const Info = () => {
               )}
             />
           </Grid>
-          <Grid xs={6}>
+          <Grid xs={12} sm={6}>
             <Controller
               name='district'
               control={control}
@@ -469,6 +470,7 @@ export default function Checkout() {
 
     return items || [];
   }, [data, cart]);
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   useEffect(() => {
     if (session === null) {
@@ -558,7 +560,7 @@ export default function Checkout() {
         <Container md css={{ mt: 50 }}>
           <Text
             h2
-            size={50}
+            size={isXs ? 50 : 30}
             css={{
               textAlign: 'center',
               textGradient: '45deg, $purple600 -20%, $pink600 100%',
@@ -570,17 +572,17 @@ export default function Checkout() {
 
           <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-              <div className='container'>
-                <div className='info'>
+              <Grid.Container gap={isXs ? 2 : 1} alignItems='baseline'>
+                <Grid xs={12} md={4}>
                   <Info />
-                </div>
-                <div className='payment'>
+                </Grid>
+                <Grid xs={12} md={4}>
                   <Payment />
-                </div>
-                <div className='summary'>
+                </Grid>
+                <Grid xs={12} md={4}>
                   <Summary />
-                </div>
-              </div>
+                </Grid>
+              </Grid.Container>
             </form>
           </FormProvider>
         </Container>
@@ -589,20 +591,6 @@ export default function Checkout() {
         .nextui-radio-point {
           box-shadow: none !important;
           outline: none !important;
-        }
-        .container {
-          display: flex;
-          justify-content: space-between;
-          column-gap: 30px;
-        }
-        .info {
-          flex: 4;
-        }
-        .payment {
-          flex: 4;
-        }
-        .summary {
-          flex: 3;
         }
         .order-number {
           width: 30px;

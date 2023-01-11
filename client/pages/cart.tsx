@@ -3,6 +3,7 @@ import {
   Card,
   Col,
   Container,
+  Grid,
   Row,
   Table,
   Text,
@@ -19,6 +20,7 @@ import { MdAdd, MdRemove } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import {
   decreaseAmount,
   increaseAmount,
@@ -241,6 +243,7 @@ export default function Cart() {
         );
     }
   };
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   return (
     <>
@@ -253,7 +256,7 @@ export default function Cart() {
         <Container md css={{ mt: 50 }}>
           <Text
             h2
-            size={50}
+            size={isXs ? 50 : 30}
             css={{
               textAlign: 'center',
               textGradient: '45deg, $purple600 -20%, $pink600 100%',
@@ -268,13 +271,18 @@ export default function Cart() {
             </Text>
           </Row>
 
-          <div className='bottom'>
-            <div className='info'>
+          <Grid.Container gap={2}>
+            <Grid
+              xs={12}
+              lg={9}
+              css={{ '& .nextui-table-container': { width: '100%' } }}
+            >
               <Table
                 aria-label='Products cart table'
                 css={{
                   height: 'auto',
                   minWidth: '100%',
+                  width: '100%',
                 }}
                 selectionMode='none'
               >
@@ -299,8 +307,8 @@ export default function Cart() {
                   )}
                 </Table.Body>
               </Table>
-            </div>
-            <div className='summary'>
+            </Grid>
+            <Grid lg={3}>
               <Card>
                 <Card.Body>
                   <Row justify='space-between'>
@@ -332,8 +340,8 @@ export default function Cart() {
                   </Row>
                 </Card.Body>
               </Card>
-            </div>
-          </div>
+            </Grid>
+          </Grid.Container>
         </Container>
       </UserLayout>
       <style jsx>{`
@@ -342,14 +350,6 @@ export default function Cart() {
           column-gap: 30px;
           justify-content: space-between;
           align-items: flex-start;
-        }
-
-        .info {
-          flex: 3;
-        }
-
-        .summary {
-          flex: 1;
         }
       `}</style>
     </>

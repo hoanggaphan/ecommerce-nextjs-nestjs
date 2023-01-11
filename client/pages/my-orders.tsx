@@ -19,6 +19,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
+import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { OrderPaginateType } from '../types';
 import { options } from './api/auth/[...nextauth]';
 
@@ -156,6 +157,7 @@ export default function MyOrders() {
   const [refundPage, setRefundPage] = useState(1);
   const { data: session } = useSession();
   const router = useRouter();
+  const isXs = useMediaQuery('(min-width: 650px)');
 
   useEffect(() => {
     if (session === null) {
@@ -173,7 +175,7 @@ export default function MyOrders() {
       <UserLayout>
         <Text
           h2
-          size={50}
+          size={isXs ? 50 : 30}
           css={{
             mt: 50,
             textAlign: 'center',

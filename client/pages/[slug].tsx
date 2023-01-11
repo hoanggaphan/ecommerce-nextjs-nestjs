@@ -3,10 +3,11 @@ import {
   Card,
   Col,
   Container,
+  Grid,
   Image,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -97,9 +98,9 @@ export default function Product() {
       <UserLayout>
         {product ? (
           <Container md css={{ pt: 80 }}>
-            <Row>
-              <Col span={6}>
-                <div style={{ maxWidth: 400, margin: '0 auto' }}>
+            <Grid.Container>
+              <Grid xs={12} sm={6}>
+                <div style={{ maxWidth: 400, margin: '0 auto', width: '100%' }}>
                   <Swiper
                     spaceBetween={10}
                     thumbs={{
@@ -140,9 +141,9 @@ export default function Product() {
                     ))}
                   </Swiper>
                 </div>
-              </Col>
-              <Spacer y={2} />
-              <Col span={6}>
+              </Grid>
+              {/* <Spacer y={2} /> */}
+              <Grid xs={12} sm={6} direction='column'>
                 <Text h2>{product.name}</Text>
                 <LikeShare
                   url={
@@ -214,8 +215,8 @@ export default function Product() {
                     </Button>
                   )}
                 </Row>
-              </Col>
-            </Row>
+              </Grid>
+            </Grid.Container>
             <Spacer y={4} />
             <Text h2>Mô tả</Text>
             <Row>{product.description}</Row>
