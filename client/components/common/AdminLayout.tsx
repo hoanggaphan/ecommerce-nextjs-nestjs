@@ -153,7 +153,7 @@ const AdminLayout: NextPage<Props> = ({ children, title }) => {
       </div>
       <div className='container'>
         <Grid.Container gap={2}>
-          <Grid xs={2}>
+          <Grid xs={2} alignItems="baseline">
             <SideBar />
           </Grid>
           <Grid xs={10}>

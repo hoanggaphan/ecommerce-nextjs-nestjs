@@ -153,7 +153,6 @@ export default function Add() {
         icon: 'error',
       });
       return;
-      return;
     }
     if (!data.variants.length) return;
 

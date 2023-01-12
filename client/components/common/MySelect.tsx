@@ -4,7 +4,6 @@ export default function MySelect(props: any) {
   return (
     <Select
       {...props}
-      // menuPortalTarget={document.querySelector('body')}
       menuPortalTarget={document.body}
       menuPosition={'fixed'}
       components={{

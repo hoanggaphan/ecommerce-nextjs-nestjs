@@ -10,6 +10,10 @@ export const validateName: ValidateType = (value) => {
   );
 };
 
+export const validatePassword: ValidateType = (value) => {
+  return value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/);
+};
+
 export const validateSlug: ValidateType = (value) => {
   return value.match(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 };

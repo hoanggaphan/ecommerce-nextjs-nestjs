@@ -119,6 +119,23 @@ export type UserType = {
   updatedDate: string;
 };
 
+export type UserPaginateType = {
+  items: UserType[];
+  meta: {
+    totalItems: number;
+    itemCount: number;
+    itemsPerPage: number;
+    totalPages: number;
+    currentPage: number;
+  };
+  links: {
+    first: string;
+    previous: string;
+    next: string;
+    last: string;
+  };
+};
+
 export type OrderItemType = {
   id: number;
   orderId: number;
