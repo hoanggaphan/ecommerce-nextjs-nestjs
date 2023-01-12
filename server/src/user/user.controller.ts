@@ -2,22 +2,27 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import { Roles } from '../decorator/role.decorator';
 import { AccessTokenGuard } from './../auth/access-token.guard';
 import { Role } from './../enums/role.enum';
 import { RolesGuard } from './../guards/roles.guard';
+import { CreateEmployeeDto } from './dto/create-employee';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -37,13 +42,13 @@ export class UserController {
     return this.userService.updatePassword(updatePasswordDto);
   }
 
-  @Roles(Role.Admin)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+  // @Roles(Role.Admin)
+  // @UseGuards(AccessTokenGuard, RolesGuard)
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // @Get()
+  // findAll() {
+  //   return this.userService.findAll();
+  // }
 
   @Roles(Role.Admin, Role.User)
   @UseGuards(AccessTokenGuard, RolesGuard)
@@ -68,5 +73,35 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
+  }
+}
+
+@Controller('admin/user')
+@Roles(Role.Admin)
+@UseGuards(AccessTokenGuard, RolesGuard)
+export class UserAdminController {
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  create(@Body() createEmployeeDto: CreateEmployeeDto) {
+    return this.userService.createEmployee(createEmployeeDto);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get()
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('name') name = '',
+  ): Promise<Pagination<User>> {
+    limit = limit > 100 ? 100 : limit;
+    return this.userService.findAllForAdmin(
+      {
+        page,
+        limit,
+        route: `${process.env.SERVER}/admin/user`,
+      },
+      name,
+    );
   }
 }

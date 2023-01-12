@@ -6,7 +6,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
+import { Like, Raw, Repository } from 'typeorm';
+import { CreateEmployeeDto } from './dto/create-employee';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -39,9 +45,49 @@ export class UserService {
     }));
   }
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  async createEmployee(createEmployeeDto: CreateEmployeeDto) {
+    const exist = await this.usersRepository.findOneBy({
+      username: createEmployeeDto.username,
+    });
+    if (exist) throw new BadRequestException('username already exist');
+
+    const hashedPassword = await bcrypt.hash(
+      createEmployeeDto.password,
+      saltOrRounds,
+    );
+    createEmployeeDto.password = hashedPassword;
+
+    return this.usersRepository.save(createEmployeeDto).then((res) => ({
+      statusCode: HttpStatus.CREATED,
+      message: 'Register success',
+    }));
   }
+
+  async findAllForAdmin(
+    options: IPaginationOptions,
+    name: string,
+  ): Promise<Pagination<User>> {
+    return paginate<User>(this.usersRepository, options, {
+      where: [
+        {
+          id: Raw((alias) => `CAST(${alias} as char(20)) Like '%${name}%'`), // Ép id kiểu int thành string, tìm kiếm gần giống
+        },
+        // {
+        //   fullName: Like(`%${name}%`),
+        // },
+        {
+          username: Like(`%${name}%`),
+        },
+      ],
+      order: {
+        updatedDate: 'DESC',
+      },
+    });
+  }
+
+  // findAllForAdmin(): Promise<User[]> {
+  //   return this.usersRepository.find();
+  // }
 
   async findOne(id: number): Promise<User> {
     const exist = await this.usersRepository.findOneBy({ id });
