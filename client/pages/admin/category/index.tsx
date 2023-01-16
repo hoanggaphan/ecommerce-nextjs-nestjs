@@ -8,7 +8,8 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
+import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
@@ -22,6 +23,7 @@ import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
+import { options } from '../../api/auth/[...nextauth]';
 
 const MySwal = withReactContent(Swal);
 
@@ -260,3 +262,27 @@ const IndexPage: NextPage = () => {
 };
 
 export default IndexPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    options
+  );
+
+  if (
+    session &&
+    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
+  ) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

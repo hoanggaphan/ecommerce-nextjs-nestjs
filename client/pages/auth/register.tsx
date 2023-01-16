@@ -5,7 +5,7 @@ import {
   Input,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
@@ -128,7 +128,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     options
   );
 
-  if (session && session.roles.includes('admin')) {
+  if (
+    session &&
+    session.roles.some(
+      (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
+    )
+  ) {
     return {
       redirect: {
         destination: '/admin/dashboard',

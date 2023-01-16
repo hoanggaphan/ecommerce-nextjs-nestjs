@@ -5,7 +5,7 @@ import {
   Input,
   Row,
   Spacer,
-  Text
+  Text,
 } from '@nextui-org/react';
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession } from 'next-auth';
@@ -38,7 +38,12 @@ export default function Login() {
       setError(res?.error);
     } else {
       const session = await getSession();
-      if (session && session.roles.includes('admin')) {
+      if (
+        session &&
+        session.roles.some(
+          (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
+        )
+      ) {
         const name = (router.query.name as string) || '/admin/dashboard';
         router.replace(name);
       } else if (session && session.roles.includes('user')) {
@@ -124,7 +129,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     options
   );
 
-  if (session && session.roles.includes('admin')) {
+  if (
+    session &&
+    session.roles.some(
+      (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
+    )
+  ) {
     return {
       redirect: {
         destination: '/admin/dashboard',

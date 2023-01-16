@@ -6,17 +6,21 @@ import {
   Pagination,
   Row,
   Table,
-  Text
+  Text,
 } from '@nextui-org/react';
-import type { NextPage } from 'next';
+import axios from 'axios';
+import type { GetServerSideProps, NextPage } from 'next';
+import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
+import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { useAdminUsers } from '../../../libs/swr/useAdminUsers';
 import { UserType } from '../../../types';
+import { options } from '../../api/auth/[...nextauth]';
 
 const columns = [
   { name: 'Mã', uid: 'id' },
@@ -108,7 +112,42 @@ const Page = ({
     setPageIndex(page);
   };
 
-  const handleCancle = async () => {};
+  const handleDelete = async (id: number) => {
+    Swal.fire({
+      title: 'Bạn có chắc?',
+      text: 'Hành động này không thể hoàn tác!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa!',
+      cancelButtonText: 'Đóng',
+      preConfirm: async (login) => {
+        try {
+          const res = await axios.delete(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/user/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken}`,
+              },
+            }
+          );
+          return res;
+        } catch (error: any) {
+          Swal.showValidationMessage(`Xóa thất bại`);
+        }
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value?.status == 200) {
+        Swal.fire({
+          title: 'Xóa thành công!',
+          icon: 'success',
+        });
+        const res: any = await mutate();
+        if (res.meta.itemCount === 0 && pageIndex > 1) {
+          setPageIndex(pageIndex - 1);
+        }
+      }
+    });
+  };
 
   const renderCell = (user: UserType, columnKey: React.Key) => {
     switch (columnKey) {
@@ -158,14 +197,14 @@ const Page = ({
                 <Dropdown.Item key='edit' textValue='Chi tiết'>
                   <Text
                     color='inherit'
-                    onClick={() => router.push(`/admin/user/${user.id}`)}
+                    // onClick={() => router.push(`/admin/user/${user.id}`)}
                   >
                     Chi tiết
                   </Text>
                 </Dropdown.Item>
                 <Dropdown.Item key='delete' color='error' textValue='Hủy'>
-                  <Text color='inherit' onClick={() => handleCancle()}>
-                    Hủy
+                  <Text color='inherit' onClick={() => handleDelete(user.id)}>
+                    Xóa
                   </Text>
                 </Dropdown.Item>
               </Dropdown.Menu>
@@ -215,3 +254,24 @@ const Page = ({
 };
 
 export default IndexPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    options
+  );
+
+  if (session && !session.roles.some((e: string) => e === 'admin')) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

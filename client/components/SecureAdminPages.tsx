@@ -20,10 +20,23 @@ export default function SecureAdminPages({
     if (session === null) {
       router.replace('/auth/login');
     }
-    if (session && !session.roles.includes('admin')) {
+    if (
+      session &&
+      !session.roles.some(
+        (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
+      )
+    ) {
       router.replace('/');
     }
   }, [session]);
 
-  return <>{session && session.roles.includes('admin') && children}</>;
+  return (
+    <>
+      {session &&
+        session.roles.some(
+          (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
+        ) &&
+        children}
+    </>
+  );
 }

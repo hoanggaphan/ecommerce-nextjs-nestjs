@@ -51,7 +51,7 @@ import { UpdateAttributeDto } from './dto/update-attribute.dto';
 // }
 
 @Controller('admin/attribute')
-@Roles(Role.Admin)
+@Roles(Role.Admin, Role.Manager)
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class AttributeAdminController {
   constructor(private readonly attributeService: AttributeService) {}

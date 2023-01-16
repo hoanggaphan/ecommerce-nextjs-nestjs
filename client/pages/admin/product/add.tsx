@@ -14,6 +14,8 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -33,6 +35,7 @@ import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { useAdminAttribute } from '../../../libs/swr/useAdminAttribute';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
+import { options } from '../../api/auth/[...nextauth]';
 import { IconButton } from '../category';
 
 export type FormValues = {
@@ -877,4 +880,28 @@ const AttributeSelect = (props: any) => {
       />
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    options
+  );
+
+  if (
+    session &&
+    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
+  ) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };

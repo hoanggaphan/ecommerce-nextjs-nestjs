@@ -33,7 +33,7 @@ export class CategoryController {
 }
 
 @Controller('admin/category')
-@Roles(Role.Admin)
+@Roles(Role.Admin, Role.Manager)
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class CategoryAdminController {
   constructor(private readonly categoryService: CategoryService) {}

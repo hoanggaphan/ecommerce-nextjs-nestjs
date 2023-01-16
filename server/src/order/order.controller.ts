@@ -30,7 +30,7 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.User, Role.Manager, Role.Employee)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Post('list')
   getOrderList(
@@ -52,14 +52,14 @@ export class OrderController {
     );
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.User, Role.Manager, Role.Employee)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(createOrderDto);
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.User, Role.Manager, Role.Employee)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Post('zalopay/create-order')
   createZaloPayOrder(@Body() order) {
@@ -104,7 +104,7 @@ export class OrderController {
     res.json(result);
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.User, Role.Manager, Role.Employee)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Post('check-order-user')
   checkOrderUser(@Body() data) {
@@ -121,7 +121,7 @@ export class OrderController {
   //   console.log('OKOK');
   // }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.User, Role.Manager, Role.Employee)
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -130,7 +130,7 @@ export class OrderController {
 }
 
 @Controller('admin/order')
-@Roles(Role.Admin)
+@Roles(Role.Admin, Role.Manager, Role.Employee)
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}

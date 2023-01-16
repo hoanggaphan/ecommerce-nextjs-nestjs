@@ -1,5 +1,7 @@
 import { Button, Card, Grid, Input, Spacer } from '@nextui-org/react';
 import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useMemo } from 'react';
@@ -14,6 +16,7 @@ import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { validateName, validatePassword } from '../../../libs/validate';
+import { options } from '../../api/auth/[...nextauth]';
 
 export type FormValues = {
   username: string;
@@ -248,4 +251,25 @@ const SelectRole = (props: any) => {
       }}
     />
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    options
+  );
+
+  if (session && !session.roles.some((e: string) => e === 'admin')) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };

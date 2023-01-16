@@ -1,6 +1,6 @@
 import { Button, Card, Grid, Navbar, Spacer, Text } from '@nextui-org/react';
 import type { NextPage } from 'next';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import {
   AiOutlineHome,
@@ -16,6 +16,7 @@ import Logo from './Logo';
 
 const SideBar = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   return (
     <Card variant='bordered' css={{ $$cardColor: '$colors$white' }}>
@@ -34,48 +35,75 @@ const SideBar = () => {
           Thống kê
         </Button>
         <Spacer y={1} />
-        <Button
-          onPress={() => router.push('/admin/category')}
-          icon={<BiCategoryAlt />}
-          light={router.pathname.includes('/admin/category') ? false : true}
-          css={{
-            backgroundColor: router.pathname.includes('/admin/category')
-              ? '$secondary'
-              : '',
-          }}
-          ripple={false}
-        >
-          Danh mục
-        </Button>
-        <Spacer y={1} />
-        <Button
-          onPress={() => router.push('/admin/attribute')}
-          icon={<GiFlowerTwirl />}
-          light={router.pathname.includes('/admin/attribute') ? false : true}
-          css={{
-            backgroundColor: router.pathname.includes('/admin/attribute')
-              ? '$secondary'
-              : '',
-          }}
-          ripple={false}
-        >
-          Thuộc tính
-        </Button>
-        <Spacer y={1} />
-        <Button
-          onPress={() => router.push('/admin/product')}
-          icon={<RiProductHuntLine />}
-          css={{
-            backgroundColor: router.pathname.includes('/admin/product')
-              ? '$secondary'
-              : '',
-          }}
-          light={router.pathname.includes('/admin/product') ? false : true}
-          ripple={false}
-        >
-          Sản phẩm
-        </Button>
-        <Spacer y={1} />
+        {session &&
+          session.roles.some(
+            (e: string) => e === 'admin' || e === 'manager'
+          ) && (
+            <>
+              <Button
+                onPress={() => router.push('/admin/category')}
+                icon={<BiCategoryAlt />}
+                light={
+                  router.pathname.includes('/admin/category') ? false : true
+                }
+                css={{
+                  backgroundColor: router.pathname.includes('/admin/category')
+                    ? '$secondary'
+                    : '',
+                }}
+                ripple={false}
+              >
+                Danh mục
+              </Button>
+              <Spacer y={1} />
+            </>
+          )}
+        {session &&
+          session.roles.some(
+            (e: string) => e === 'admin' || e === 'manager'
+          ) && (
+            <>
+              <Button
+                onPress={() => router.push('/admin/attribute')}
+                icon={<GiFlowerTwirl />}
+                light={
+                  router.pathname.includes('/admin/attribute') ? false : true
+                }
+                css={{
+                  backgroundColor: router.pathname.includes('/admin/attribute')
+                    ? '$secondary'
+                    : '',
+                }}
+                ripple={false}
+              >
+                Thuộc tính
+              </Button>
+              <Spacer y={1} />
+            </>
+          )}
+        {session &&
+          session.roles.some(
+            (e: string) => e === 'admin' || e === 'manager'
+          ) && (
+            <>
+              <Button
+                onPress={() => router.push('/admin/product')}
+                icon={<RiProductHuntLine />}
+                css={{
+                  backgroundColor: router.pathname.includes('/admin/product')
+                    ? '$secondary'
+                    : '',
+                }}
+                light={
+                  router.pathname.includes('/admin/product') ? false : true
+                }
+                ripple={false}
+              >
+                Sản phẩm
+              </Button>
+              <Spacer y={1} />
+            </>
+          )}
         <Button
           onPress={() => router.push('/admin/order')}
           icon={<AiOutlineShoppingCart />}
@@ -90,20 +118,24 @@ const SideBar = () => {
           Đơn hàng
         </Button>
         <Spacer y={1} />
-        <Button
-          onPress={() => router.push('/admin/employee')}
-          icon={<HiOutlineUserGroup />}
-          css={{
-            backgroundColor: router.pathname.includes('/admin/employee')
-              ? '$secondary'
-              : '',
-          }}
-          light={router.pathname.includes('/admin/employee') ? false : true}
-          ripple={false}
-        >
-          Nhân viên
-        </Button>
-        <Spacer y={1} />
+        {session && session.roles.some((e: string) => e === 'admin') && (
+          <>
+            <Button
+              onPress={() => router.push('/admin/employee')}
+              icon={<HiOutlineUserGroup />}
+              css={{
+                backgroundColor: router.pathname.includes('/admin/employee')
+                  ? '$secondary'
+                  : '',
+              }}
+              light={router.pathname.includes('/admin/employee') ? false : true}
+              ripple={false}
+            >
+              Nhân viên
+            </Button>
+            <Spacer y={1} />
+          </>
+        )}
         <Button
           onPress={() => router.push('/admin/setting')}
           icon={<AiOutlineSetting />}
@@ -153,7 +185,7 @@ const AdminLayout: NextPage<Props> = ({ children, title }) => {
       </div>
       <div className='container'>
         <Grid.Container gap={2}>
-          <Grid xs={2} alignItems="baseline">
+          <Grid xs={2} alignItems='baseline'>
             <SideBar />
           </Grid>
           <Grid xs={10}>

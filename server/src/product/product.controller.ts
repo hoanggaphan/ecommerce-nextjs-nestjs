@@ -85,21 +85,25 @@ export class ProductController {
 }
 
 @Controller('admin/product')
-@Roles(Role.Admin)
-@UseGuards(AccessTokenGuard, RolesGuard)
 export class ProductAdminController {
   constructor(private readonly productService: ProductService) {}
 
+  @Roles(Role.Admin, Role.Manager, Role.Employee)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get('top-selling')
   async topSelling() {
     return this.productService.topSelling();
   }
 
+  @Roles(Role.Admin, Role.Manager, Role.Employee)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get('total-product')
   async totalProduct() {
     return this.productService.count();
   }
 
+  @Roles(Role.Admin, Role.Manager, Role.Employee)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get()
   async findAllForAdmin(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
@@ -117,16 +121,22 @@ export class ProductAdminController {
     );
   }
 
-  @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
-  }
-
+  @Roles(Role.Admin, Role.Manager, Role.Employee)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findById(id);
   }
 
+  @Roles(Role.Admin, Role.Manager)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Post()
+  create(@Body() createProductDto: CreateProductDto) {
+    return this.productService.create(createProductDto);
+  }
+
+  @Roles(Role.Admin, Role.Manager)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -135,6 +145,8 @@ export class ProductAdminController {
     return this.productService.update(id, updateProductDto);
   }
 
+  @Roles(Role.Admin, Role.Manager)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productService.remove(id);

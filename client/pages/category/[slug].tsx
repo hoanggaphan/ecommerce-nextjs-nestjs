@@ -35,8 +35,8 @@ export default function Slug() {
   }
 
   const renderData = () => {
-    if (!products) return 'Loading...';
-    if (products.length === 0) return 'Chưa có sản phẩm';
+    // if (!products) return 'Loading...';
+    if (products && products.length === 0) return 'Chưa có sản phẩm';
     return <ItemsList title={category?.name || ''} data={products} />;
   };
 

@@ -12,7 +12,8 @@ import {
   User,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
+import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -22,6 +23,7 @@ import AdminLayout from '../../../components/common/AdminLayout';
 import SecureAdminPages from '../../../components/SecureAdminPages';
 import { useAdminProducts } from '../../../libs/swr/useAdminProducts';
 import { ImageType, ProductType } from '../../../types';
+import { options } from '../../api/auth/[...nextauth]';
 
 const columns = [
   { name: 'Sản phẩm', uid: 'product' },
@@ -362,3 +364,27 @@ const Page = memo(
 );
 
 export default IndexPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    options
+  );
+
+  if (
+    session &&
+    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
+  ) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

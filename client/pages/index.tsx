@@ -100,73 +100,119 @@ export const ItemsList = ({ title, data }: ItemsListProps) => {
 
   return (
     <>
-      <Text
-        h2
-        size={isXs ? 50 : 30}
-        css={{
-          textAlign: 'center',
-          textGradient: '45deg, $purple600 -20%, $pink600 100%',
-        }}
-        weight='bold'
-      >
-        {title}
-      </Text>
+      {data ? (
+        <Text
+          h2
+          size={isXs ? 50 : 30}
+          css={{
+            textAlign: 'center',
+            textGradient: '45deg, $purple600 -20%, $pink600 100%',
+          }}
+          weight='bold'
+        >
+          {title}
+        </Text>
+      ) : (
+        <div style={{ height: isXs ? 85 : 55, width: '100%' }}></div>
+      )}
+
       <Grid.Container gap={isXs ? 2 : 1}>
-        {data?.map((i) => (
-          <Grid key={i.id} xs={6} sm={3}>
-            <Link href={`/${i.slug}`}>
-              <a style={{ width: '100%' }}>
-                <Card variant='bordered' isHoverable>
-                  <Card.Header css={{ pb: 0, minHeight: 40 }}>
-                    {i.isNew && (
-                      <Badge isSquared variant='flat' color='secondary'>
-                        Mới
-                      </Badge>
-                    )}
-                    {i.isPopular && (
-                      <Badge isSquared variant='flat' color='error'>
-                        Nổi bật
-                      </Badge>
-                    )}
-                  </Card.Header>
-                  <Card.Body css={{ py: isMobile ? '$6' : '$10' }}>
-                    <Image
-                      width={isXs ? 235 : 100}
-                      height={isXs ? 235 : 100}
-                      src={i.images[0].url}
-                    />
-                    <Spacer y={1} />
-                    <Text
-                      h3
-                      css={{
-                        textAlign: 'center',
-                        fontSize: isXs ? 24 : 16,
-                        minHeight: isXs ? 72 : 48,
-                        marginBottom: isMobile ? 0 : 10,
-                      }}
-                      className='line-clamp-2'
-                    >
-                      {i.name}
-                    </Text>
-                    <Text
-                      h3
-                      color='secondary'
-                      css={{
-                        textAlign: 'center',
-                        fontSize: isXs ? 24 : 16,
-                        marginBottom: isMobile ? 0 : 10,
-                      }}
-                    >
-                      {i.variants[0].price.toLocaleString('vi-VN')} đ
-                    </Text>
-                  </Card.Body>
-                </Card>
-              </a>
-            </Link>
-          </Grid>
-        ))}
+        {data
+          ? data.map((i) => (
+              <Grid key={i.id} xs={6} sm={3}>
+                <Link href={`/${i.slug}`}>
+                  <a style={{ width: '100%' }}>
+                    <Card variant='bordered' isHoverable>
+                      <Card.Header css={{ pb: 0, minHeight: 40 }}>
+                        {i.isNew && (
+                          <Badge isSquared variant='flat' color='secondary'>
+                            Mới
+                          </Badge>
+                        )}
+                        {i.isPopular && (
+                          <Badge isSquared variant='flat' color='error'>
+                            Nổi bật
+                          </Badge>
+                        )}
+                      </Card.Header>
+                      <Card.Body css={{ py: isMobile ? '$6' : '$10' }}>
+                        <Image
+                          width={isXs ? 235 : 100}
+                          height={isXs ? 235 : 100}
+                          src={i.images[0].url}
+                        />
+                        <Spacer y={1} />
+                        <Text
+                          h3
+                          css={{
+                            textAlign: 'center',
+                            fontSize: isXs ? 24 : 16,
+                            minHeight: isXs ? 72 : 48,
+                            marginBottom: isMobile ? 0 : 10,
+                          }}
+                          className='line-clamp-2'
+                        >
+                          {i.name}
+                        </Text>
+                        <Text
+                          h3
+                          color='secondary'
+                          css={{
+                            textAlign: 'center',
+                            fontSize: isXs ? 24 : 16,
+                            marginBottom: isMobile ? 0 : 10,
+                          }}
+                        >
+                          {i.variants[0].price.toLocaleString('vi-VN')} đ
+                        </Text>
+                      </Card.Body>
+                    </Card>
+                  </a>
+                </Link>
+              </Grid>
+            ))
+          : [...new Array(4)].map((_, i) => (
+              <Grid key={i} xs={6} sm={3}>
+                <Skeleton />
+              </Grid>
+            ))}
       </Grid.Container>
     </>
+  );
+};
+const Skeleton = () => {
+  const isXs = useMediaQuery('(min-width: 650px)');
+  const isMobile = useMediaQuery('(max-width: 360px)');
+
+  return (
+    <Card variant='bordered' isHoverable css={{ backgroundColor: '$accents0' }}>
+      <Card.Header css={{ pb: 0, minHeight: 40 }}></Card.Header>
+      <Card.Body css={{ py: isMobile ? '$6' : '$10' }}>
+        <div
+          style={{ width: isXs ? 235 : 100, height: isXs ? 235 : 100 }}
+        ></div>
+        <Spacer y={1} />
+        <Text
+          h3
+          css={{
+            textAlign: 'center',
+            fontSize: isXs ? 24 : 16,
+            minHeight: isXs ? 72 : 48,
+            marginBottom: isMobile ? 0 : 10,
+          }}
+          className='line-clamp-2'
+        ></Text>
+        <Text
+          h3
+          color='secondary'
+          css={{
+            textAlign: 'center',
+            fontSize: isXs ? 24 : 16,
+            marginBottom: isMobile ? 0 : 10,
+          }}
+        ></Text>
+      </Card.Body>
+    </Card>
   );
 };
 
@@ -204,44 +250,69 @@ const Articles = () => {
       </Text>
 
       <Grid.Container gap={isXs ? 2 : 1}>
-        {articles?.map((i) => (
-          <Grid key={i.slug} xs={12} sm={4}>
-            <Link href={`article/${i.slug}`}>
-              <a style={{ width: '100%' }}>
-                <Card variant='bordered' isHoverable>
+        {articles
+          ? articles.map((i) => (
+              <Grid key={i.slug} xs={12} sm={4}>
+                <Link href={`article/${i.slug}`}>
+                  <a style={{ width: '100%' }}>
+                    <Card variant='bordered' isHoverable>
+                      <Card.Body css={{ p: 0 }}>
+                        <Card.Image
+                          src={i.bannerImage.url}
+                          objectFit='cover'
+                          width='100%'
+                          height={218}
+                          alt=''
+                        />
+                      </Card.Body>
+                      <Card.Footer
+                        css={{
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        <Text h3 className='line-clamp-2'>
+                          {i.title}
+                        </Text>
+                        <Text
+                          css={{
+                            color: '$accents7',
+                            fontWeight: '$semibold',
+                            fontSize: '$sm',
+                          }}
+                        >
+                          {dayFromNow(i.publishedAt)}
+                        </Text>
+                      </Card.Footer>
+                    </Card>
+                  </a>
+                </Link>
+              </Grid>
+            ))
+          : [...new Array(3)].map((_, i) => (
+              <Grid key={i} xs={12} sm={4}>
+                <Card
+                  variant='bordered'
+                  isHoverable
+                  css={{ backgroundColor: '$accents0' }}
+                >
                   <Card.Body css={{ p: 0 }}>
-                    <Card.Image
-                      src={i.bannerImage.url}
-                      objectFit='cover'
-                      width='100%'
-                      height={218}
-                      alt=''
-                    />
+                    <div
+                      style={{
+                        width: '100%',
+                        height: 218,
+                      }}
+                    ></div>
                   </Card.Body>
                   <Card.Footer
                     css={{
                       flexDirection: 'column',
                       alignItems: 'flex-start',
                     }}
-                  >
-                    <Text h3 className='line-clamp-2'>
-                      {i.title}
-                    </Text>
-                    <Text
-                      css={{
-                        color: '$accents7',
-                        fontWeight: '$semibold',
-                        fontSize: '$sm',
-                      }}
-                    >
-                      {dayFromNow(i.publishedAt)}
-                    </Text>
-                  </Card.Footer>
+                  ></Card.Footer>
                 </Card>
-              </a>
-            </Link>
-          </Grid>
-        ))}
+              </Grid>
+            ))}
       </Grid.Container>
     </>
   );

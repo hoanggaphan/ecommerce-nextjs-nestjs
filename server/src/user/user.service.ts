@@ -12,6 +12,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { Like, Raw, Repository } from 'typeorm';
+import { Role } from './../enums/role.enum';
 import { CreateEmployeeDto } from './dto/create-employee';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -67,27 +68,24 @@ export class UserService {
     options: IPaginationOptions,
     name: string,
   ): Promise<Pagination<User>> {
-    return paginate<User>(this.usersRepository, options, {
-      where: [
+    const queryBuilder = this.usersRepository.createQueryBuilder('user');
+    queryBuilder
+      .where([
         {
           id: Raw((alias) => `CAST(${alias} as char(20)) Like '%${name}%'`), // Ép id kiểu int thành string, tìm kiếm gần giống
         },
-        // {
-        //   fullName: Like(`%${name}%`),
-        // },
         {
           username: Like(`%${name}%`),
         },
-      ],
-      order: {
-        updatedDate: 'DESC',
-      },
-    });
-  }
+      ])
+      .andWhere(':role1 IN(user.roles) or :role2 IN(user.roles)', {
+        role1: Role.Manager,
+        role2: Role.Employee,
+      })
+      .orderBy('user.updatedDate', 'DESC'); // Or whatever you need to do
 
-  // findAllForAdmin(): Promise<User[]> {
-  //   return this.usersRepository.find();
-  // }
+    return paginate<User>(queryBuilder, options);
+  }
 
   async findOne(id: number): Promise<User> {
     const exist = await this.usersRepository.findOneBy({ id });

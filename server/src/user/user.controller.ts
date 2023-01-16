@@ -34,8 +34,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Roles(Role.Admin, Role.User)
-  @UseGuards(AccessTokenGuard, RolesGuard)
+  @UseGuards(AccessTokenGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch('update-password')
   updatePassword(@Body() updatePasswordDto: UpdatePasswordDto) {
@@ -50,29 +49,20 @@ export class UserController {
   //   return this.userService.findAll();
   // }
 
-  @Roles(Role.Admin, Role.User)
-  @UseGuards(AccessTokenGuard, RolesGuard)
+  @UseGuards(AccessTokenGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
 
-  @Roles(Role.Admin, Role.User)
-  @UseGuards(AccessTokenGuard, RolesGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.userService.update(id, updateUserDto);
-  }
-
-  @Roles(Role.Admin)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id);
   }
 }
 
@@ -103,5 +93,10 @@ export class UserAdminController {
       },
       name,
     );
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.remove(id);
   }
 }
