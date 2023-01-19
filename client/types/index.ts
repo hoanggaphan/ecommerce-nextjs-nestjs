@@ -111,7 +111,7 @@ export type CityType = {
 export type UserType = {
   id: number;
   fullName: string;
-  phone: number;
+  phone: string;
   address: string;
   username: string;
   roles: string[];

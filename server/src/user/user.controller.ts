@@ -20,6 +20,7 @@ import { Role } from './../enums/role.enum';
 import { RolesGuard } from './../guards/roles.guard';
 import { CreateEmployeeDto } from './dto/create-employee';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -93,6 +94,21 @@ export class UserAdminController {
       },
       name,
     );
+  }
+
+  @UseGuards(AccessTokenGuard)
+  // @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findOne(id);
+  }
+
+  @Patch('update-account/:id')
+  updateAccount(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateAccountDto: UpdateAccountDto,
+  ) {
+    return this.userService.updateAccount(id, updateAccountDto);
   }
 
   @Delete(':id')

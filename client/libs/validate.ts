@@ -23,3 +23,7 @@ export const validateURL: ValidateType = (value) => {
     /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i
   );
 };
+
+export const validatePhone: ValidateType = (value) => {
+  return value.match(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g);
+};

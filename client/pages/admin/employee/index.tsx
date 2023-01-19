@@ -197,7 +197,9 @@ const Page = ({
                 <Dropdown.Item key='edit' textValue='Chi tiết'>
                   <Text
                     color='inherit'
-                    // onClick={() => router.push(`/admin/user/${user.id}`)}
+                    onClick={() =>
+                      router.push(`/admin/employee/update/${user.id}`)
+                    }
                   >
                     Chi tiết
                   </Text>

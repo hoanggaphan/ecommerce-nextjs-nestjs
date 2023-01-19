@@ -15,6 +15,7 @@ import { Like, Raw, Repository } from 'typeorm';
 import { Role } from './../enums/role.enum';
 import { CreateEmployeeDto } from './dto/create-employee';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -112,6 +113,18 @@ export class UserService {
     }
 
     return this.usersRepository.update(id, updateUserDto).then((res) => ({
+      statusCode: HttpStatus.OK,
+      message: 'Update success',
+    }));
+  }
+
+  async updateAccount(id: number, updateAccountDto: UpdateAccountDto) {
+    const exist = await this.usersRepository.findOneBy({ id });
+    if (!exist) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return this.usersRepository.update(id, updateAccountDto).then((res) => ({
       statusCode: HttpStatus.OK,
       message: 'Update success',
     }));
