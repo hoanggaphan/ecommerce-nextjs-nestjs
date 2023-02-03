@@ -1,18 +1,11 @@
-import {
-  Button,
-  Card,
-  Grid,
-  Input,
-  Row,
-  Spacer,
-  Text,
-} from '@nextui-org/react';
+import { Button, Card, Input, Row, Spacer, Text } from '@nextui-org/react';
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession } from 'next-auth';
 import { getSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Draggable from 'react-draggable';
 import { useForm } from 'react-hook-form';
 import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
@@ -54,71 +47,97 @@ export default function Login() {
   };
 
   return (
-    <Grid.Container css={{ h: '100vh' }} alignItems='center' justify='center'>
-      <Grid justify='center'>
-        <form
-          autoComplete='off'
-          autoSave='off'
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Card css={{ minWidth: '300px' }}>
-            {error && (
-              <Card.Header>
-                <Text color='error'>Lỗi xác thực</Text>
-              </Card.Header>
-            )}
-            <Card.Header css={{ justifyContent: 'center' }}>
-              <Text b color='secondary'>
-                Đăng nhập
-              </Text>
-            </Card.Header>
-            <Card.Divider />
-            <Card.Body css={{ py: '$10' }}>
-              <Spacer y={1} />
-              <Input
-                labelPlaceholder='Username'
-                {...register('username', { required: true })}
-                required
-                autoComplete='off'
-                autoSave='off'
-              />
-              <Spacer y={2} />
-              <Input
-                type='password'
-                labelPlaceholder='Password'
-                {...register('password', { required: true })}
-                required
-                autoComplete='off'
-                autoSave='off'
-              />
-            </Card.Body>
-            <Card.Footer css={{ flexDirection: 'column' }}>
-              <Row justify='center'>
-                <Button type='submit' size='sm' color='secondary'>
+    <>
+      <section className='container'>
+        <video className='video' autoPlay muted loop>
+          <source src='/katarina.mp4' type='video/mp4' />
+          Your browser does not support HTML5 video.
+        </video>
+
+        <Draggable>
+          <form
+            autoComplete='off'
+            autoSave='off'
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Card css={{ width: '300px' }}>
+              {error && (
+                <Card.Header>
+                  <Text color='error'>Lỗi xác thực</Text>
+                </Card.Header>
+              )}
+              <Card.Header css={{ justifyContent: 'center' }}>
+                <Text b color='secondary'>
                   Đăng nhập
-                </Button>
-              </Row>
-              <Row css={{ mt: 10 }}>
-                <Text>
-                  Chưa có tài khoản?
-                  <Link href='/auth/register'>
-                    <a
-                      style={{
-                        textDecoration: 'underline',
-                        color: '#7828C8',
-                      }}
-                    >
-                      {' '}
-                      Đăng ký
-                    </a>
-                  </Link>
                 </Text>
-              </Row>
-            </Card.Footer>
-          </Card>
-        </form>
-      </Grid>
-    </Grid.Container>
+              </Card.Header>
+              <Card.Divider />
+              <Card.Body css={{ py: '$10' }}>
+                <Spacer y={1} />
+                <Input
+                  labelPlaceholder='Username'
+                  {...register('username', { required: true })}
+                  required
+                  autoComplete='off'
+                  autoSave='off'
+                />
+                <Spacer y={2} />
+                <Input
+                  type='password'
+                  labelPlaceholder='Password'
+                  {...register('password', { required: true })}
+                  required
+                  autoComplete='off'
+                  autoSave='off'
+                />
+              </Card.Body>
+              <Card.Footer css={{ flexDirection: 'column' }}>
+                <Row justify='center'>
+                  <Button type='submit' size='sm' color='secondary'>
+                    Đăng nhập
+                  </Button>
+                </Row>
+                <Row css={{ mt: 10 }}>
+                  <Text>
+                    Chưa có tài khoản?
+                    <Link href='/auth/register'>
+                      <a
+                        style={{
+                          textDecoration: 'underline',
+                          color: '#7828C8',
+                        }}
+                      >
+                        {' '}
+                        Đăng ký
+                      </a>
+                    </Link>
+                  </Text>
+                </Row>
+              </Card.Footer>
+            </Card>
+          </form>
+        </Draggable>
+      </section>
+
+      <style jsx>{`
+        .container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100vh;
+          overflow: hidden;
+        }
+        .video {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      `}</style>
+    </>
   );
 }
 
