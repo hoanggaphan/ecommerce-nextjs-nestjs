@@ -9,6 +9,7 @@ import {
   Text,
 } from '@nextui-org/react';
 import type { NextPage } from 'next';
+import NextImg from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Autoplay, Navigation } from 'swiper';
@@ -22,6 +23,12 @@ import { getAllArticlesForHome } from '../libs/graphcms';
 import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { useProducts } from '../libs/swr/useProducts';
 import { ArticleType, ProductType } from '../types';
+import carousel1 from '../public/carousel-1.jpg';
+import carousel2 from '../public/carousel-2.jpg';
+import carousel3 from '../public/carousel-3.jpg';
+import carousel4 from '../public/carousel-4.jpg';
+import carousel5 from '../public/carousel-5.jpg';
+import carousel6 from '../public/carousel-6.jpg';
 
 const Carousel = () => (
   <Swiper
@@ -34,58 +41,70 @@ const Carousel = () => (
     modules={[Navigation, Autoplay]}
   >
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-1.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel1}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-2.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel2}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-3.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel3}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-4.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel4}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-5.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel5}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
     <SwiperSlide>
-      <Image
-        width='100%'
-        height='41.5vw'
-        src='/carousel-6.jpg'
-        alt='Default Image'
-        objectFit='cover'
-      />
+      <div style={{ width: '100%', height: '41.5vw' }}>
+        <NextImg
+          src={carousel6}
+          layout='fill'
+          priority
+          objectFit='cover'
+          alt='Default Image'
+        />
+      </div>
     </SwiperSlide>
   </Swiper>
 );

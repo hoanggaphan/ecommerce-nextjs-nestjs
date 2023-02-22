@@ -10,11 +10,14 @@ import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
+import ahriPreview from '../../public/ahri-preview.jpg';
+import Image from 'next/image';
 
 export default function Register() {
   useBotChat(false);
   const router = useRouter();
   const [error, setError] = useState<string[] | string>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const {
     register,
@@ -43,7 +46,24 @@ export default function Register() {
   return (
     <>
       <section className='container'>
-        <video className='video' autoPlay muted loop>
+        <div className='bg-preview'>
+          {!loaded && (
+            <Image
+              src={ahriPreview}
+              layout='fill'
+              priority
+              alt='video preview image'
+              objectFit='cover'
+            />
+          )}
+        </div>
+        <video
+          className='video'
+          autoPlay
+          muted
+          loop
+          onLoadedData={() => setLoaded(true)}
+        >
           <source src='/ahri.mp4' type='video/mp4' />
           Your browser does not support HTML5 video.
         </video>
@@ -133,6 +153,14 @@ export default function Register() {
           overflow: hidden;
         }
         .video {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .bg-preview {
           position: fixed;
           top: 0;
           left: 0;

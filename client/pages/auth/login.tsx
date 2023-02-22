@@ -2,6 +2,7 @@ import { Button, Card, Input, Row, Spacer, Text } from '@nextui-org/react';
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession } from 'next-auth';
 import { getSession, signIn } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -9,10 +10,12 @@ import Draggable from 'react-draggable';
 import { useForm } from 'react-hook-form';
 import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
+import kataPreview from '../../public/kata-preview.jpg';
 
 export default function Login() {
   useBotChat(false);
   const [error, setError] = useState<string | null>();
+  const [loaded, setLoaded] = useState<boolean>(false);
   const router = useRouter();
 
   const {
@@ -49,7 +52,25 @@ export default function Login() {
   return (
     <>
       <section className='container'>
-        <video className='video' autoPlay muted loop>
+        <div className='bg-preview'>
+          {!loaded && (
+            <Image
+              src={kataPreview}
+              layout='fill'
+              priority
+              alt='video preview image'
+              objectFit='cover'
+            />
+          )}
+        </div>
+
+        <video
+          className='video'
+          autoPlay
+          muted
+          loop
+          onLoadedData={() => setLoaded(true)}
+        >
           <source src='/katarina.mp4' type='video/mp4' />
           Your browser does not support HTML5 video.
         </video>
@@ -166,6 +187,14 @@ export default function Login() {
           overflow: hidden;
         }
         .video {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .bg-preview {
           position: fixed;
           top: 0;
           left: 0;
