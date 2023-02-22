@@ -124,6 +124,12 @@ export class UserService {
       throw new NotFoundException('User not found.');
     }
 
+    const hashedPassword = await bcrypt.hash(
+      updateAccountDto.password,
+      saltOrRounds,
+    );
+    updateAccountDto.password = hashedPassword;
+
     return this.usersRepository.update(id, updateAccountDto).then((res) => ({
       statusCode: HttpStatus.OK,
       message: 'Update success',

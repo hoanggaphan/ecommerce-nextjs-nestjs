@@ -114,6 +114,43 @@ export default function Login() {
                   </Text>
                 </Row>
               </Card.Footer>
+              <Card.Divider />
+              <Card.Footer css={{ flexDirection: 'column', gap: 5 }}>
+                <Text small>
+                  Trang admin:
+                  <Text b style={{ marginLeft: 5 }}>
+                    /admin/dashboard
+                  </Text>
+                </Text>
+
+                <Text small>
+                  Acc client:
+                  <Text b style={{ marginLeft: 5 }}>
+                    username1 - Username1
+                  </Text>
+                </Text>
+
+                <Text small>
+                  Acc admin:
+                  <Text b style={{ marginLeft: 5 }}>
+                    admin123 - Admin123
+                  </Text>
+                </Text>
+
+                <Text small>
+                  Acc quản lý:
+                  <Text b style={{ marginLeft: 5 }}>
+                    manager1 - Manager1
+                  </Text>
+                </Text>
+
+                <Text small>
+                  Acc nhân viên:
+                  <Text b style={{ marginLeft: 5 }}>
+                    employee1 - Employee1
+                  </Text>
+                </Text>
+              </Card.Footer>
             </Card>
           </form>
         </Draggable>

@@ -53,9 +53,9 @@ export default function Register() {
             autoComplete='off'
             autoSave='off'
             onSubmit={handleSubmit(onSubmit)}
-            className="card-form"
+            className='card-form'
           >
-            <Card >
+            <Card>
               <Card.Header style={{ flexDirection: 'column' }}>
                 {Array.isArray(error) ? (
                   error.map((i, index) => (
@@ -113,6 +113,12 @@ export default function Register() {
                     </a>
                   </Link>
                 </Row>
+              </Card.Footer>
+              <Card.Divider />
+              <Card.Footer css={{ flexDirection: 'column' }}>
+                <Text small color='warning'>
+                  Mật khẩu chứa ít nhất 1 số và 1 kí tự viết hoa
+                </Text>
               </Card.Footer>
             </Card>
           </form>
