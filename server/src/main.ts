@@ -5,6 +5,9 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'development' ? '*' : process.env.CLIENT,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -13,9 +16,6 @@ async function bootstrap() {
     }),
   );
   app.use(json({ limit: '50mb' }));
-  app.enableCors({
-    origin: process.env.NODE_ENV === 'development' ? '*' : process.env.CLIENT,
-  });
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   await app.listen(process.env.APP_PORT);
 }
