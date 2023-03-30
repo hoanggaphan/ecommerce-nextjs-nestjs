@@ -18,10 +18,5 @@
                 "OPTIONS"
             ]
         }
-    ],
-    "functions": {
-        "src/main.ts": {
-          "maxDuration": 60
-        }
-    }
+    ]
 }
