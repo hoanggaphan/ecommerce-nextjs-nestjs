@@ -6,11 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import Draggable from 'react-draggable';
 import { useForm } from 'react-hook-form';
 import { useBotChat } from '../../components/common/BotChat';
 import { options } from '../api/auth/[...nextauth]';
-import kataPreview from '../../public/kata-preview.jpg';
 
 export default function Login() {
   useBotChat(false);
@@ -55,7 +53,7 @@ export default function Login() {
         <div className='bg-preview'>
           {!loaded && (
             <Image
-              src={kataPreview}
+              src='/kata-preview.jpg'
               layout='fill'
               priority
               alt='video preview image'
@@ -75,106 +73,104 @@ export default function Login() {
           Your browser does not support HTML5 video.
         </video>
 
-        <Draggable>
-          <form
-            autoComplete='off'
-            autoSave='off'
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Card css={{ width: '300px' }}>
-              {error && (
-                <Card.Header>
-                  <Text color='error'>Lỗi xác thực</Text>
-                </Card.Header>
-              )}
-              <Card.Header css={{ justifyContent: 'center' }}>
-                <Text b color='secondary'>
-                  Đăng nhập
-                </Text>
+        <form
+          autoComplete='off'
+          autoSave='off'
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Card css={{ width: '300px' }}>
+            {error && (
+              <Card.Header>
+                <Text color='error'>Lỗi xác thực</Text>
               </Card.Header>
-              <Card.Divider />
-              <Card.Body css={{ py: '$10' }}>
-                <Spacer y={1} />
-                <Input
-                  labelPlaceholder='Username'
-                  {...register('username', { required: true })}
-                  required
-                  autoComplete='off'
-                  autoSave='off'
-                />
-                <Spacer y={2} />
-                <Input
-                  type='password'
-                  labelPlaceholder='Password'
-                  {...register('password', { required: true })}
-                  required
-                  autoComplete='off'
-                  autoSave='off'
-                />
-              </Card.Body>
-              <Card.Footer css={{ flexDirection: 'column' }}>
-                <Row justify='center'>
-                  <Button type='submit' size='sm' color='secondary'>
-                    Đăng nhập
-                  </Button>
-                </Row>
-                <Row css={{ mt: 10 }}>
-                  <Text>
-                    Chưa có tài khoản?
-                    <Link href='/auth/register'>
-                      <a
-                        style={{
-                          textDecoration: 'underline',
-                          color: '#7828C8',
-                        }}
-                      >
-                        {' '}
-                        Đăng ký
-                      </a>
-                    </Link>
-                  </Text>
-                </Row>
-              </Card.Footer>
-              <Card.Divider />
-              <Card.Footer css={{ flexDirection: 'column', gap: 5 }}>
-                <Text small>
-                  Trang admin:
-                  <Text b style={{ marginLeft: 5 }}>
-                    /admin/dashboard
-                  </Text>
+            )}
+            <Card.Header css={{ justifyContent: 'center' }}>
+              <Text b color='secondary'>
+                Đăng nhập
+              </Text>
+            </Card.Header>
+            <Card.Divider />
+            <Card.Body css={{ py: '$10' }}>
+              <Spacer y={1} />
+              <Input
+                labelPlaceholder='Username'
+                {...register('username', { required: true })}
+                required
+                autoComplete='off'
+                autoSave='off'
+              />
+              <Spacer y={2} />
+              <Input
+                type='password'
+                labelPlaceholder='Password'
+                {...register('password', { required: true })}
+                required
+                autoComplete='off'
+                autoSave='off'
+              />
+            </Card.Body>
+            <Card.Footer css={{ flexDirection: 'column' }}>
+              <Row justify='center'>
+                <Button type='submit' size='sm' color='secondary'>
+                  Đăng nhập
+                </Button>
+              </Row>
+              <Row css={{ mt: 10 }}>
+                <Text>
+                  Chưa có tài khoản?
+                  <Link href='/auth/register'>
+                    <a
+                      style={{
+                        textDecoration: 'underline',
+                        color: '#7828C8',
+                      }}
+                    >
+                      {' '}
+                      Đăng ký
+                    </a>
+                  </Link>
                 </Text>
+              </Row>
+            </Card.Footer>
+            <Card.Divider />
+            <Card.Footer css={{ flexDirection: 'column', gap: 5 }}>
+              <Text small>
+                Trang admin:
+                <Text b style={{ marginLeft: 5 }}>
+                  /admin/dashboard
+                </Text>
+              </Text>
 
-                <Text small>
-                  Acc client:
-                  <Text b style={{ marginLeft: 5 }}>
-                    username1 - Username1
-                  </Text>
+              <Text small>
+                Acc client:
+                <Text b style={{ marginLeft: 5 }}>
+                  username1 - Username1
                 </Text>
+              </Text>
 
-                <Text small>
-                  Acc admin:
-                  <Text b style={{ marginLeft: 5 }}>
-                    admin123 - Admin123
-                  </Text>
+              <Text small>
+                Acc admin:
+                <Text b style={{ marginLeft: 5 }}>
+                  admin123 - Admin123
                 </Text>
+              </Text>
 
-                <Text small>
-                  Acc quản lý:
-                  <Text b style={{ marginLeft: 5 }}>
-                    manager1 - Manager1
-                  </Text>
+              <Text small>
+                Acc quản lý:
+                <Text b style={{ marginLeft: 5 }}>
+                  manager1 - Manager1
                 </Text>
+              </Text>
 
-                <Text small>
-                  Acc nhân viên:
-                  <Text b style={{ marginLeft: 5 }}>
-                    employee1 - Employee1
-                  </Text>
+              <Text small>
+                Acc nhân viên:
+                <Text b style={{ marginLeft: 5 }}>
+                  employee1 - Employee1
                 </Text>
-              </Card.Footer>
-            </Card>
-          </form>
-        </Draggable>
+              </Text>
+            </Card.Footer>
+          </Card>
+        </form>
       </section>
 
       <style jsx>{`
