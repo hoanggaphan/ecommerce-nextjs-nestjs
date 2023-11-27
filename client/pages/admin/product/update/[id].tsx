@@ -14,8 +14,6 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -33,12 +31,12 @@ import Select, { components } from 'react-select';
 import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../../components/SecureAdminPages';
+import useAuth from '../../../../libs/hooks/useAuth';
+import useRoles from '../../../../libs/hooks/useRoles';
 import { useAdminAttribute } from '../../../../libs/swr/useAdminAttribute';
 import { useAdminCategory } from '../../../../libs/swr/useAdminCategory';
 import { useAdminProduct } from '../../../../libs/swr/useAdminProduct';
 import { AttributeValueType, ImageType } from '../../../../types';
-import { options } from '../../../api/auth/[...nextauth]';
 import { IconButton } from '../../category';
 
 export type FormValues = {
@@ -99,6 +97,8 @@ const deleteImg = async (imgId: string) => {
 };
 
 export default function Update() {
+  useAuth(true);
+  useRoles(['admin', 'manager'], '/admin/dashboard');
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
@@ -345,7 +345,7 @@ export default function Update() {
   }, [product]);
 
   return (
-    <SecureAdminPages>
+    <>
       {' '}
       <Head>
         <title>Cập nhật sản phẩm</title>
@@ -792,7 +792,7 @@ export default function Update() {
           }
         `}</style>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 }
 
@@ -1064,28 +1064,4 @@ const AttributeSelect = (props: any) => {
       />
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
-  ) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };

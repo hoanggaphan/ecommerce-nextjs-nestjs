@@ -16,7 +16,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
 import { useAdminOrders } from '../../../libs/swr/useAdminOrders';
 import { OrderType } from '../../../types';
 
@@ -74,6 +74,7 @@ export const IconButton = styled('button', {
 });
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
   const [pageIndex, setPageIndex] = useState(1);
   const [keyword, setKeyword] = useState('');
   const [temp, setTemp] = useState('');
@@ -87,7 +88,7 @@ const IndexPage: NextPage = () => {
   const handleChange = (e: ChangeEvent<FormElement>) => setTemp(e.target.value);
 
   return (
-    <SecureAdminPages>
+    <>
       <>
         <Head>
           <title>Sản phẩm</title>
@@ -121,7 +122,7 @@ const IndexPage: NextPage = () => {
           </div>
         </AdminLayout>
       </>
-    </SecureAdminPages>
+    </>
   );
 };
 

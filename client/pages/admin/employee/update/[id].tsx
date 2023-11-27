@@ -1,7 +1,5 @@
 import { Button, Card, Grid, Input, Spacer, Text } from '@nextui-org/react';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -15,14 +13,14 @@ import {
 import Select, { components } from 'react-select';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../../components/SecureAdminPages';
+import useAuth from '../../../../libs/hooks/useAuth';
+import useRoles from '../../../../libs/hooks/useRoles';
 import { useAdminUser } from '../../../../libs/swr/useAdminUser';
 import {
   validateName,
   validatePassword,
   validatePhone,
 } from '../../../../libs/validate';
-import { options } from '../../../api/auth/[...nextauth]';
 
 export type InforFormValues = {
   fullName: string;
@@ -48,6 +46,8 @@ const rolesOptions = [
 ];
 
 export default function Add() {
+  useAuth(true);
+  useRoles(['admin', '/admin/dashboard']);
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
@@ -193,7 +193,7 @@ export default function Add() {
   };
 
   return (
-    <SecureAdminPages>
+    <>
       {' '}
       <Head>
         <title>Cập nhật nhân viên</title>
@@ -307,7 +307,7 @@ export default function Add() {
           </Grid>
         </Grid.Container>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 }
 
@@ -378,25 +378,4 @@ const SelectRole = (props: any) => {
       }}
     />
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (session && !session.roles.some((e: string) => e === 'admin')) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };

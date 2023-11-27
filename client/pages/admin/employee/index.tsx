@@ -9,18 +9,17 @@ import {
   Text,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import { unstable_getServerSession } from 'next-auth';
+import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
+import useRoles from '../../../libs/hooks/useRoles';
 import { useAdminUsers } from '../../../libs/swr/useAdminUsers';
 import { UserType } from '../../../types';
-import { options } from '../../api/auth/[...nextauth]';
 
 const columns = [
   { name: 'Mã', uid: 'id' },
@@ -30,6 +29,8 @@ const columns = [
 ];
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
+  useRoles(['admin', '/admin/dashboard']);
   const [pageIndex, setPageIndex] = useState(1);
   const [keyword, setKeyword] = useState('');
   const [temp, setTemp] = useState('');
@@ -45,7 +46,7 @@ const IndexPage: NextPage = () => {
     setTemp(e.target.value);
 
   return (
-    <SecureAdminPages>
+    <>
       <Head>
         <title>Nhân viên</title>
         <link rel='icon' href='/favicon.ico' />
@@ -84,7 +85,7 @@ const IndexPage: NextPage = () => {
           </div>
         </div>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 };
 
@@ -256,24 +257,3 @@ const Page = ({
 };
 
 export default IndexPage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (session && !session.roles.some((e: string) => e === 'admin')) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

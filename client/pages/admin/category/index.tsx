@@ -8,8 +8,7 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import { unstable_getServerSession } from 'next-auth';
+import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
@@ -18,12 +17,12 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import CategoryAddForm from '../../../components/CategoryAddForm';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
 import SweetHtmlCategory from '../../../components/SweetHtmlCategory';
+import useAuth from '../../../libs/hooks/useAuth';
+import useRoles from '../../../libs/hooks/useRoles';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
 import { validateName, validateSlug } from '../../../libs/validate';
 import { CategoryType } from '../../../types';
-import { options } from '../../api/auth/[...nextauth]';
 
 const MySwal = withReactContent(Swal);
 
@@ -54,6 +53,8 @@ const columns = [
 ];
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
+  useRoles(['admin', 'manager'], '/admin/dashboard');
   const { data: session } = useSession();
   const { data, error, mutate } = useAdminCategory(session?.accessToken);
 
@@ -200,7 +201,7 @@ const IndexPage: NextPage = () => {
   };
 
   return (
-    <SecureAdminPages>
+    <>
       <Head>
         <title>Danh mục</title>
         <link rel='icon' href='/favicon.ico' />
@@ -257,32 +258,8 @@ const IndexPage: NextPage = () => {
           </Grid>
         </Grid.Container>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 };
 
 export default IndexPage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
-  ) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

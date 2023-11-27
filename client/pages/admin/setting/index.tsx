@@ -1,11 +1,12 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
   return (
-    <SecureAdminPages>
+    <>
       <Head>
         <title>Cài đặt</title>
         <link rel='icon' href='/favicon.ico' />
@@ -14,7 +15,7 @@ const IndexPage: NextPage = () => {
       <AdminLayout title='Cài đặt'>
         
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 };
 

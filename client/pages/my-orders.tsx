@@ -8,20 +8,18 @@ import {
   Text,
 } from '@nextui-org/react';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import useSWR from 'swr';
 import UserLayout from '../components/common/UserLayout';
+import useAuth from '../libs/hooks/useAuth';
 import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { OrderPaginateType } from '../types';
-import { options } from './api/auth/[...nextauth]';
 
 const allFetcher = (url: string, body: any, token: string) => {
   return axios
@@ -148,6 +146,7 @@ const AllTabContent = ({
 };
 
 export default function MyOrders() {
+  useAuth(true);
   const [allPage, setAllPage] = useState(1);
   const [processingPage, setProcessingPage] = useState(1);
   const [deliveringPage, setDeliveringPage] = useState(1);
@@ -155,15 +154,7 @@ export default function MyOrders() {
   const [cancelPage, setCancelPage] = useState(1);
   const [returnPage, setReturnPage] = useState(1);
   const [refundPage, setRefundPage] = useState(1);
-  const { data: session } = useSession();
-  const router = useRouter();
   const isXs = useMediaQuery('(min-width: 650px)');
-
-  useEffect(() => {
-    if (session === null) {
-      router.push('/');
-    }
-  }, [session]);
 
   return (
     <>
@@ -347,24 +338,3 @@ export default function MyOrders() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

@@ -1,30 +1,21 @@
 import { Button, Card, Container, Grid, Input, Text } from '@nextui-org/react';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import UserLayout from '../components/common/UserLayout';
+import useAuth from '../libs/hooks/useAuth';
 import useMediaQuery from '../libs/hooks/useMediaQuery';
 import { useUser } from '../libs/swr/useUser';
-import { options } from './api/auth/[...nextauth]';
 
 export default function Profile() {
+  useAuth(true);
   const { data: session } = useSession();
   const { data: user, mutate } = useUser(session?.userId, session?.accessToken);
   const { handleSubmit, register, setValue } = useForm();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session === null) {
-      router.push('/');
-    }
-  }, [session]);
 
   useEffect(() => {
     if (user) {
@@ -142,24 +133,3 @@ export default function Profile() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

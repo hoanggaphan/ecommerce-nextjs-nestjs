@@ -12,18 +12,17 @@ import {
   User,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import { unstable_getServerSession } from 'next-auth';
+import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ChangeEvent, Dispatch, memo, SetStateAction, useState } from 'react';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
+import useRoles from '../../../libs/hooks/useRoles';
 import { useAdminProducts } from '../../../libs/swr/useAdminProducts';
 import { ImageType, ProductType } from '../../../types';
-import { options } from '../../api/auth/[...nextauth]';
 
 const columns = [
   { name: 'Sản phẩm', uid: 'product' },
@@ -97,6 +96,7 @@ const deleteImgsFromCloud = async (images: ImageType[]) => {
 };
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
   const [pageIndex, setPageIndex] = useState(1);
   const [keyword, setKeyword] = useState('');
   const [temp, setTemp] = useState('');
@@ -111,7 +111,7 @@ const IndexPage: NextPage = () => {
   const handleChange = (e: ChangeEvent<FormElement>) => setTemp(e.target.value);
 
   return (
-    <SecureAdminPages>
+    <>
       <>
         <Head>
           <title>Sản phẩm</title>
@@ -152,7 +152,7 @@ const IndexPage: NextPage = () => {
           </div>
         </AdminLayout>
       </>
-    </SecureAdminPages>
+    </>
   );
 };
 
@@ -166,6 +166,7 @@ const Page = memo(
     pageIndex: number;
     setPageIndex: Dispatch<SetStateAction<number>>;
   }) => {
+    useRoles(['admin', 'manager', '/admin/dashboard']);
     const router = useRouter();
     const { data: session } = useSession();
     const { data: products, mutate } = useAdminProducts(
@@ -364,27 +365,3 @@ const Page = memo(
 );
 
 export default IndexPage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
-  ) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

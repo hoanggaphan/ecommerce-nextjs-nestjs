@@ -14,8 +14,8 @@ import {
   Chart as ChartJS,
   Filler,
   Legend,
-  LinearScale,
   LineElement,
+  LinearScale,
   PointElement,
   Title,
   Tooltip,
@@ -30,9 +30,9 @@ import { GiBeachBag } from 'react-icons/gi';
 import { GrBitcoin } from 'react-icons/gr';
 import useSWR from 'swr';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
 import { useAdminOrders } from '../../../libs/swr/useAdminOrders';
 import { OrderType } from '../../../types';
+import useAuth from '../../../libs/hooks/useAuth';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -604,8 +604,10 @@ const TotalProduct = () => {
 };
 
 const Admin: NextPage = () => {
+  useAuth(true);
+
   return (
-    <SecureAdminPages>
+    <>
       <Head>
         <title>Trang chủ</title>
         <link rel='icon' href='/favicon.ico' />
@@ -706,7 +708,7 @@ const Admin: NextPage = () => {
           </Grid>
         </Grid.Container>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 };
 

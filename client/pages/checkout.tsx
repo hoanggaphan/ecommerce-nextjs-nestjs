@@ -13,11 +13,9 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import axios from 'axios';
-import { unstable_getServerSession } from 'next-auth/next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { GetServerSideProps } from 'next/types';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Controller,
@@ -29,7 +27,7 @@ import {
 import Swal from 'sweetalert2';
 import MySelect from '../components/common/MySelect';
 import UserLayout from '../components/common/UserLayout';
-import useAuthUser from '../libs/hooks/useAuthUser';
+import useAuth from '../libs/hooks/useAuth';
 import useMediaQuery from '../libs/hooks/useMediaQuery';
 import {
   clearCart,
@@ -39,7 +37,6 @@ import {
 import { useAppDispatch, useAppSelector } from '../libs/redux/store';
 import { useCities } from '../libs/swr/useCities';
 import { CartItemType, CityType, DistrictType, WardType } from '../types';
-import { options } from './api/auth/[...nextauth]';
 import { CustomCartItemType, useCheckVariantIds } from './cart';
 
 const findAmount = (variantId: number, cart: CartItemType[]) => {
@@ -453,7 +450,7 @@ type FormValues = {
 };
 
 export default function Checkout() {
-  useAuthUser(true);
+  useAuth(true);
   const router = useRouter();
   const { data: session } = useSession();
   const methods = useForm<FormValues>();
@@ -608,24 +605,3 @@ export default function Checkout() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

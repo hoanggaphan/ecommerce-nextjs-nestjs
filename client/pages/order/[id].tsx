@@ -10,32 +10,24 @@ import {
   User,
 } from '@nextui-org/react';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { AiOutlineReload } from 'react-icons/ai';
 import { CgMenuBoxed } from 'react-icons/cg';
 import { GiReceiveMoney } from 'react-icons/gi';
 import { TbTruckDelivery } from 'react-icons/tb';
 import UserLayout from '../../components/common/UserLayout';
+import useAuth from '../../libs/hooks/useAuth';
 import useMediaQuery from '../../libs/hooks/useMediaQuery';
 import { useOrder } from '../../libs/swr/useOrder';
-import { options } from '../api/auth/[...nextauth]';
 
 export default function Id() {
+  useAuth(true);
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
   const { data: order } = useOrder({ id, token: session?.accessToken });
-
-  useEffect(() => {
-    if (session === null) {
-      router.push('/');
-    }
-  }, [session]);
 
   const handleZaloPay = async () => {
     if (!order) return;
@@ -413,51 +405,4 @@ const OrderStepper = () => {
       `}</style>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  // Check user is logged
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
-
-  // Check order of user is existing in database
-  try {
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/order/check-order-user`,
-      {
-        orderId: context.params?.id,
-        userId: session.userId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      }
-    );
-  } catch (error: any) {
-    if (error.response.data.statusCode === 404) {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
-  }
-
-  return {
-    props: {},
-  };
 };

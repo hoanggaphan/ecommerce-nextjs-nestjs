@@ -19,7 +19,6 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { HiOutlineUserCircle } from 'react-icons/hi';
 import { RiSearchLine } from 'react-icons/ri';
 import ScrollToTop from 'react-scroll-to-top';
-import useAuthUser from '../../libs/hooks/useAuthUser';
 import useMediaQuery from '../../libs/hooks/useMediaQuery';
 import { selectTotalAmount } from '../../libs/redux/reducers/cartReducer';
 import { useAppSelector } from '../../libs/redux/store';
@@ -217,7 +216,6 @@ const Search = () => {
 };
 
 const MyNavbar = () => {
-  useAuthUser(false);
   const { data: category } = useCategory();
   const router = useRouter();
   const { data: session } = useSession();

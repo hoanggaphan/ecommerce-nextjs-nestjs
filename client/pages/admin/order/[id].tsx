@@ -20,7 +20,7 @@ import { FaUserAstronaut } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import Select from 'react-select';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
 import { useOrder } from '../../../libs/swr/useOrder';
 import { OrderItemType } from '../../../types';
 
@@ -45,6 +45,7 @@ type OptionType = {
 };
 
 export default function Index() {
+  useAuth(true);
   const router = useRouter();
   const { id } = router.query;
   const { data: session } = useSession();
@@ -182,7 +183,7 @@ export default function Index() {
   };
 
   return (
-    <SecureAdminPages>
+    <>
       {' '}
       <Head>
         <title>Chi tiết đơn hàng</title>
@@ -383,6 +384,6 @@ export default function Index() {
           </Card.Body>
         </Card>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 }

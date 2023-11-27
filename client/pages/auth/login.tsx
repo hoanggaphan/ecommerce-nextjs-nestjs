@@ -1,14 +1,11 @@
 import { Button, Card, Input, Row, Spacer, Text } from '@nextui-org/react';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
-import { getSession, signIn } from 'next-auth/react';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBotChat } from '../../components/common/BotChat';
-import { options } from '../api/auth/[...nextauth]';
 
 export default function Login() {
   useBotChat(false);
@@ -46,6 +43,14 @@ export default function Login() {
       }
     }
   };
+
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/');
+    }
+  }, [session]);
 
   return (
     <>
@@ -202,36 +207,3 @@ export default function Login() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    session.roles.some(
-      (e: string) => e === 'admin' || e === 'manager' || e === 'employee'
-    )
-  ) {
-    return {
-      redirect: {
-        destination: '/admin/dashboard',
-        permanent: false,
-      },
-    };
-  } else if (session && session.roles.includes('user')) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

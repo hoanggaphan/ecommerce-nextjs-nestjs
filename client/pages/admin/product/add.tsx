@@ -14,8 +14,6 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
-import { GetServerSideProps } from 'next';
-import { unstable_getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
@@ -32,10 +30,10 @@ import Select, { components } from 'react-select';
 import slugify from 'react-slugify';
 import Swal from 'sweetalert2';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useAuth from '../../../libs/hooks/useAuth';
+import useRoles from '../../../libs/hooks/useRoles';
 import { useAdminAttribute } from '../../../libs/swr/useAdminAttribute';
 import { useAdminCategory } from '../../../libs/swr/useAdminCategory';
-import { options } from '../../api/auth/[...nextauth]';
 import { IconButton } from '../category';
 
 export type FormValues = {
@@ -85,6 +83,8 @@ const uploadImg = async (img: File) => {
 };
 
 export default function Add() {
+  useAuth(true);
+  useRoles(['admin', 'manager', '/admin/dashboard']);
   const { data: session } = useSession();
   const {
     control,
@@ -254,7 +254,7 @@ export default function Add() {
   };
 
   return (
-    <SecureAdminPages>
+    <>
       {' '}
       <Head>
         <title>Tạo sản phẩm</title>
@@ -609,7 +609,7 @@ export default function Add() {
           }
         `}</style>
       </AdminLayout>
-    </SecureAdminPages>
+    </>
   );
 }
 
@@ -880,28 +880,4 @@ const AttributeSelect = (props: any) => {
       />
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
-  ) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };

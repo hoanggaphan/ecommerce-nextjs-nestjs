@@ -9,8 +9,7 @@ import {
   useInput,
 } from '@nextui-org/react';
 import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import { unstable_getServerSession } from 'next-auth';
+import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
@@ -23,11 +22,11 @@ import {
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import AdminLayout from '../../../components/common/AdminLayout';
-import SecureAdminPages from '../../../components/SecureAdminPages';
+import useRoles from '../../../libs/hooks/useRoles';
 import { useAdminAttribute } from '../../../libs/swr/useAdminAttribute';
 import { validateName } from '../../../libs/validate';
 import { AttributeType, AttributeValues } from '../../../types';
-import { options } from '../../api/auth/[...nextauth]';
+import useAuth from '../../../libs/hooks/useAuth';
 
 const MySwal = withReactContent(Swal);
 
@@ -82,6 +81,7 @@ const columns = [
 ];
 
 const InputAdd = () => {
+  useRoles(['admin', 'manager'], '/admin/dashboard');
   const { data: session } = useSession();
   const { mutate } = useAdminAttribute(session?.accessToken);
   const { value, reset, bindings } = useInput('');
@@ -181,6 +181,7 @@ const InputAdd = () => {
 };
 
 const IndexPage: NextPage = () => {
+  useAuth(true);
   const { data: session } = useSession();
   const { data, mutate } = useAdminAttribute(session?.accessToken);
   const attributes = data || [];
@@ -473,7 +474,7 @@ const IndexPage: NextPage = () => {
 
   return (
     <>
-      <SecureAdminPages>
+      <>
         <Head>
           <title>Danh mục</title>
           <link rel='icon' href='/favicon.ico' />
@@ -541,7 +542,7 @@ const IndexPage: NextPage = () => {
             ))}
           </div>
         </AdminLayout>
-      </SecureAdminPages>
+      </>
       <style jsx>{`
         .items {
           column-count: 6;
@@ -556,27 +557,3 @@ const IndexPage: NextPage = () => {
 };
 
 export default IndexPage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    options
-  );
-
-  if (
-    session &&
-    !session.roles.some((e: string) => e === 'admin' || e === 'manager')
-  ) {
-    return {
-      redirect: {
-        destination: '/404',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
