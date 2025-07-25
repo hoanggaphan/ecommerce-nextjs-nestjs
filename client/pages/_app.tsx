@@ -55,22 +55,11 @@ function MyApp({
         </PersistGate>
       </Provider>
 
-      <Script>
-        {` window.fbAsyncInit = function() {
-                  FB.init({
-                      appId: "1784956665094089",
-                      xfbml: true,
-                      version: "v15.0"
-                  });
-              };
-              (function(d, s, id){
-                  var js, fjs = d.getElementsByTagName(s)[0];
-                  if (d.getElementById(id)) { return; }
-                  js = d.createElement(s); js.id = id;
-                  js.src = "//connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js";
-                  fjs.parentNode.insertBefore(js, fjs);
-              }(document, 'script', 'facebook-jssdk'));`}
-      </Script>
+      <Script
+        strategy="afterInteractive"
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1784956665094089"
+        crossOrigin="anonymous"
+      />
     </>
   );
 }
