@@ -12,8 +12,8 @@ export function useBotChat(isTrue: boolean) {
   useEffect(() => {
     if (window.FB) {
       isTrue
-        ? window.FB.CustomerChat.show(false)
-        : window.FB.CustomerChat.hide();
+        ? window.FB.CustomerChat?.show(false)
+        : window.FB.CustomerChat?.hide();
     }
   }, []);
 
