@@ -14,14 +14,10 @@ import { VariantModule } from './variant/variant.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: process.env.DB_NAME as any,
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT as any,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_SCHEMA,
-      autoLoadEntities: true,
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
       synchronize: process.env.NODE_ENV === 'development',
+      autoLoadEntities: true,
     }),
     UserModule,
     AuthModule,
